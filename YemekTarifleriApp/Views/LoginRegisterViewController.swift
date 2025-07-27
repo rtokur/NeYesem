@@ -8,7 +8,10 @@
 import UIKit
 import SnapKit
 
-class LoginRegisterViewController: UIViewController {
+class LoginRegisterViewController: UIViewController, UITextFieldDelegate {
+    //MARK: - Properties
+    private var passwordToggleButtons: [(UITextField, UIButton)] = []
+    
     //MARK: - UI Elements
     private let scrollView: UIScrollView = {
         let scrollView = UIScrollView()
@@ -65,7 +68,7 @@ class LoginRegisterViewController: UIViewController {
         return view
     }()
     
-    private lazy var loginFormStack: UIStackView = {
+    private lazy var loginFormStackView: UIStackView = {
         let stack = UIStackView()
         stack.axis = .vertical
         stack.spacing = 12
@@ -185,9 +188,144 @@ class LoginRegisterViewController: UIViewController {
     
     private let signUpView: UIView = {
         let view = UIView()
-        view.backgroundColor = .purple
         view.isHidden = true
         return view
+    }()
+    
+    private lazy var signUpFormStackView: UIStackView = {
+        let stack = UIStackView()
+        stack.axis = .vertical
+        stack.spacing = 12
+        stack.alignment = .fill
+        return stack
+    }()
+    
+    private lazy var emailSignUpLabel: UILabel = {
+        let label = UILabel()
+        label.text = "E-posta"
+        label.font = UIFont(name: "DMSans-Regular",
+                            size: 16)
+        label.textColor = UIColor(named: "Text800")
+        return label
+    }()
+
+    private lazy var emailSignUpTextField: UITextField = {
+        let textField = UITextField()
+        textField.layer.borderColor = UIColor(named: "Text300")?.cgColor
+        textField.layer.borderWidth = 1
+        textField.layer.cornerRadius = 10
+        textField.keyboardType = .emailAddress
+        textField.autocapitalizationType = .none
+        
+        let font = UIFont(name: "DMSans-Regular",
+                          size: 16)
+        let textColor = UIColor(named: "Text900")
+        
+        textField.font = font
+        textField.textColor = textColor
+        textField.attributedPlaceholder = NSAttributedString(
+            string: "ornek@hotmail.com",
+            attributes: [
+                .foregroundColor: UIColor(named: "Text300") ?? UIColor.lightGray,
+                .font: font ?? .systemFont(ofSize: 16)
+            ]
+        )
+        let paddingView = UIView(frame: CGRect(x: 0,
+                                               y: 0,
+                                               width: 17,
+                                               height: 0))
+        textField.leftView = paddingView
+        textField.leftViewMode = .always
+        return textField
+    }()
+
+    private lazy var newPasswordLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Yeni Şifre"
+        label.font = UIFont(name: "DMSans-Regular",
+                            size: 16)
+        label.textColor = UIColor(named: "Text800")
+        return label
+    }()
+
+    private lazy var newPasswordTextField: UITextField = {
+        let textField = UITextField()
+        textField.layer.borderColor = UIColor(named: "Text300")?.cgColor
+        textField.layer.borderWidth = 1
+        textField.layer.cornerRadius = 10
+        textField.isSecureTextEntry = true
+        textField.autocapitalizationType = .none
+        
+        let font = UIFont(name: "DMSans-Regular", size: 16)
+        let textColor = UIColor(named: "Text900")
+        
+        textField.font = font
+        textField.textColor = textColor
+        textField.attributedPlaceholder = NSAttributedString(
+            string: "***********",
+            attributes: [
+                .foregroundColor: UIColor(named: "Text300") ?? UIColor.lightGray,
+                .font: font ?? .systemFont(ofSize: 16)
+            ]
+        )
+        let paddingView = UIView(frame: CGRect(x: 0,
+                                               y: 0,
+                                               width: 17,
+                                               height: 0))
+        textField.leftView = paddingView
+        textField.leftViewMode = .always
+        return textField
+    }()
+
+    private lazy var confirmPasswordLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Şifreyi Doğrula"
+        label.font = UIFont(name: "DMSans-Regular",
+                            size: 16)
+        label.textColor = UIColor(named: "Text800")
+        return label
+    }()
+
+    private lazy var confirmPasswordTextField: UITextField = {
+        let textField = UITextField()
+        textField.layer.borderColor = UIColor(named: "Text300")?.cgColor
+        textField.layer.borderWidth = 1
+        textField.layer.cornerRadius = 10
+        textField.isSecureTextEntry = true
+        textField.autocapitalizationType = .none
+        
+        let font = UIFont(name: "DMSans-Regular", size: 16)
+        let textColor = UIColor(named: "Text900")
+        
+        textField.font = font
+        textField.textColor = textColor
+        textField.attributedPlaceholder = NSAttributedString(
+            string: "***********",
+            attributes: [
+                .foregroundColor: UIColor(named: "Text300") ?? UIColor.lightGray,
+                .font: font ?? .systemFont(ofSize: 16)
+            ]
+        )
+        let paddingView = UIView(frame: CGRect(x: 0,
+                                               y: 0,
+                                               width: 17,
+                                               height: 0))
+        textField.leftView = paddingView
+        textField.leftViewMode = .always
+        return textField
+    }()
+    
+    private lazy var signUpButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setTitle("Kayıt Ol",
+                        for: .normal)
+        button.setTitleColor(.white,
+                             for: .normal)
+        button.backgroundColor = UIColor(named: "CustomPrimaryColor")
+        button.layer.cornerRadius = 15
+        button.titleLabel?.font = UIFont(name: "DMSans-Bold",
+                                         size: 16)
+        return button
     }()
     
     private lazy var orLineStack: UIStackView = {
@@ -263,6 +401,8 @@ class LoginRegisterViewController: UIViewController {
         setupConstraints()
         setupGestures()
         setupPasswordTextField()
+        setupDismissKeyboardGesture()
+        setupDelegates()
     }
     
     //MARK: - Setup Methods
@@ -273,14 +413,22 @@ class LoginRegisterViewController: UIViewController {
         stackView.addArrangedSubview(logoImageView)
         stackView.addArrangedSubview(segmentedControl)
         stackView.addArrangedSubview(loginView)
-        loginView.addSubview(loginFormStack)
-        loginFormStack.addArrangedSubview(emailLabel)
-        loginFormStack.addArrangedSubview(emailTextField)
-        loginFormStack.addArrangedSubview(passwordLabel)
-        loginFormStack.addArrangedSubview(passwordTextField)
-        loginFormStack.addArrangedSubview(forgotPasswordLabel)
-        loginFormStack.addArrangedSubview(loginButton)
+        loginView.addSubview(loginFormStackView)
+        loginFormStackView.addArrangedSubview(emailLabel)
+        loginFormStackView.addArrangedSubview(emailTextField)
+        loginFormStackView.addArrangedSubview(passwordLabel)
+        loginFormStackView.addArrangedSubview(passwordTextField)
+        loginFormStackView.addArrangedSubview(forgotPasswordLabel)
+        loginFormStackView.addArrangedSubview(loginButton)
         stackView.addArrangedSubview(signUpView)
+        signUpView.addSubview(signUpFormStackView)
+        signUpFormStackView.addArrangedSubview(emailSignUpLabel)
+        signUpFormStackView.addArrangedSubview(emailSignUpTextField)
+        signUpFormStackView.addArrangedSubview(newPasswordLabel)
+        signUpFormStackView.addArrangedSubview(newPasswordTextField)
+        signUpFormStackView.addArrangedSubview(confirmPasswordLabel)
+        signUpFormStackView.addArrangedSubview(confirmPasswordTextField)
+        signUpFormStackView.addArrangedSubview(signUpButton)
         stackView.addArrangedSubview(orLineStack)
         stackView.addArrangedSubview(socialButtonsStack)
         bottomStack.addArrangedSubview(bottomTextLabel)
@@ -307,7 +455,7 @@ class LoginRegisterViewController: UIViewController {
             make.leading.trailing.equalToSuperview().inset(10)
             make.height.equalTo(300)
         }
-        loginFormStack.snp.makeConstraints { make in
+        loginFormStackView.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(20)
             make.leading.trailing.equalToSuperview().inset(10)
         }
@@ -322,7 +470,23 @@ class LoginRegisterViewController: UIViewController {
         }
         signUpView.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview().inset(10)
-            make.height.equalTo(400)
+            make.height.equalTo(350)
+        }
+        signUpFormStackView.snp.makeConstraints { make in
+            make.top.equalToSuperview().offset(20)
+            make.leading.trailing.equalToSuperview().inset(10)
+        }
+        emailSignUpTextField.snp.makeConstraints { make in
+            make.height.equalTo(50)
+        }
+        newPasswordTextField.snp.makeConstraints { make in
+            make.height.equalTo(50)
+        }
+        confirmPasswordTextField.snp.makeConstraints { make in
+            make.height.equalTo(50)
+        }
+        signUpButton.snp.makeConstraints { make in
+            make.height.equalTo(50)
         }
         orLineStack.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview().inset(50)
@@ -363,8 +527,26 @@ class LoginRegisterViewController: UIViewController {
                                                 action: #selector(signUpLoginTapped))
         signUpLoginLabel.addGestureRecognizer(tapGesture)
     }
-        
+    
+    private func setupDismissKeyboardGesture() {
+        let tapGesture = UITapGestureRecognizer(target: self,
+                                                action: #selector(dismissKeyboard))
+        tapGesture.cancelsTouchesInView = false
+        view.addGestureRecognizer(tapGesture)
+    }
+
+    private func setupDelegates(){
+        emailTextField.delegate = self
+        passwordTextField.delegate = self
+        confirmPasswordTextField.delegate = self
+        newPasswordTextField.delegate = self
+    }
     //MARK: - Functions
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
+    }
+    
     private func updateSignUpLoginLabel(text: String) {
         let attr = NSMutableAttributedString(string: text)
         attr.addAttribute(.underlineStyle,
@@ -421,31 +603,27 @@ class LoginRegisterViewController: UIViewController {
     }
 
     private func setupPasswordTextField() {
-        let button = UIButton(type: .custom)
-        button.setImage(UIImage(systemName: "eye"),
-                        for: .normal)
-        button.tintColor = UIColor(named: "Text300") ?? .gray
-        button.frame = CGRect(x: 0,
-                              y: 0,
-                              width: 30,
-                              height: 30)
-        button.addTarget(self,
-                         action: #selector(togglePasswordVisibility),
-                         for: .touchUpInside)
-        
-        let containerView = UIView(frame: CGRect(x: 0,
-                                                 y: 0,
-                                                 width: 34,
-                                                 height: 24))
-        button.frame = CGRect(x: -10,
-                              y: 0,
-                              width: 24,
-                              height: 24)
-        containerView.addSubview(button)
-        
-        passwordTextField.rightView = containerView
-        passwordTextField.rightViewMode = .always
+        addPasswordToggleButton(to: passwordTextField)
+        addPasswordToggleButton(to: confirmPasswordTextField)
+        addPasswordToggleButton(to: newPasswordTextField)
     }
+    
+    private func addPasswordToggleButton(to textField: UITextField) {
+        let button = UIButton(type: .custom)
+        button.setImage(UIImage(systemName: "eye"), for: .normal)
+        button.tintColor = UIColor(named: "Text300") ?? .gray
+        button.frame = CGRect(x: -10, y: 0, width: 24, height: 24)
+        button.addTarget(self, action: #selector(togglePasswordVisibility(_:)), for: .touchUpInside)
+
+        let containerView = UIView(frame: CGRect(x: 0, y: 0, width: 34, height: 24))
+        containerView.addSubview(button)
+
+        textField.rightView = containerView
+        textField.rightViewMode = .always
+
+        passwordToggleButtons.append((textField, button))
+    }
+
     
     // MARK: - Actions
     @objc func segmentedControlClicked(_ sender: UISegmentedControl) {
@@ -457,15 +635,17 @@ class LoginRegisterViewController: UIViewController {
     }
 
     @objc private func togglePasswordVisibility(_ sender: UIButton) {
-        passwordTextField.isSecureTextEntry.toggle()
+        guard let (textField, _) = passwordToggleButtons.first(where: { $0.1 == sender }) else { return }
+        
+        textField.isSecureTextEntry.toggle()
+
+        let imageName = textField.isSecureTextEntry ? "eye" : "eye.slash"
         
         UIView.transition(with: sender,
                           duration: 0.2,
                           options: .transitionCrossDissolve,
                           animations: {
-            let imageName = self.passwordTextField.isSecureTextEntry ? "eye" : "eye.slash"
-            sender.setImage(UIImage(systemName: imageName),
-                            for: .normal)
+            sender.setImage(UIImage(systemName: imageName), for: .normal)
         })
     }
     
@@ -474,5 +654,8 @@ class LoginRegisterViewController: UIViewController {
         segmentedControlClicked(segmentedControl)
     }
     
+    @objc private func dismissKeyboard() {
+        view.endEditing(true)
+    }
 }
 
