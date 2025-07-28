@@ -11,7 +11,8 @@ import SnapKit
 class LoginRegisterViewController: UIViewController, UITextFieldDelegate {
     //MARK: - Properties
     private var passwordToggleButtons: [(UITextField, UIButton)] = []
-    
+    private var activeTextField: UITextField?
+
     //MARK: - UI Elements
     private let scrollView: UIScrollView = {
         let scrollView = UIScrollView()
@@ -39,15 +40,13 @@ class LoginRegisterViewController: UIViewController, UITextFieldDelegate {
         segmentedControl.selectedSegmentIndex = 0
         
         let selectedAttributes: [NSAttributedString.Key: Any] = [
-            .foregroundColor: UIColor(named: "CustomSecondaryColor") ?? .systemBlue,
-            .font: UIFont(name: "DMSans-SemiBold",
-                          size: 16) ?? UIFont.boldSystemFont(ofSize: 16)
+            .foregroundColor: UIColor.secondaryColor,
+            .font: UIFont.dmSansSemiBold(16)
         ]
         
         let normalAttributes: [NSAttributedString.Key: Any] = [
-            .foregroundColor: UIColor(named: "Text500") ?? .gray,
-            .font: UIFont(name: "DMSans-SemiBold",
-                          size: 16) ?? UIFont.systemFont(ofSize: 16)
+            .foregroundColor: UIColor.textColor500,
+            .font: UIFont.dmSansSemiBold(16)
         ]
         
         segmentedControl.setTitleTextAttributes(normalAttributes,
@@ -79,77 +78,30 @@ class LoginRegisterViewController: UIViewController, UITextFieldDelegate {
     private lazy var emailLabel: UILabel = {
         let label = UILabel()
         label.text = "E-posta"
-        label.font = UIFont(name: "DMSans-Regular",
-                            size: 16)
-        label.textColor = UIColor(named: "Text800")
+        label.font = UIFont.dmSansRegular(16)
+        label.textColor = UIColor.textColor800
         return label
     }()
 
     private lazy var emailTextField: UITextField = {
         let textField = UITextField()
-        textField.layer.borderColor = UIColor(named: "Text300")?.cgColor
-        textField.layer.borderWidth = 1
-        textField.layer.cornerRadius = 10
         textField.keyboardType = .emailAddress
-        textField.autocapitalizationType = .none
-        
-        let font = UIFont(name: "DMSans-Regular",
-                          size: 16)
-        let textColor = UIColor(named: "Text900")
-        
-        textField.font = font
-        textField.textColor = textColor
-        textField.attributedPlaceholder = NSAttributedString(
-            string: "ornek@hotmail.com",
-            attributes: [
-                .foregroundColor: UIColor(named: "Text300") ?? UIColor.lightGray,
-                .font: font ?? .systemFont(ofSize: 16)
-            ]
-        )
-        let paddingView = UIView(frame: CGRect(x: 0,
-                                               y: 0,
-                                               width: 17,
-                                               height: 0))
-        textField.leftView = paddingView
-        textField.leftViewMode = .always
+        textField.applyDefaultStyle(placeholder: "ornek@hotmail.com")
         return textField
     }()
 
     private lazy var passwordLabel: UILabel = {
         let label = UILabel()
         label.text = "Şifre"
-        label.font = UIFont(name: "DMSans-Regular",
-                            size: 16)
-        label.textColor = UIColor(named: "Text800")
+        label.font = UIFont.dmSansRegular(16)
+        label.textColor = UIColor.textColor800
         return label
     }()
 
     private lazy var passwordTextField: UITextField = {
         let textField = UITextField()
-        textField.layer.borderColor = UIColor(named: "Text300")?.cgColor
-        textField.layer.borderWidth = 1
-        textField.layer.cornerRadius = 10
         textField.isSecureTextEntry = true
-        textField.autocapitalizationType = .none
-        
-        let font = UIFont(name: "DMSans-Regular", size: 16)
-        let textColor = UIColor(named: "Text900")
-        
-        textField.font = font
-        textField.textColor = textColor
-        textField.attributedPlaceholder = NSAttributedString(
-            string: "***********",
-            attributes: [
-                .foregroundColor: UIColor(named: "Text300") ?? UIColor.lightGray,
-                .font: font ?? .systemFont(ofSize: 16)
-            ]
-        )
-        let paddingView = UIView(frame: CGRect(x: 0,
-                                               y: 0,
-                                               width: 17,
-                                               height: 0))
-        textField.leftView = paddingView
-        textField.leftViewMode = .always
+        textField.applyDefaultStyle(placeholder: "***********")
         return textField
     }()
 
@@ -162,12 +114,11 @@ class LoginRegisterViewController: UIViewController, UITextFieldDelegate {
                                 range: NSRange(location: 0,
                                                length: text.count))
         attributed.addAttribute(.foregroundColor,
-                                value: UIColor(named: "CustomSecondaryColor") ?? .systemBlue,
+                                value: UIColor.secondaryColor,
                                 range: NSRange(location: 0,
                                                length: text.count))
         label.attributedText = attributed
-        label.font = UIFont(name: "DMSans-Regular",
-                            size: 14)
+        label.font = UIFont.dmSansRegular(14)
         label.textAlignment = .right
         label.isUserInteractionEnabled = true
         return label
@@ -179,10 +130,9 @@ class LoginRegisterViewController: UIViewController, UITextFieldDelegate {
                         for: .normal)
         button.setTitleColor(.white,
                              for: .normal)
-        button.backgroundColor = UIColor(named: "CustomPrimaryColor")
+        button.backgroundColor = UIColor.primaryColor
         button.layer.cornerRadius = 15
-        button.titleLabel?.font = UIFont(name: "DMSans-Bold",
-                                         size: 16)
+        button.titleLabel?.font = UIFont.dmSansBold(16)
         return button
     }()
     
@@ -203,115 +153,45 @@ class LoginRegisterViewController: UIViewController, UITextFieldDelegate {
     private lazy var emailSignUpLabel: UILabel = {
         let label = UILabel()
         label.text = "E-posta"
-        label.font = UIFont(name: "DMSans-Regular",
-                            size: 16)
-        label.textColor = UIColor(named: "Text800")
+        label.font = UIFont.dmSansRegular(16)
+        label.textColor = UIColor.textColor800
         return label
     }()
 
     private lazy var emailSignUpTextField: UITextField = {
         let textField = UITextField()
-        textField.layer.borderColor = UIColor(named: "Text300")?.cgColor
-        textField.layer.borderWidth = 1
-        textField.layer.cornerRadius = 10
         textField.keyboardType = .emailAddress
-        textField.autocapitalizationType = .none
-        
-        let font = UIFont(name: "DMSans-Regular",
-                          size: 16)
-        let textColor = UIColor(named: "Text900")
-        
-        textField.font = font
-        textField.textColor = textColor
-        textField.attributedPlaceholder = NSAttributedString(
-            string: "ornek@hotmail.com",
-            attributes: [
-                .foregroundColor: UIColor(named: "Text300") ?? UIColor.lightGray,
-                .font: font ?? .systemFont(ofSize: 16)
-            ]
-        )
-        let paddingView = UIView(frame: CGRect(x: 0,
-                                               y: 0,
-                                               width: 17,
-                                               height: 0))
-        textField.leftView = paddingView
-        textField.leftViewMode = .always
+        textField.applyDefaultStyle(placeholder: "ornek@hotmail.com")
         return textField
     }()
 
     private lazy var newPasswordLabel: UILabel = {
         let label = UILabel()
         label.text = "Yeni Şifre"
-        label.font = UIFont(name: "DMSans-Regular",
-                            size: 16)
-        label.textColor = UIColor(named: "Text800")
+        label.font = UIFont.dmSansRegular(16)
+        label.textColor = UIColor.textColor800
         return label
     }()
 
     private lazy var newPasswordTextField: UITextField = {
         let textField = UITextField()
-        textField.layer.borderColor = UIColor(named: "Text300")?.cgColor
-        textField.layer.borderWidth = 1
-        textField.layer.cornerRadius = 10
         textField.isSecureTextEntry = true
-        textField.autocapitalizationType = .none
-        
-        let font = UIFont(name: "DMSans-Regular", size: 16)
-        let textColor = UIColor(named: "Text900")
-        
-        textField.font = font
-        textField.textColor = textColor
-        textField.attributedPlaceholder = NSAttributedString(
-            string: "***********",
-            attributes: [
-                .foregroundColor: UIColor(named: "Text300") ?? UIColor.lightGray,
-                .font: font ?? .systemFont(ofSize: 16)
-            ]
-        )
-        let paddingView = UIView(frame: CGRect(x: 0,
-                                               y: 0,
-                                               width: 17,
-                                               height: 0))
-        textField.leftView = paddingView
-        textField.leftViewMode = .always
+        textField.applyDefaultStyle(placeholder: "***********")
         return textField
     }()
 
     private lazy var confirmPasswordLabel: UILabel = {
         let label = UILabel()
         label.text = "Şifreyi Doğrula"
-        label.font = UIFont(name: "DMSans-Regular",
-                            size: 16)
-        label.textColor = UIColor(named: "Text800")
+        label.font = UIFont.dmSansRegular(16)
+        label.textColor = UIColor.textColor800
         return label
     }()
 
     private lazy var confirmPasswordTextField: UITextField = {
         let textField = UITextField()
-        textField.layer.borderColor = UIColor(named: "Text300")?.cgColor
-        textField.layer.borderWidth = 1
-        textField.layer.cornerRadius = 10
         textField.isSecureTextEntry = true
-        textField.autocapitalizationType = .none
-        
-        let font = UIFont(name: "DMSans-Regular", size: 16)
-        let textColor = UIColor(named: "Text900")
-        
-        textField.font = font
-        textField.textColor = textColor
-        textField.attributedPlaceholder = NSAttributedString(
-            string: "***********",
-            attributes: [
-                .foregroundColor: UIColor(named: "Text300") ?? UIColor.lightGray,
-                .font: font ?? .systemFont(ofSize: 16)
-            ]
-        )
-        let paddingView = UIView(frame: CGRect(x: 0,
-                                               y: 0,
-                                               width: 17,
-                                               height: 0))
-        textField.leftView = paddingView
-        textField.leftViewMode = .always
+        textField.applyDefaultStyle(placeholder: "***********")
         return textField
     }()
     
@@ -321,10 +201,9 @@ class LoginRegisterViewController: UIViewController, UITextFieldDelegate {
                         for: .normal)
         button.setTitleColor(.white,
                              for: .normal)
-        button.backgroundColor = UIColor(named: "CustomPrimaryColor")
+        button.backgroundColor = UIColor.primaryColor
         button.layer.cornerRadius = 15
-        button.titleLabel?.font = UIFont(name: "DMSans-Bold",
-                                         size: 16)
+        button.titleLabel?.font = UIFont.dmSansBold(16)
         return button
     }()
     
@@ -333,7 +212,7 @@ class LoginRegisterViewController: UIViewController, UITextFieldDelegate {
         let rightLine = makeLineView()
         let label = makeLabel("ya da",
                               fontSize: 14,
-                              color: UIColor(named: "Text400") ?? .lightGray)
+                              color: UIColor.textColor400)
         let stack = UIStackView(arrangedSubviews: [leftLine,
                                                    label,
                                                    rightLine])
@@ -367,8 +246,7 @@ class LoginRegisterViewController: UIViewController, UITextFieldDelegate {
     private lazy var bottomTextLabel: UILabel = {
         let label = UILabel()
         label.text = "Hesabın yok mu?"
-        label.font = UIFont(name: "DMSans-Regular",
-                            size: 14)
+        label.font = UIFont.dmSansRegular(14)
         label.textColor = .darkGray
         return label
     }()
@@ -382,12 +260,11 @@ class LoginRegisterViewController: UIViewController, UITextFieldDelegate {
                                       range: NSRange(location: 0,
                                                      length: text.count))
         attributedString.addAttribute(.foregroundColor,
-                                      value: UIColor(named: "CustomSecondaryColor") ?? UIColor.orange,
+                                      value: UIColor.secondaryColor,
                                       range: NSRange(location: 0,
                                                      length: text.count))
         label.attributedText = attributedString
-        label.font = UIFont(name: "DMSans-Regular",
-                            size: 14)
+        label.font = UIFont.dmSansRegular(14)
         label.isUserInteractionEnabled = true
         return label
     }()
@@ -396,13 +273,13 @@ class LoginRegisterViewController: UIViewController, UITextFieldDelegate {
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         setupViews()
         setupConstraints()
         setupGestures()
         setupPasswordTextField()
-        setupDismissKeyboardGesture()
         setupDelegates()
+        setupReturnKeys()
+        setupKeyboardObservers()
     }
     
     //MARK: - Setup Methods
@@ -434,6 +311,8 @@ class LoginRegisterViewController: UIViewController, UITextFieldDelegate {
         bottomStack.addArrangedSubview(bottomTextLabel)
         bottomStack.addArrangedSubview(signUpLoginLabel)
         stackView.addArrangedSubview(bottomStack)
+        
+        self.hideKeyboardOnTap()
     }
     
     func setupConstraints(){
@@ -527,26 +406,36 @@ class LoginRegisterViewController: UIViewController, UITextFieldDelegate {
                                                 action: #selector(signUpLoginTapped))
         signUpLoginLabel.addGestureRecognizer(tapGesture)
     }
-    
-    private func setupDismissKeyboardGesture() {
-        let tapGesture = UITapGestureRecognizer(target: self,
-                                                action: #selector(dismissKeyboard))
-        tapGesture.cancelsTouchesInView = false
-        view.addGestureRecognizer(tapGesture)
-    }
 
     private func setupDelegates(){
         emailTextField.delegate = self
+        emailSignUpTextField.delegate = self
         passwordTextField.delegate = self
         confirmPasswordTextField.delegate = self
         newPasswordTextField.delegate = self
     }
-    //MARK: - Functions
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        textField.resignFirstResponder()
-        return true
+    
+    private func setupReturnKeys() {
+        emailTextField.returnKeyType = .next
+        passwordTextField.returnKeyType = .done
+        
+        emailSignUpTextField.returnKeyType = .next
+        newPasswordTextField.returnKeyType = .next
+        confirmPasswordTextField.returnKeyType = .done
     }
     
+    private func setupKeyboardObservers() {
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(keyboardWillShow(_:)),
+                                               name: UIResponder.keyboardWillShowNotification,
+                                               object: nil)
+        
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(keyboardWillHide(_:)),
+                                               name: UIResponder.keyboardWillHideNotification,
+                                               object: nil)
+    }
+    //MARK: - Functions
     private func updateSignUpLoginLabel(text: String) {
         let attr = NSMutableAttributedString(string: text)
         attr.addAttribute(.underlineStyle,
@@ -554,7 +443,7 @@ class LoginRegisterViewController: UIViewController, UITextFieldDelegate {
                           range: NSRange(location: 0,
                                          length: text.count))
         attr.addAttribute(.foregroundColor,
-                          value: UIColor(named: "CustomSecondaryColor") ?? UIColor.orange,
+                          value: UIColor.secondaryColor,
                           range: NSRange(location: 0,
                                          length: text.count))
         signUpLoginLabel.attributedText = attr
@@ -573,7 +462,7 @@ class LoginRegisterViewController: UIViewController, UITextFieldDelegate {
         }
         button.layer.cornerRadius = 25
         button.layer.borderWidth = 1
-        button.layer.borderColor = UIColor(named: "D8DADC")?.cgColor
+        button.layer.borderColor = UIColor.D8DADC.cgColor
         button.backgroundColor = .white
         button.layer.shadowColor = UIColor.black.cgColor
         button.layer.shadowOpacity = 0.1
@@ -585,7 +474,7 @@ class LoginRegisterViewController: UIViewController, UITextFieldDelegate {
     
     private func makeLineView() -> UIView {
         let view = UIView()
-        view.backgroundColor = UIColor(named: "Text400")
+        view.backgroundColor = UIColor.textColor400
         view.snp.makeConstraints { make in
             make.height.equalTo(1)
         }
@@ -595,8 +484,7 @@ class LoginRegisterViewController: UIViewController, UITextFieldDelegate {
     private func makeLabel(_ text: String, fontSize: CGFloat, color: UIColor) -> UILabel {
         let label = UILabel()
         label.text = text
-        label.font = UIFont(name: "DMSans-Regular",
-                            size: fontSize)
+        label.font = UIFont.dmSansRegular(fontSize)
         label.textColor = color
         label.textAlignment = .center
         return label
@@ -611,7 +499,7 @@ class LoginRegisterViewController: UIViewController, UITextFieldDelegate {
     private func addPasswordToggleButton(to textField: UITextField) {
         let button = UIButton(type: .custom)
         button.setImage(UIImage(systemName: "eye"), for: .normal)
-        button.tintColor = UIColor(named: "Text300") ?? .gray
+        button.tintColor = UIColor.textColor300
         button.frame = CGRect(x: -10, y: 0, width: 24, height: 24)
         button.addTarget(self, action: #selector(togglePasswordVisibility(_:)), for: .touchUpInside)
 
@@ -623,7 +511,6 @@ class LoginRegisterViewController: UIViewController, UITextFieldDelegate {
 
         passwordToggleButtons.append((textField, button))
     }
-
     
     // MARK: - Actions
     @objc func segmentedControlClicked(_ sender: UISegmentedControl) {
@@ -654,8 +541,53 @@ class LoginRegisterViewController: UIViewController, UITextFieldDelegate {
         segmentedControlClicked(segmentedControl)
     }
     
-    @objc private func dismissKeyboard() {
-        view.endEditing(true)
+    @objc private func keyboardWillShow(_ notification: Notification) {
+        if let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect {
+            let keyboardHeight = keyboardFrame.height
+            scrollView.contentInset.bottom = keyboardHeight + 20
+            scrollView.verticalScrollIndicatorInsets.bottom = keyboardHeight + 20
+            
+            if let activeTextField = activeTextField {
+                let textFieldFrame = activeTextField.convert(activeTextField.bounds, to: scrollView)
+                scrollView.scrollRectToVisible(textFieldFrame, animated: true)
+            }
+        }
+    }
+
+    @objc private func keyboardWillHide(_ notification: Notification) {
+        scrollView.contentInset.bottom = 0
+        scrollView.verticalScrollIndicatorInsets.bottom = 0
     }
 }
 
+extension LoginRegisterViewController {
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        activeTextField = textField
+        textField.setActiveBorder()
+    }
+    
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        activeTextField = nil
+        textField.setInactiveBorder()
+    }
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        switch textField {
+        case emailTextField:
+            passwordTextField.becomeFirstResponder()
+        case passwordTextField:
+            textField.resignFirstResponder()
+            
+        case emailSignUpTextField:
+            newPasswordTextField.becomeFirstResponder()
+        case newPasswordTextField:
+            confirmPasswordTextField.becomeFirstResponder()
+        case confirmPasswordTextField:
+            textField.resignFirstResponder()
+            
+        default:
+            textField.resignFirstResponder()
+        }
+        return true
+    }
+}
