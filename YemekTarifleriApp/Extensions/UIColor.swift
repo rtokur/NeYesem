@@ -39,4 +39,12 @@ extension UIColor {
     static var textColor900: UIColor {
         return UIColor(named: "Text900")!
     }
+    
+    static var Color10: UIColor {
+        return UIColor(named: "Color10")!
+    }
+    
+    static var Primary950: UIColor {
+        return UIColor(named: "Primary950")!
+    }
 }

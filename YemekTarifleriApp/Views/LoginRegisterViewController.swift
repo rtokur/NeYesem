@@ -12,6 +12,7 @@ class LoginRegisterViewController: UIViewController, UITextFieldDelegate {
     //MARK: - Properties
     private var passwordToggleButtons: [(UITextField, UIButton)] = []
     private var activeTextField: UITextField?
+    private let loginRegisterViewModel = LoginRegisterViewModel()
 
     //MARK: - UI Elements
     private let scrollView: UIScrollView = {
@@ -133,6 +134,7 @@ class LoginRegisterViewController: UIViewController, UITextFieldDelegate {
         button.backgroundColor = UIColor.primaryColor
         button.layer.cornerRadius = 15
         button.titleLabel?.font = UIFont.dmSansBold(16)
+        button.addTarget(self, action: #selector(handleLogin), for: .touchUpInside)
         return button
     }()
     
@@ -204,6 +206,7 @@ class LoginRegisterViewController: UIViewController, UITextFieldDelegate {
         button.backgroundColor = UIColor.primaryColor
         button.layer.cornerRadius = 15
         button.titleLabel?.font = UIFont.dmSansBold(16)
+        button.addTarget(self, action: #selector(handleRegister), for: .touchUpInside)
         return button
     }()
     
@@ -349,7 +352,7 @@ class LoginRegisterViewController: UIViewController, UITextFieldDelegate {
         }
         signUpView.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview().inset(10)
-            make.height.equalTo(350)
+            make.height.equalTo(370)
         }
         signUpFormStackView.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(20)
@@ -402,9 +405,11 @@ class LoginRegisterViewController: UIViewController, UITextFieldDelegate {
     }
     
     private func setupGestures() {
-        let tapGesture = UITapGestureRecognizer(target: self,
+        let tapGestureSignUp = UITapGestureRecognizer(target: self,
                                                 action: #selector(signUpLoginTapped))
-        signUpLoginLabel.addGestureRecognizer(tapGesture)
+        signUpLoginLabel.addGestureRecognizer(tapGestureSignUp)
+        let tapGestureForgotPassword = UITapGestureRecognizer(target: self, action: #selector(forgotPasswordTapped))
+        forgotPasswordLabel.addGestureRecognizer(tapGestureForgotPassword)
     }
 
     private func setupDelegates(){
@@ -437,16 +442,16 @@ class LoginRegisterViewController: UIViewController, UITextFieldDelegate {
     }
     //MARK: - Functions
     private func updateSignUpLoginLabel(text: String) {
-        let attr = NSMutableAttributedString(string: text)
-        attr.addAttribute(.underlineStyle,
+        let attributes = NSMutableAttributedString(string: text)
+        attributes.addAttribute(.underlineStyle,
                           value: NSUnderlineStyle.single.rawValue,
                           range: NSRange(location: 0,
                                          length: text.count))
-        attr.addAttribute(.foregroundColor,
+        attributes.addAttribute(.foregroundColor,
                           value: UIColor.secondaryColor,
                           range: NSRange(location: 0,
                                          length: text.count))
-        signUpLoginLabel.attributedText = attr
+        signUpLoginLabel.attributedText = attributes
     }
     
     private func makeSocialButton(imageName: String? = nil,
@@ -501,7 +506,7 @@ class LoginRegisterViewController: UIViewController, UITextFieldDelegate {
         button.setImage(UIImage(systemName: "eye"), for: .normal)
         button.tintColor = UIColor.textColor300
         button.frame = CGRect(x: -10, y: 0, width: 24, height: 24)
-        button.addTarget(self, action: #selector(togglePasswordVisibility(_:)), for: .touchUpInside)
+        button.addTarget(self, action: #selector(togglePasswordVisibility(_:)), for: .touchDown)
 
         let containerView = UIView(frame: CGRect(x: 0, y: 0, width: 34, height: 24))
         containerView.addSubview(button)
@@ -510,6 +515,16 @@ class LoginRegisterViewController: UIViewController, UITextFieldDelegate {
         textField.rightViewMode = .always
 
         passwordToggleButtons.append((textField, button))
+    }
+    
+    private func showAlert(message: String) {
+        let alert = UIAlertController(title: "Hata", message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Tamam", style: .default))
+        present(alert, animated: true)
+    }
+    
+    private func navigateToHome() {
+        print("Ana ekrana geçiliyor...")
     }
     
     // MARK: - Actions
@@ -557,6 +572,32 @@ class LoginRegisterViewController: UIViewController, UITextFieldDelegate {
     @objc private func keyboardWillHide(_ notification: Notification) {
         scrollView.contentInset.bottom = 0
         scrollView.verticalScrollIndicatorInsets.bottom = 0
+    }
+    
+    @objc private func handleLogin(){
+        loginRegisterViewModel.login(email: emailTextField.text, password: passwordTextField.text) { [weak self] error in
+            if let error = error {
+                self?.showAlert(message: error)
+            } else {
+                self?.navigateToHome()
+            }
+        }
+    }
+    
+    @objc private func handleRegister(){
+        loginRegisterViewModel.register(email: emailSignUpTextField.text, password: newPasswordTextField.text, confirmPassword: confirmPasswordTextField.text) { [weak self] error in
+            if let error = error {
+                self?.showAlert(message: error)
+            } else {
+                self?.navigateToHome()
+            }
+        }
+    }
+    
+    @objc private func forgotPasswordTapped(){
+        let forgotPasswordViewController = ForgotPasswordViewController()
+        navigationController?.pushViewController(forgotPasswordViewController,
+                                                 animated: true)
     }
 }
 

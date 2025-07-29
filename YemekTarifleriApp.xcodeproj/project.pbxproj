@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0B80BEBE2E37F2E50002E972 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 0B80BEBD2E37F2E50002E972 /* FirebaseAuth */; };
+		0B80BEC02E37F2E50002E972 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 0B80BEBF2E37F2E50002E972 /* FirebaseFirestore */; };
+		0B80BEC22E37F2E50002E972 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 0B80BEC12E37F2E50002E972 /* FirebaseStorage */; };
 		0BAE12E82E356BCD002F1066 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 0BAE12E72E356BCD002F1066 /* SnapKit */; };
 /* End PBXBuildFile section */
 
@@ -41,6 +44,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				0BAE12E82E356BCD002F1066 /* SnapKit in Frameworks */,
+				0B80BEC22E37F2E50002E972 /* FirebaseStorage in Frameworks */,
+				0B80BEBE2E37F2E50002E972 /* FirebaseAuth in Frameworks */,
+				0B80BEC02E37F2E50002E972 /* FirebaseFirestore in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -84,6 +90,9 @@
 			name = YemekTarifleriApp;
 			packageProductDependencies = (
 				0BAE12E72E356BCD002F1066 /* SnapKit */,
+				0B80BEBD2E37F2E50002E972 /* FirebaseAuth */,
+				0B80BEBF2E37F2E50002E972 /* FirebaseFirestore */,
+				0B80BEC12E37F2E50002E972 /* FirebaseStorage */,
 			);
 			productName = YemekTarifleriApp;
 			productReference = 0BAE12A42E35657B002F1066 /* YemekTarifleriApp.app */;
@@ -115,6 +124,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				0BAE12E62E356BCD002F1066 /* XCRemoteSwiftPackageReference "SnapKit" */,
+				0B80BEBC2E37F2E50002E972 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 0BAE12A52E35657B002F1066 /* Products */;
@@ -346,6 +356,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		0B80BEBC2E37F2E50002E972 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 12.0.0;
+			};
+		};
 		0BAE12E62E356BCD002F1066 /* XCRemoteSwiftPackageReference "SnapKit" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SnapKit/SnapKit.git";
@@ -357,6 +375,21 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		0B80BEBD2E37F2E50002E972 /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0B80BEBC2E37F2E50002E972 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
+		};
+		0B80BEBF2E37F2E50002E972 /* FirebaseFirestore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0B80BEBC2E37F2E50002E972 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestore;
+		};
+		0B80BEC12E37F2E50002E972 /* FirebaseStorage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0B80BEBC2E37F2E50002E972 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseStorage;
+		};
 		0BAE12E72E356BCD002F1066 /* SnapKit */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 0BAE12E62E356BCD002F1066 /* XCRemoteSwiftPackageReference "SnapKit" */;
