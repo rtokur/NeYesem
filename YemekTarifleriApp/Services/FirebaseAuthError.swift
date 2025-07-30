@@ -7,7 +7,7 @@
 
 import FirebaseAuth
 
-enum FirebaseAuthError: Int {
+enum FirebaseAuthError: Int, Error {
     case networkError = 17020
     case userNotFound = 17004
     case wrongPassword = 17009
@@ -18,6 +18,9 @@ enum FirebaseAuthError: Int {
     case tooManyRequests = 17010
     case operationNotAllowed = 17006
     case unknown = -1
+    case invalidGoogleAuth
+    case missingClientID
+    case missingFacebookToken
     
     var localizedMessage: String {
         switch self {
@@ -37,12 +40,22 @@ enum FirebaseAuthError: Int {
             return "Çok fazla giriş denemesi yapıldı. Lütfen daha sonra tekrar deneyin."
         case .operationNotAllowed:
             return "Bu işlem şu anda devre dışı. Lütfen destekle iletişime geçin."
+        case .invalidGoogleAuth:
+            return "Google kimlik doğrulama bilgileri alınamadı."
+        case .missingClientID:
+            return "Google Client ID bulunamadı. Firebase yapılandırmasını kontrol edin."
+        case .missingFacebookToken:
+            return "Facebook girişinde bir sorun oluştu. Lütfen tekrar deneyin."
         case .unknown:
             return "Bir hata oluştu. Lütfen tekrar deneyin."
         }
     }
     
     static func message(for error: Error) -> String {
+        if let customError = error as? FirebaseAuthError {
+            return customError.localizedMessage
+        }
+
         let nsError = error as NSError
         let code = FirebaseAuthError(rawValue: nsError.code) ?? .unknown
         return code.localizedMessage

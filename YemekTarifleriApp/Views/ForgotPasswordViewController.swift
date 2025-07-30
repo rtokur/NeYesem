@@ -8,6 +8,8 @@
 import UIKit
 
 class ForgotPasswordViewController: UIViewController, UITextFieldDelegate {
+    //MARK: - Properties
+    private let forgotPasswordViewModel = ForgotPasswordViewModel()
     
     //MARK: - UI Elements
     private lazy var scrollView: UIScrollView = {
@@ -168,7 +170,15 @@ class ForgotPasswordViewController: UIViewController, UITextFieldDelegate {
     }
     
     @objc func sendTapped(){
-        
+        forgotPasswordViewModel.resetPassword(email: emailTextField.text) { [weak self] error in
+            DispatchQueue.main.async {
+                if let error = error {
+                    self?.showAlert(title: "Hata", message: error)
+                } else {
+                    self?.showAlert(title: "Başarılı", message: "Şifre sıfırlama bağlantısı e-posta adresinize gönderildi.")
+                }
+            }
+        }
     }
     
     @objc private func keyboardWillShow(_ notification: Notification) {

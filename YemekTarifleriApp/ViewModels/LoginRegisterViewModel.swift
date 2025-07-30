@@ -5,7 +5,7 @@
 //  Created by Rumeysa Tokur on 29.07.2025.
 //
 
-import Foundation
+import UIKit
 
 final class LoginRegisterViewModel {
     
@@ -65,6 +65,32 @@ final class LoginRegisterViewModel {
         let username = email.components(separatedBy: "@").first ?? "Kullanıcı"
         
         authService.signUp(email: email, password: password, username: username) { result in
+            switch result {
+            case .success:
+                completion(nil)
+            case .failure(let error):
+                let firebaseError = FirebaseAuthError.message(for: error)
+                completion(firebaseError)
+            }
+        }
+    }
+    
+    // MARK: - Google Sign-In
+    func loginWithGoogle(presentingVC: UIViewController, completion: @escaping (String?) -> Void) {
+        authService.signInWithGoogle(presentingVC: presentingVC) { result in
+            switch result {
+            case .success:
+                completion(nil)
+            case .failure(let error):
+                let firebaseError = FirebaseAuthError.message(for: error)
+                completion(firebaseError)
+            }
+        }
+    }
+    
+    // MARK: - Facebook Sign-In
+    func loginWithFacebook(presentingVC: UIViewController, completion: @escaping (String?) -> Void) {
+        authService.signInWithFacebook(presentingVC: presentingVC) { result in
             switch result {
             case .success:
                 completion(nil)

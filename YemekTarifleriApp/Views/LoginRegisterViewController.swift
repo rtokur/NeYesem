@@ -226,16 +226,31 @@ class LoginRegisterViewController: UIViewController, UITextFieldDelegate {
     }()
     
     private lazy var socialButtonsStack: UIStackView = {
-        let fbButton = makeSocialButton(imageName: "facebook-icon")
-        let googleButton = makeSocialButton(imageName: "google-icon")
-        let appleButton = makeSocialButton(systemName: "apple.logo")
-        let stack = UIStackView(arrangedSubviews: [fbButton,
+        let stack = UIStackView(arrangedSubviews: [facebookButton,
                                                    googleButton,
                                                    appleButton])
         stack.axis = .horizontal
         stack.spacing = 16
         stack.distribution = .equalSpacing
         return stack
+    }()
+    
+    private lazy var googleButton: UIButton = {
+        let button = makeSocialButton(imageName: "google-icon")
+        button.addTarget(self, action: #selector(handleGoogleLogin), for: .touchUpInside)
+        return button
+    }()
+    
+    private lazy var facebookButton: UIButton = {
+        let button = makeSocialButton(imageName: "facebook-icon")
+        button.addTarget(self, action: #selector(handleFacebookLogin), for: .touchUpInside)
+        return button
+    }()
+    
+    private lazy var appleButton: UIButton = {
+        let button = makeSocialButton(systemName: "apple.logo")
+        button.addTarget(self, action: #selector(handleAppleLogin), for: .touchUpInside)
+        return button
     }()
     
     private lazy var bottomStack: UIStackView = {
@@ -517,12 +532,6 @@ class LoginRegisterViewController: UIViewController, UITextFieldDelegate {
         passwordToggleButtons.append((textField, button))
     }
     
-    private func showAlert(message: String) {
-        let alert = UIAlertController(title: "Hata", message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Tamam", style: .default))
-        present(alert, animated: true)
-    }
-    
     private func navigateToHome() {
         print("Ana ekrana geçiliyor...")
     }
@@ -598,6 +607,30 @@ class LoginRegisterViewController: UIViewController, UITextFieldDelegate {
         let forgotPasswordViewController = ForgotPasswordViewController()
         navigationController?.pushViewController(forgotPasswordViewController,
                                                  animated: true)
+    }
+    
+    @objc private func handleGoogleLogin() {
+        loginRegisterViewModel.loginWithGoogle(presentingVC: self) { [weak self] error in
+            if let error = error {
+                self?.showAlert(message: error)
+            } else {
+                self?.navigateToHome()
+            }
+        }
+    }
+    
+    @objc private func handleFacebookLogin() {
+        loginRegisterViewModel.loginWithFacebook(presentingVC: self) { [weak self] error in
+            if let error = error {
+                self?.showAlert(message: error)
+            } else {
+                self?.navigateToHome()
+            }
+        }
+    }
+    
+    @objc private func handleAppleLogin() {
+        
     }
 }
 

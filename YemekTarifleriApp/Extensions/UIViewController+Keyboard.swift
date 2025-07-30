@@ -14,9 +14,26 @@ extension UIViewController {
         tap.cancelsTouchesInView = false
         view.addGestureRecognizer(tap)
     }
-
+    
     @objc private func dismissKeyboard() {
         view.endEditing(true)
+    }
+    
+    func showAlert(title: String = "Uyarı",
+                   message: String,
+                   actionTitle: String = "Tamam",
+                   completion: (() -> Void)? = nil) {
+        
+        let alert = UIAlertController(title: title,
+                                      message: message,
+                                      preferredStyle: .alert)
+        
+        let action = UIAlertAction(title: actionTitle, style: .default) { _ in
+            completion?()
+        }
+        
+        alert.addAction(action)
+        present(alert, animated: true)
     }
 }
 

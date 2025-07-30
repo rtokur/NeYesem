@@ -63,6 +63,8 @@ playground.xcworkspace
 *.temp
 *.orig
 
+*.xcconfig
+
 # Env
 .env
 .env.*
