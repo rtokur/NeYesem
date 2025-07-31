@@ -16,6 +16,7 @@ protocol AuthServiceProtocol {
     func signIn(email: String, password: String, completion: @escaping (Result<Void, Error>) -> Void)
     func signInWithGoogle(presentingVC: UIViewController, completion: @escaping (Result<Void, Error>) -> Void)
     func signInWithFacebook(presentingVC: UIViewController, completion: @escaping (Result<Void, Error>) -> Void)
+    func sendPasswordReset(email: String, completion: @escaping (Result<Void, Error>) -> Void)
     func signOut() throws
     var currentUser: User? { get }
 }
@@ -135,6 +136,23 @@ final class AuthManager: AuthServiceProtocol {
                 }
                 
                 self?.saveUserToFirestore(user: firebaseUser, completion: completion)
+            }
+        }
+    }
+    
+    
+    // MARK: - Reset Password
+    func sendPasswordReset(email: String, completion: @escaping (Result<Void, Error>) -> Void) {
+        guard !email.isEmpty else {
+            completion(.failure(FirebaseAuthError.invalidEmail))
+            return
+        }
+        
+        auth.sendPasswordReset(withEmail: email) { error in
+            if let error = error {
+                completion(.failure(error))
+            } else {
+                completion(.success(()))
             }
         }
     }

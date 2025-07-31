@@ -175,7 +175,9 @@ class ForgotPasswordViewController: UIViewController, UITextFieldDelegate {
                 if let error = error {
                     self?.showAlert(title: "Hata", message: error)
                 } else {
-                    self?.showAlert(title: "Başarılı", message: "Şifre sıfırlama bağlantısı e-posta adresinize gönderildi.")
+                    self?.showAlert(title: "Başarılı", message: "Şifre sıfırlama bağlantısı e-posta adresinize gönderildi."){ 
+                        self?.navigationController?.popViewController(animated: true)
+                    }
                 }
             }
         }
