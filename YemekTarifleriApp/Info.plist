@@ -2,6 +2,36 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+    <key>GIDClientID</key>
+    <string>$(GID_CLIENT_ID)</string>
+    <key>FacebookAppID</key>
+    <string>$(FACEBOOK_APP_ID)</string>
+    <key>FacebookDisplayName</key>
+    <string>YemekTarifiApp</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>Google</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>$(GID_CLIENT_ID)</string>
+                <string>fb$(FACEBOOK_APP_ID)</string>
+			</array>
+		</dict>
+	</array>
+    <key>FacebookAutoLogAppEventsEnabled</key>
+    <true/>
+    <key>FacebookClientToken</key>
+    <string>$(FACEBOOK_CLIENT_TOKEN)</string>
+	<key>UIAppFonts</key>
+	<array>
+		<string>DMSans-Bold.ttf</string>
+		<string>DMSans-Regular.ttf</string>
+		<string>DMSans-SemiBold.ttf</string>
+	</array>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>

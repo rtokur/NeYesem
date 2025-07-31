@@ -13,6 +13,9 @@ DerivedData/
 xcuserdata/
 *.xcscmblueprint
 *.xccheckout
+*.sqlite
+*.sqlite-wal
+*.sqlite-shm
 
 # SwiftPM
 .build/
@@ -62,6 +65,8 @@ playground.xcworkspace
 *.tmp
 *.temp
 *.orig
+
+*.xcconfig
 
 # Env
 .env
