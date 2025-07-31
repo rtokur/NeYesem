@@ -13,6 +13,9 @@ DerivedData/
 xcuserdata/
 *.xcscmblueprint
 *.xccheckout
+*.sqlite
+*.sqlite-wal
+*.sqlite-shm
 
 # SwiftPM
 .build/

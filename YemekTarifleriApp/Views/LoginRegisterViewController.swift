@@ -237,19 +237,25 @@ class LoginRegisterViewController: UIViewController, UITextFieldDelegate {
     
     private lazy var googleButton: UIButton = {
         let button = makeSocialButton(imageName: "google-icon")
-        button.addTarget(self, action: #selector(handleGoogleLogin), for: .touchUpInside)
+        button.addTarget(self,
+                         action: #selector(handleGoogleLogin),
+                         for: .touchUpInside)
         return button
     }()
     
     private lazy var facebookButton: UIButton = {
         let button = makeSocialButton(imageName: "facebook-icon")
-        button.addTarget(self, action: #selector(handleFacebookLogin), for: .touchUpInside)
+        button.addTarget(self,
+                         action: #selector(handleFacebookLogin),
+                         for: .touchUpInside)
         return button
     }()
     
     private lazy var appleButton: UIButton = {
         let button = makeSocialButton(systemName: "apple.logo")
-        button.addTarget(self, action: #selector(handleAppleLogin), for: .touchUpInside)
+        button.addTarget(self,
+                         action: #selector(handleAppleLogin),
+                         for: .touchUpInside)
         return button
     }()
     
@@ -421,9 +427,10 @@ class LoginRegisterViewController: UIViewController, UITextFieldDelegate {
     
     private func setupGestures() {
         let tapGestureSignUp = UITapGestureRecognizer(target: self,
-                                                action: #selector(signUpLoginTapped))
+                                                      action: #selector(signUpLoginTapped))
         signUpLoginLabel.addGestureRecognizer(tapGestureSignUp)
-        let tapGestureForgotPassword = UITapGestureRecognizer(target: self, action: #selector(forgotPasswordTapped))
+        let tapGestureForgotPassword = UITapGestureRecognizer(target: self,
+                                                              action: #selector(forgotPasswordTapped))
         forgotPasswordLabel.addGestureRecognizer(tapGestureForgotPassword)
     }
 
@@ -518,9 +525,13 @@ class LoginRegisterViewController: UIViewController, UITextFieldDelegate {
     
     private func addPasswordToggleButton(to textField: UITextField) {
         let button = UIButton(type: .custom)
-        button.setImage(UIImage(systemName: "eye"), for: .normal)
+        button.setImage(UIImage(systemName: "eye"),
+                        for: .normal)
         button.tintColor = UIColor.textColor300
-        button.frame = CGRect(x: -10, y: 0, width: 24, height: 24)
+        button.frame = CGRect(x: -10,
+                              y: 0,
+                              width: 24,
+                              height: 24)
         button.addTarget(self, action: #selector(togglePasswordVisibility(_:)), for: .touchDown)
 
         let containerView = UIView(frame: CGRect(x: 0, y: 0, width: 34, height: 24))
