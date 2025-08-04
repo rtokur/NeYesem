@@ -227,8 +227,7 @@ class LoginRegisterViewController: UIViewController, UITextFieldDelegate {
     
     private lazy var socialButtonsStack: UIStackView = {
         let stack = UIStackView(arrangedSubviews: [facebookButton,
-                                                   googleButton,
-                                                   appleButton])
+                                                   googleButton])
         stack.axis = .horizontal
         stack.spacing = 16
         stack.distribution = .equalSpacing
@@ -247,14 +246,6 @@ class LoginRegisterViewController: UIViewController, UITextFieldDelegate {
         let button = makeSocialButton(imageName: "facebook-icon")
         button.addTarget(self,
                          action: #selector(handleFacebookLogin),
-                         for: .touchUpInside)
-        return button
-    }()
-    
-    private lazy var appleButton: UIButton = {
-        let button = makeSocialButton(systemName: "apple.logo")
-        button.addTarget(self,
-                         action: #selector(handleAppleLogin),
                          for: .touchUpInside)
         return button
     }()
@@ -544,7 +535,8 @@ class LoginRegisterViewController: UIViewController, UITextFieldDelegate {
     }
     
     private func navigateToHome() {
-        print("Ana ekrana geçiliyor...")
+        let mainTabBarController = MainTabBarController()
+        navigationController?.pushViewController(mainTabBarController, animated: true)
     }
     
     // MARK: - Actions
@@ -638,10 +630,6 @@ class LoginRegisterViewController: UIViewController, UITextFieldDelegate {
                 self?.navigateToHome()
             }
         }
-    }
-    
-    @objc private func handleAppleLogin() {
-        
     }
 }
 

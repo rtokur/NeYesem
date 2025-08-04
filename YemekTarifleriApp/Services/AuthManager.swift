@@ -22,6 +22,7 @@ protocol AuthServiceProtocol {
 }
 
 final class AuthManager: AuthServiceProtocol {
+    
     static let shared = AuthManager()
     private let auth = Auth.auth()
     private let db = Firestore.firestore()
@@ -88,18 +89,7 @@ final class AuthManager: AuthServiceProtocol {
             
             let credential = GoogleAuthProvider.credential(withIDToken: idToken,
                                                            accessToken: accessToken)
-            
-            self.auth.signIn(with: credential) { authResult, error in
-                if let error = error {
-                    return completion(.failure(error))
-                }
-                
-                guard let firebaseUser = authResult?.user else {
-                    return completion(.failure(FirebaseAuthError.unknown))
-                }
-                
-                self.saveUserToFirestore(user: firebaseUser, completion: completion)
-            }
+            self.firebaseSignIn(with: credential, completion: completion)
         }
     }
     
@@ -123,23 +113,9 @@ final class AuthManager: AuthServiceProtocol {
             }
             
             let credential = FacebookAuthProvider.credential(withAccessToken: tokenString)
-            
-            self?.auth.signIn(with: credential) { authResult, error in
-                if let error = error {
-                    completion(.failure(error))
-                    return
-                }
-                
-                guard let firebaseUser = authResult?.user else {
-                    completion(.failure(FirebaseAuthError.unknown))
-                    return
-                }
-                
-                self?.saveUserToFirestore(user: firebaseUser, completion: completion)
-            }
+            self?.firebaseSignIn(with: credential, completion: completion)
         }
     }
-    
     
     // MARK: - Reset Password
     func sendPasswordReset(email: String, completion: @escaping (Result<Void, Error>) -> Void) {
@@ -182,6 +158,14 @@ final class AuthManager: AuthServiceProtocol {
             } else {
                 completion(.success(()))
             }
+        }
+    }
+    
+    private func firebaseSignIn(with credential: AuthCredential, completion: @escaping (Result<Void, Error>) -> Void) {
+        auth.signIn(with: credential) { [weak self] authResult, error in
+            if let error = error { return completion(.failure(error)) }
+            guard let user = authResult?.user else { return completion(.failure(FirebaseAuthError.unknown)) }
+            self?.saveUserToFirestore(user: user, completion: completion)
         }
     }
 }

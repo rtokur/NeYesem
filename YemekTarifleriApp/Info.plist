@@ -19,6 +19,7 @@
 			<array>
 				<string>$(GID_CLIENT_ID)</string>
                 <string>fb$(FACEBOOK_APP_ID)</string>
+                <string>$(APPLE_REVERSED_CLIENT_ID)</string>
 			</array>
 		</dict>
 	</array>
