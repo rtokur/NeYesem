@@ -6,8 +6,11 @@
 //
 
 import UIKit
+import FirebaseAuth
 
 class FavoriteViewController: UIViewController, UITextFieldDelegate {
+    
+    //MARK: - Properties
     private let categories = ["Tüm tarifler", "Kahvaltı", "Yemek", "Tatlı", "Salata"]
     private let mealsArray: [(title: String, type: String)] = [
         ("Kremalı Makarna", "Akşam yemeği"),
@@ -175,7 +178,7 @@ class FavoriteViewController: UIViewController, UITextFieldDelegate {
     }
 }
 
-
+//MARK: - Delegates
 extension FavoriteViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if collectionView == mealCollectionView {

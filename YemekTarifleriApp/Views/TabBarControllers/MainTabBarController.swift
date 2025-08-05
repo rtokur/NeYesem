@@ -9,12 +9,20 @@ import UIKit
 
 class MainTabBarController: UITabBarController {
     
+    //MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
+        setValue(CustomTabBar(), forKey: "tabBar")
         setupTabs()
-        // Do any additional setup after loading the view.
+        
+        tabBar.layer.borderWidth = 0.5
+        tabBar.layer.borderColor = UIColor.textColor300.cgColor
+        tabBar.clipsToBounds = true
+        
+        (tabBar as? CustomTabBar)?.setCenterButtonAction(target: self, action: #selector(centerButtonTapped))
     }
     
+    //MARK: - Functions
     private func setupTabs() {
         let homeViewController = HomeViewController()
         homeViewController.tabBarItem = UITabBarItem(title: "Anasayfa", image: UIImage(systemName: "house"), tag: 0)
@@ -27,7 +35,7 @@ class MainTabBarController: UITabBarController {
         favoriteNavigationController.setNavigationBarHidden(true, animated: true)
         
         let fridgeViewController = FridgeViewController()
-        fridgeViewController.tabBarItem = UITabBarItem(title: "Dolabım", image: UIImage(systemName: "cart"), tag: 2)
+        fridgeViewController.tabBarItem = UITabBarItem(title: "Dolabım", image: UIImage(systemName: "takeoutbag.and.cup.and.straw"), tag: 2)
         let fridgeNavigationController = UINavigationController(rootViewController: fridgeViewController)
         fridgeNavigationController.setNavigationBarHidden(true, animated: true)
         
@@ -36,13 +44,23 @@ class MainTabBarController: UITabBarController {
         let profileNavigationController = UINavigationController(rootViewController: profileViewController)
         profileNavigationController.setNavigationBarHidden(true, animated: true)
         
+        let dummyViewController = UIViewController()
+        dummyViewController.tabBarItem.isEnabled = false
+        
         viewControllers = [
             homeNavigationController,
             favoriteNavigationController,
+            dummyViewController,
             fridgeNavigationController,
             profileNavigationController
         ]
         
         tabBar.tintColor = .secondaryColor
+    }
+    
+    //MARK: - Actions
+    @objc private func centerButtonTapped() {
+        let createRecipeViewController = CreateRecipeViewController()
+        navigationController?.pushViewController(createRecipeViewController, animated: true)
     }
 }

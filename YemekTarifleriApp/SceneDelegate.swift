@@ -16,10 +16,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let window = UIWindow(windowScene: windowScene)
         self.window = window
         if AuthManager.shared.currentUser != nil {
-            window.rootViewController = MainTabBarController()
+            let navigationController = UINavigationController(rootViewController: MainTabBarController())
+            navigationController.setNavigationBarHidden(true, animated: true)
+            window.rootViewController = navigationController
         } else {
-            let loginRegisterViewController = LoginRegisterViewController()
-            let navigationController = UINavigationController(rootViewController: loginRegisterViewController)
+            let navigationController = UINavigationController(rootViewController: LoginRegisterViewController())
+            navigationController.setNavigationBarHidden(true, animated: true)
             window.rootViewController = navigationController
         }
         

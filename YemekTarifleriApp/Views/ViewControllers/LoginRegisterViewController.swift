@@ -633,6 +633,7 @@ class LoginRegisterViewController: UIViewController, UITextFieldDelegate {
     }
 }
 
+//MARK: - Delegates
 extension LoginRegisterViewController {
     func textFieldDidBeginEditing(_ textField: UITextField) {
         activeTextField = textField

@@ -202,6 +202,7 @@ class ForgotPasswordViewController: UIViewController, UITextFieldDelegate {
     }
 }
 
+//MARK: - Delegates
 extension ForgotPasswordViewController {
     func textFieldDidBeginEditing(_ textField: UITextField) {
         textField.setActiveBorder()
