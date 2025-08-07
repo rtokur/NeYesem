@@ -10,6 +10,7 @@ final class ProfileViewModel {
     private let userService: UserServiceProtocol
     var onUserDataFetched: ((UserModel) -> Void)?
     var onError: ((String) -> Void)?
+    var onSignOut: (() -> Void)?
     
     init(userService: UserServiceProtocol = UserService()) {
         self.userService = userService
@@ -19,7 +20,20 @@ final class ProfileViewModel {
         userService.fetchCurrentUser { [weak self] result in
             switch result {
             case .success(let user):
+                CoreDataManager.shared.saveUserProfile(uid: user.uid, email: user.email, username: user.displayName)
                 self?.onUserDataFetched?(user)
+            case .failure(let error):
+                self?.onError?(error.localizedDescription)
+            }
+        }
+    }
+    
+    func signOut() {
+        userService.signOut { [weak self] result in
+            switch result {
+            case .success:
+                CoreDataManager.shared.deleteUserProfile()
+                self?.onSignOut?()
             case .failure(let error):
                 self?.onError?(error.localizedDescription)
             }

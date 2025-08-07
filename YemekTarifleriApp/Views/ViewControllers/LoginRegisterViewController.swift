@@ -31,7 +31,10 @@ class LoginRegisterViewController: UIViewController, UITextFieldDelegate {
     
     private let logoImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.backgroundColor = .blue
+        imageView.image = UIImage(named: "logo")
+        imageView.layer.cornerRadius = 50
+        imageView.contentMode = .scaleAspectFit
+        imageView.clipsToBounds = true
         return imageView
     }()
 
@@ -404,7 +407,7 @@ class LoginRegisterViewController: UIViewController, UITextFieldDelegate {
         }
         socialButtonsStack.snp.makeConstraints { make in
             make.height.equalTo(50)
-            make.leading.trailing.equalToSuperview().inset(100)
+            make.width.equalTo(116)
         }
         for button in socialButtonsStack.arrangedSubviews {
             button.snp.makeConstraints { make in

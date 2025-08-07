@@ -10,6 +10,7 @@ import FirebaseAuth
 
 protocol UserServiceProtocol {
     func fetchCurrentUser(completion: @escaping (Result<UserModel, Error>) -> Void)
+    func signOut(completion: @escaping (Result<Void, Error>) -> Void)
 }
 
 final class UserService: UserServiceProtocol {
@@ -36,6 +37,15 @@ final class UserService: UserServiceProtocol {
             }
             
             completion(.success(user))
+        }
+    }
+    
+    func signOut(completion: @escaping (Result<Void, Error>) -> Void) {
+        do {
+            try Auth.auth().signOut()
+            completion(.success(()))
+        } catch {
+            completion(.failure(error))
         }
     }
 }

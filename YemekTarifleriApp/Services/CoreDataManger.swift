@@ -25,4 +25,25 @@ final class CoreDataManager {
             print("Core Data kaydedilemedi: \(error.localizedDescription)")
         }
     }
+    
+    func saveUserProfile(uid: String, email: String, username: String) {
+        let entity = UserProfile(context: context)
+        entity.uid = uid
+        entity.email = email
+        entity.username = username
+        
+        saveContext()
+    }
+    
+    func fetchUserProfile() -> UserProfile? {
+        let request: NSFetchRequest<UserProfile> = UserProfile.fetchRequest()
+        return try? context.fetch(request).first
+    }
+    
+    func deleteUserProfile() {
+        if let profile = fetchUserProfile() {
+            context.delete(profile)
+            saveContext()
+        }
+    }
 }

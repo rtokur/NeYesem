@@ -17,7 +17,6 @@ protocol AuthServiceProtocol {
     func signInWithGoogle(presentingVC: UIViewController, completion: @escaping (Result<Void, Error>) -> Void)
     func signInWithFacebook(presentingVC: UIViewController, completion: @escaping (Result<Void, Error>) -> Void)
     func sendPasswordReset(email: String, completion: @escaping (Result<Void, Error>) -> Void)
-    func signOut() throws
     var currentUser: User? { get }
 }
 
@@ -133,11 +132,6 @@ final class AuthManager: AuthServiceProtocol {
         }
     }
     
-    // MARK: - Sign Out
-    func signOut() throws {
-        try auth.signOut()
-    }
-    
     // MARK: - Save User to Firestore
     private func saveUserToFirestore(user: User, username: String? = nil, completion: @escaping (Result<Void, Error>) -> Void) {
         let userRef = db.collection("users").document(user.uid)
@@ -151,11 +145,16 @@ final class AuthManager: AuthServiceProtocol {
         if username != nil {
             userData["createdAt"] = FieldValue.serverTimestamp()
         }
-        
+
         userRef.setData(userData, merge: true) { error in
             if let error = error {
                 completion(.failure(error))
             } else {
+                CoreDataManager.shared.saveUserProfile(
+                    uid: user.uid,
+                    email: user.email ?? "",
+                    username: username ?? user.displayName ?? "Kullanıcı"
+                )
                 completion(.success(()))
             }
         }

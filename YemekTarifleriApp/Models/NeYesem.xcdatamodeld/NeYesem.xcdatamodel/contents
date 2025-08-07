@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="23788.4" systemVersion="24F74" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithSwiftData="YES" userDefinedModelVersionIdentifier="">
-    <entity name="Recipe" representedClassName="Recipe" syncable="YES" codeGenerationType="class">
-        <attribute name="ingredients" optional="YES" attributeType="String"/>
-        <attribute name="title" optional="YES" attributeType="String"/>
+    <entity name="UserProfile" representedClassName="UserProfile" syncable="YES">
+        <attribute name="email" optional="YES" attributeType="String"/>
+        <attribute name="uid" optional="YES" attributeType="String"/>
+        <attribute name="username" optional="YES" attributeType="String"/>
     </entity>
 </model>

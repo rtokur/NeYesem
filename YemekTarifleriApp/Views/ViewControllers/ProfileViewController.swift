@@ -22,7 +22,7 @@ class ProfileViewController: UIViewController {
         let stack = UIStackView()
         stack.axis = .vertical
         stack.alignment = .center
-        stack.spacing = 20
+        stack.spacing = 25
         return stack
     }()
     
@@ -33,6 +33,22 @@ class ProfileViewController: UIViewController {
         label.textColor = UIColor.Color10
         label.textAlignment = .center
         return label
+    }()
+    
+    private lazy var notificationButton: UIButton = {
+        let button = UIButton()
+        var configuration = UIButton.Configuration.filled()
+        configuration.image = UIImage(named: "bell")
+        configuration.background.cornerRadius = 10
+        configuration.baseBackgroundColor = .white
+        button.configuration = configuration
+        
+        button.layer.shadowColor = UIColor.black.cgColor
+        button.layer.shadowOffset = CGSize(width: 0, height: 1)
+        button.layer.shadowRadius = 3
+        button.layer.shadowOpacity = 0.07
+        button.layer.masksToBounds = false
+        return button
     }()
     
     private lazy var profileImageView: UIImageView = {
@@ -62,9 +78,9 @@ class ProfileViewController: UIViewController {
     
     private let preferenceView: UIView = {
         let view = UIView()
-        view.backgroundColor = .clear
+        view.backgroundColor = UIColor.Text50
         view.layer.cornerRadius = 20
-        view.layer.borderColor = UIColor.Text200.cgColor
+        view.layer.borderColor = UIColor.Text100.cgColor
         view.layer.borderWidth = 1
         return view
     }()
@@ -78,8 +94,8 @@ class ProfileViewController: UIViewController {
     private lazy var myPreferenceLabel: UILabel = {
         let label = UILabel()
         label.text = "Tercihlerim"
-        label.font = .dmSansSemiBold(18)
-        label.textColor = UIColor.Primary900
+        label.font = .dmSansSemiBold(17)
+        label.textColor = UIColor.textColor900
         label.textAlignment = .left
         return label
     }()
@@ -90,7 +106,7 @@ class ProfileViewController: UIViewController {
         
         var attributedTitle = AttributedString("Profili Düzenle")
         attributedTitle.font = .dmSansSemiBold(11)
-        attributedTitle.foregroundColor = UIColor.primaryColor
+        attributedTitle.foregroundColor = UIColor.white
         configuration.attributedTitle = attributedTitle
         
         let symbolConfiguration = UIImage.SymbolConfiguration(pointSize: 11, weight: .bold)
@@ -98,11 +114,9 @@ class ProfileViewController: UIViewController {
         
         configuration.imagePlacement = .trailing
         configuration.imagePadding = 3
-        configuration.baseForegroundColor = UIColor.primaryColor
-        configuration.baseBackgroundColor = .clear
-        
-        configuration.background.strokeColor = UIColor.primaryColor
-        configuration.background.strokeWidth = 1
+        configuration.baseForegroundColor = UIColor.white
+        configuration.baseBackgroundColor = UIColor.primaryColor
+
         configuration.background.cornerRadius = 20
         button.configuration = configuration
         
@@ -112,8 +126,8 @@ class ProfileViewController: UIViewController {
     private lazy var dietLabel: UILabel = {
         let label = UILabel()
         label.text = "Beslenme tarzı: "
-        label.font = .dmSansSemiBold(14)
-        label.textColor = UIColor.Primary800
+        label.font = .dmSansRegular(14)
+        label.textColor = UIColor.Text950
         label.textAlignment = .left
         return label
     }()
@@ -121,8 +135,8 @@ class ProfileViewController: UIViewController {
     private lazy var allergyLabel: UILabel = {
         let label = UILabel()
         label.text = "Alerji: "
-        label.font = .dmSansSemiBold(14)
-        label.textColor = UIColor.Primary800
+        label.font = .dmSansRegular(14)
+        label.textColor = UIColor.Text950
         label.textAlignment = .left
         return label
     }()
@@ -130,69 +144,73 @@ class ProfileViewController: UIViewController {
     private lazy var dontLikeLabel: UILabel = {
         let label = UILabel()
         label.text = "Sevmediğim ürünler: "
-        label.font = .dmSansSemiBold(14)
-        label.textColor = UIColor.Primary800
+        label.font = .dmSansRegular(14)
+        label.textColor = UIColor.Text950
         label.textAlignment = .left
         return label
     }()
     
-    private lazy var statsContainerView: UIStackView = {
-        let savedView = StatItemView(number: 23, title: "Kaydedilen tarifler")
-        let completedView = StatItemView(number: 12, title: "Tamamlanan tarifler")
-        
-        let stackView = UIStackView(arrangedSubviews: [
-            savedView,
-            makeDivider(length: 60, color: UIColor.Text200),
-            favoriteView,
-            makeDivider(length: 60, color: UIColor.Text200),
-            completedView
-        ])
-        
-        stackView.axis = .horizontal
-        stackView.alignment = .center
-        stackView.distribution = .equalSpacing
-        stackView.layer.borderColor = UIColor.Secondary100.cgColor
-        stackView.layer.borderWidth = 1
-        stackView.layer.cornerRadius = 25
-
-        [savedView, favoriteView, completedView].forEach { view in
-            view.snp.makeConstraints { make in
-                make.width.equalToSuperview().dividedBy(3).offset(-2)
-            }
-        }
-        return stackView
-    }()
-    
-    private lazy var favoriteView: StatItemView = {
-        let view = StatItemView(number: 5, title: "Favoriler")
-        view.isUserInteractionEnabled = true
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(favoriteTapped))
-        view.addGestureRecognizer(tapGesture)
-        return view
-    }()
+//    private lazy var statsContainerView: UIStackView = {
+//        let savedView = StatItemView(number: 23, title: "Kaydedilen tarifler")
+//        let completedView = StatItemView(number: 12, title: "Tamamlanan tarifler")
+//        
+//        let stackView = UIStackView(arrangedSubviews: [
+//            savedView,
+//            makeDivider(length: 60, color: UIColor.Text200),
+//            favoriteView,
+//            makeDivider(length: 60, color: UIColor.Text200),
+//            completedView
+//        ])
+//        
+//        stackView.axis = .horizontal
+//        stackView.alignment = .center
+//        stackView.distribution = .equalSpacing
+//        stackView.layer.borderColor = UIColor.Secondary100.cgColor
+//        stackView.layer.borderWidth = 1
+//        stackView.layer.cornerRadius = 25
+//
+//        [savedView, favoriteView, completedView].forEach { view in
+//            view.snp.makeConstraints { make in
+//                make.width.equalToSuperview().dividedBy(3).offset(-2)
+//            }
+//        }
+//        return stackView
+//    }()
+//    
+//    private lazy var favoriteView: StatItemView = {
+//        let view = StatItemView(number: 5, title: "Favoriler")
+//        view.isUserInteractionEnabled = true
+//        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(favoriteTapped))
+//        view.addGestureRecognizer(tapGesture)
+//        return view
+//    }()
     
     private lazy var optionsView: UIView = {
         let view = UIView()
         view.layer.cornerRadius = 20
-        view.layer.borderColor = UIColor.Text100.cgColor
-        view.layer.borderWidth = 1
         return view
     }()
     
     private lazy var optionsContainerStackView: UIStackView = {
         let shoppingList = ProfileOptionView(icon: UIImage(systemName: "cart"), title: "Alışveriş Listelerim")
-        let orders = ProfileOptionView(icon: UIImage(systemName: "bell"), title: "Bildirimler")
-        let settings = ProfileOptionView(icon: UIImage(systemName: "globe"), title: "Dil Seçenekleri")
-        let help = ProfileOptionView(icon: UIImage(systemName: "gearshape"), title: "Ayarlar")
+        let settings = ProfileOptionView(icon: UIImage(systemName: "gearshape"), title: "Ayarlar")
+        let language = ProfileOptionView(icon: UIImage(systemName: "globe"), title: "Dil Seçenekleri")
+        let signOut = ProfileOptionView(icon: UIImage(systemName: "rectangle.portrait.and.arrow.right"), title: "Çıkış Yap")
+
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(signOutTapped))
+        signOut.addGestureRecognizer(tapGesture)
+        signOut.isUserInteractionEnabled = true
         
         let stackView = UIStackView(arrangedSubviews: [
-            shoppingList,
             makeDivider(color: UIColor.Text100),
-            orders,
+            shoppingList,
             makeDivider(color: UIColor.Text100),
             settings,
             makeDivider(color: UIColor.Text100),
-            help
+            language,
+            makeDivider(color: UIColor.Text100),
+            signOut,
+            makeDivider(color: UIColor.Text100)
         ])
         
         stackView.axis = .vertical
@@ -216,6 +234,7 @@ class ProfileViewController: UIViewController {
         view.addSubview(scrollView)
         scrollView.addSubview(stackView)
         stackView.addArrangedSubview(myProfileLabel)
+        view.addSubview(notificationButton)
         stackView.addArrangedSubview(profileImageView)
         stackView.addArrangedSubview(profileNameLabel)
         stackView.addArrangedSubview(emailLabel)
@@ -226,7 +245,7 @@ class ProfileViewController: UIViewController {
         preferenceStackView.addArrangedSubview(allergyLabel)
         preferenceStackView.addArrangedSubview(dontLikeLabel)
         preferenceView.addSubview(editPreferenceButton)
-        stackView.addArrangedSubview(statsContainerView)
+//        stackView.addArrangedSubview(statsContainerView)
         stackView.addArrangedSubview(optionsView)
         optionsView.addSubview(optionsContainerStackView)
         stackView.setCustomSpacing(10, after: profileImageView)
@@ -244,7 +263,12 @@ class ProfileViewController: UIViewController {
             make.width.equalTo(scrollView.frameLayoutGuide)
         }
         myProfileLabel.snp.makeConstraints { make in
-            make.height.equalTo(20)
+            make.height.equalTo(44)
+        }
+        notificationButton.snp.makeConstraints { make in
+            make.trailing.equalToSuperview().inset(15)
+            make.top.equalTo(view.safeAreaLayoutGuide)
+            make.height.width.equalTo(44)
         }
         profileImageView.snp.makeConstraints { make in
             make.height.width.equalTo(120)
@@ -279,10 +303,10 @@ class ProfileViewController: UIViewController {
             make.height.equalTo(32)
             make.width.equalTo(120)
         }
-        statsContainerView.snp.makeConstraints { make in
-            make.height.equalTo(80)
-            make.width.equalToSuperview()
-        }
+//        statsContainerView.snp.makeConstraints { make in
+//            make.height.equalTo(80)
+//            make.width.equalToSuperview()
+//        }
         optionsView.snp.makeConstraints { make in
             make.width.equalToSuperview()
         }
@@ -303,6 +327,21 @@ class ProfileViewController: UIViewController {
         viewModel.onError = { [weak self] errorMessage in
             DispatchQueue.main.async {
                 self?.showAlert(message: errorMessage)
+            }
+        }
+        
+        viewModel.onSignOut = { [weak self] in
+            DispatchQueue.main.async {
+                guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                      let sceneDelegate = windowScene.delegate as? SceneDelegate else {
+                    return
+                }
+                
+                let navigationController = UINavigationController(rootViewController: LoginRegisterViewController())
+                navigationController.setNavigationBarHidden(true, animated: false)
+                
+                sceneDelegate.window?.rootViewController = navigationController
+                sceneDelegate.window?.makeKeyAndVisible()
             }
         }
     }
@@ -328,6 +367,17 @@ class ProfileViewController: UIViewController {
         if let tabBarController = self.tabBarController {
             tabBarController.selectedIndex = 1
         }
+    }
+    
+    @objc private func signOutTapped() {
+        let alert = UIAlertController(title: "Çıkış Yap", message: "Hesabınızdan çıkış yapmak istediğinize emin misiniz?", preferredStyle: .alert)
+        
+        alert.addAction(UIAlertAction(title: "Vazgeç", style: .cancel, handler: nil))
+        alert.addAction(UIAlertAction(title: "Çıkış Yap", style: .destructive, handler: { [weak self] _ in
+            self?.viewModel.signOut()
+        }))
+        
+        present(alert, animated: true, completion: nil)
     }
 }
 

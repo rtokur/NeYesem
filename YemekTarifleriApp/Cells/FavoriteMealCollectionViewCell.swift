@@ -175,7 +175,7 @@ class FavoriteMealCollectionViewCell: UICollectionViewCell {
             make.height.equalTo(20)
         }
         mealTypeView.snp.makeConstraints { make in
-            make.width.equalTo(1)
+            make.width.equalTo(10)
         }
         mealTypeLabel.snp.makeConstraints { make in
             make.edges.equalToSuperview().inset(5)

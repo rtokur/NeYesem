@@ -19,18 +19,18 @@ class ProfileOptionView: UIView {
     
     private let titleLabel: UILabel = {
         let label = UILabel()
-        label.font = .dmSansSemiBold(14)
-        label.textColor = UIColor.textColor400
+        label.font = .dmSansSemiBold(15)
+        label.textColor = UIColor.Text950
         label.textAlignment = .left
         return label
     }()
     
     private let arrowImageView: UIImageView = {
         let imageView = UIImageView()
-        let configuration = UIImage.SymbolConfiguration(pointSize: 14)
+        let configuration = UIImage.SymbolConfiguration(pointSize: 12)
         imageView.image = UIImage(systemName: "chevron.right")?.withConfiguration(configuration)
         imageView.contentMode = .scaleAspectFit
-        imageView.tintColor = UIColor.textColor300
+        imageView.tintColor = UIColor.textColor900
         return imageView
     }()
     
@@ -58,19 +58,19 @@ class ProfileOptionView: UIView {
         }
         
         stack.snp.makeConstraints { make in
-            make.edges.equalToSuperview().inset(8)
+            make.edges.equalToSuperview().inset(4)
         }
         
         iconImageView.snp.makeConstraints { make in
-            make.width.height.equalTo(20)
+            make.width.height.equalTo(28)
         }
         arrowImageView.snp.makeConstraints { make in
-            make.width.equalTo(20)
+            make.width.equalTo(28)
         }
     }
     
     func configure(icon: UIImage?, title: String) {
-        let configuration = UIImage.SymbolConfiguration(pointSize: 11)
+        let configuration = UIImage.SymbolConfiguration(pointSize: 13)
         iconImageView.image = icon?.withConfiguration(configuration)
         titleLabel.text = title
     }
