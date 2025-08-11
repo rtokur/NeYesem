@@ -150,41 +150,6 @@ class ProfileViewController: UIViewController {
         return label
     }()
     
-//    private lazy var statsContainerView: UIStackView = {
-//        let savedView = StatItemView(number: 23, title: "Kaydedilen tarifler")
-//        let completedView = StatItemView(number: 12, title: "Tamamlanan tarifler")
-//        
-//        let stackView = UIStackView(arrangedSubviews: [
-//            savedView,
-//            makeDivider(length: 60, color: UIColor.Text200),
-//            favoriteView,
-//            makeDivider(length: 60, color: UIColor.Text200),
-//            completedView
-//        ])
-//        
-//        stackView.axis = .horizontal
-//        stackView.alignment = .center
-//        stackView.distribution = .equalSpacing
-//        stackView.layer.borderColor = UIColor.Secondary100.cgColor
-//        stackView.layer.borderWidth = 1
-//        stackView.layer.cornerRadius = 25
-//
-//        [savedView, favoriteView, completedView].forEach { view in
-//            view.snp.makeConstraints { make in
-//                make.width.equalToSuperview().dividedBy(3).offset(-2)
-//            }
-//        }
-//        return stackView
-//    }()
-//    
-//    private lazy var favoriteView: StatItemView = {
-//        let view = StatItemView(number: 5, title: "Favoriler")
-//        view.isUserInteractionEnabled = true
-//        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(favoriteTapped))
-//        view.addGestureRecognizer(tapGesture)
-//        return view
-//    }()
-    
     private lazy var optionsView: UIView = {
         let view = UIView()
         view.layer.cornerRadius = 20
@@ -245,7 +210,6 @@ class ProfileViewController: UIViewController {
         preferenceStackView.addArrangedSubview(allergyLabel)
         preferenceStackView.addArrangedSubview(dontLikeLabel)
         preferenceView.addSubview(editPreferenceButton)
-//        stackView.addArrangedSubview(statsContainerView)
         stackView.addArrangedSubview(optionsView)
         optionsView.addSubview(optionsContainerStackView)
         stackView.setCustomSpacing(10, after: profileImageView)
@@ -303,10 +267,6 @@ class ProfileViewController: UIViewController {
             make.height.equalTo(32)
             make.width.equalTo(120)
         }
-//        statsContainerView.snp.makeConstraints { make in
-//            make.height.equalTo(80)
-//            make.width.equalToSuperview()
-//        }
         optionsView.snp.makeConstraints { make in
             make.width.equalToSuperview()
         }
@@ -370,14 +330,11 @@ class ProfileViewController: UIViewController {
     }
     
     @objc private func signOutTapped() {
-        let alert = UIAlertController(title: "Çıkış Yap", message: "Hesabınızdan çıkış yapmak istediğinize emin misiniz?", preferredStyle: .alert)
-        
-        alert.addAction(UIAlertAction(title: "Vazgeç", style: .cancel, handler: nil))
-        alert.addAction(UIAlertAction(title: "Çıkış Yap", style: .destructive, handler: { [weak self] _ in
+        let alert = LogoutAlertView()
+        alert.onConfirm = { [weak self] in
             self?.viewModel.signOut()
-        }))
-        
-        present(alert, animated: true, completion: nil)
+        }
+        alert.present(on: self)
     }
 }
 
