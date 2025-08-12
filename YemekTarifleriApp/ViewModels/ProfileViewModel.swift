@@ -20,7 +20,7 @@ final class ProfileViewModel {
         userService.fetchCurrentUser { [weak self] result in
             switch result {
             case .success(let user):
-                CoreDataManager.shared.saveUserProfile(uid: user.uid, email: user.email, username: user.displayName)
+                CoreDataManager.shared.saveUserProfile(uid: user.uid, email: user.email ?? "Bilinmiyor", username: user.displayName ?? "Bilinmiyor")
                 self?.onUserDataFetched?(user)
             case .failure(let error):
                 self?.onError?(error.localizedDescription)

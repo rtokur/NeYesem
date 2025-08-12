@@ -138,7 +138,7 @@ final class AuthManager: AuthServiceProtocol {
         
         var userData: [String: Any] = [
             "email": user.email ?? "",
-            "displayName": username ?? user.displayName ?? "Kullanıcı",
+            "username": username ?? user.displayName ?? "Kullanıcı",
             "lastLogin": FieldValue.serverTimestamp()
         ]
         

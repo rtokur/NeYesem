@@ -10,16 +10,23 @@ import CoreData
 
 struct UserModel {
     let uid: String
-    let displayName: String
-    let email: String
-    
+    let displayName: String?
+    let email: String?
+    let phone: String?
+
     init?(dictionary: [String: Any], uid: String) {
-        guard let displayName = dictionary["displayName"] as? String,
-              let email = dictionary["email"] as? String else {
-            return nil
-        }
         self.uid = uid
-        self.displayName = displayName
-        self.email = email
+        self.displayName = dictionary["username"] as? String
+        self.email = dictionary["email"] as? String
+        self.phone = dictionary["phone"] as? String
+    }
+
+    var asFirestore: [String: Any] {
+        [
+            "username": displayName ?? "",
+            "email": email ?? "",
+            "phone": phone ?? ""
+        ]
     }
 }
+

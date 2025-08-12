@@ -10,7 +10,8 @@ import UIKit
 class ProfileViewController: UIViewController {
     //MARK: - Properties
     private let viewModel = ProfileViewModel()
-    
+    private var currentUser: UserModel?
+
     //MARK: UI Elements
     private let scrollView: UIScrollView = {
         let scrollView = UIScrollView()
@@ -119,6 +120,9 @@ class ProfileViewController: UIViewController {
 
         configuration.background.cornerRadius = 20
         button.configuration = configuration
+        button.addTarget(self,
+                         action: #selector(navigateToEditProfile),
+                         for: .touchUpInside)
         
         return button
     }()
@@ -165,6 +169,10 @@ class ProfileViewController: UIViewController {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(signOutTapped))
         signOut.addGestureRecognizer(tapGesture)
         signOut.isUserInteractionEnabled = true
+        
+        let tapGestureSettings = UITapGestureRecognizer(target: self, action: #selector(navigateToSettings))
+        settings.addGestureRecognizer(tapGestureSettings)
+        settings.isUserInteractionEnabled = true
         
         let stackView = UIStackView(arrangedSubviews: [
             makeDivider(color: UIColor.Text100),
@@ -279,6 +287,7 @@ class ProfileViewController: UIViewController {
     private func bindViewModel() {
         viewModel.onUserDataFetched = { [weak self] user in
             DispatchQueue.main.async {
+                self?.currentUser = user
                 self?.profileNameLabel.text = user.displayName
                 self?.emailLabel.text = user.email
             }
@@ -335,6 +344,22 @@ class ProfileViewController: UIViewController {
             self?.viewModel.signOut()
         }
         alert.present(on: self)
+    }
+    
+    @objc func navigateToEditProfile() {
+        let viewModel = EditProfileViewModel(preloadedUser: currentUser)
+        let editProfileViewController = EditProfileViewController(viewModel: viewModel)
+        editProfileViewController.onDidSave = { [weak self] updatedUser in
+            self?.currentUser = updatedUser
+            self?.profileNameLabel.text = updatedUser.displayName
+            self?.emailLabel.text = updatedUser.email
+        }
+        navigationController?.pushViewController(editProfileViewController, animated: true)
+    }
+    
+    @objc func navigateToSettings() {
+        let settingsViewController = SettingsViewController()
+        navigationController?.pushViewController(settingsViewController, animated: true)
     }
 }
 
