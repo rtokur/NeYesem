@@ -1,19 +1,19 @@
 //
-//  MealTypeCollectionViewCell.swift
+//  CategoryCollectionViewCell.swift
 //  YemekTarifleriApp
 //
-//  Created by Rumeysa Tokur on 4.08.2025.
+//  Created by Rumeysa Tokur on 12.08.2025.
 //
 
 import UIKit
 
-class MealTypeCollectionViewCell: UICollectionViewCell {
-    static let reuseID = "MealTypeCollectionViewCell"
+class CategoryCollectionViewCell: UICollectionViewCell {
+    static let reuseID = "CategoryCell"
     
-    //MARK: UI Elements
-    lazy var titleLabel: UILabel = {
+    private let titleLabel: UILabel = {
         let label = UILabel()
         label.font = .dmSansSemiBold(11)
+        label.textColor = UIColor.textColor400
         label.textAlignment = .center
         return label
     }()
@@ -51,12 +51,12 @@ class MealTypeCollectionViewCell: UICollectionViewCell {
     private func updateAppearance() {
         if isSelected {
             contentView.backgroundColor = selectedBackground
-            contentView.layer.borderColor = selectedBackground.cgColor
             titleLabel.textColor = selectedTextColor
+            contentView.layer.borderColor = selectedBackground.cgColor
         } else {
             contentView.backgroundColor = deselectedBackground
-            contentView.layer.borderColor = UIColor.Text50.cgColor
             titleLabel.textColor = deselectedTextColor
+            contentView.layer.borderColor = UIColor.Text50.cgColor
         }
     }
 }

@@ -20,13 +20,13 @@ class FavoriteViewController: UIViewController, UITextFieldDelegate {
         ("Çilekli Salata", "Salata"),
         ("Sebzeli Krep", "Kahvaltı")
     ]
-    private var selectedIndex = 0
+    private var selectedIndexPath: IndexPath = IndexPath(item: 0, section: 0)
     
     //MARK: UI Elements
     private lazy var stackView: UIStackView = {
         let stack = UIStackView()
         stack.axis = .vertical
-        stack.alignment = .fill
+        stack.alignment = .center
         stack.spacing = 20
         return stack
     }()
@@ -39,7 +39,7 @@ class FavoriteViewController: UIViewController, UITextFieldDelegate {
         label.textAlignment = .center
         return label
     }()
-
+    
     private lazy var searchStackView: UIStackView = {
         let stack = UIStackView()
         stack.axis = .horizontal
@@ -95,12 +95,14 @@ class FavoriteViewController: UIViewController, UITextFieldDelegate {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
         layout.minimumInteritemSpacing = 7
-        let collectionView = UICollectionView(frame: .zero,
-                                              collectionViewLayout: layout)
+        layout.minimumLineSpacing = 7
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collectionView.register(MealTypeCollectionViewCell.self, forCellWithReuseIdentifier: MealTypeCollectionViewCell.reuseID)
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.showsHorizontalScrollIndicator = false
-        collectionView.register(MealTypeCollectionViewCell.self, forCellWithReuseIdentifier: "MealTypeCollectionViewCell")
+        collectionView.backgroundColor = .clear
+        collectionView.contentInset = UIEdgeInsets(top: 0, left: 15, bottom: 0, right: 15)
         return collectionView
     }()
     
@@ -108,13 +110,12 @@ class FavoriteViewController: UIViewController, UITextFieldDelegate {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
         layout.minimumInteritemSpacing = 14
-        layout.minimumLineSpacing = 14
         let collectionView = UICollectionView(frame: .zero,
                                               collectionViewLayout: layout)
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.showsVerticalScrollIndicator = false
-        collectionView.register(FavoriteMealCollectionViewCell.self, forCellWithReuseIdentifier: "FavoriteMealCollectionViewCell")
+        collectionView.register(FavoriteMealCollectionViewCell.self, forCellWithReuseIdentifier: FavoriteMealCollectionViewCell.reuseID)
         return collectionView
     }()
     
@@ -123,6 +124,7 @@ class FavoriteViewController: UIViewController, UITextFieldDelegate {
         super.viewDidLoad()
         setupViews()
         setupConstraints()
+        preselectFirstCategory()
     }
     
     //MARK: - Setup Methods
@@ -145,14 +147,14 @@ class FavoriteViewController: UIViewController, UITextFieldDelegate {
     
     func setupConstraints(){
         stackView.snp.makeConstraints { make in
-            make.leading.trailing.equalToSuperview().inset(15)
-            make.top.bottom.equalTo(view.safeAreaLayoutGuide)
+            make.edges.equalTo(view.safeAreaLayoutGuide)
         }
         favoritesLabel.snp.makeConstraints { make in
-            make.height.equalTo(20)
+            make.height.equalTo(44)
         }
         searchStackView.snp.makeConstraints { make in
             make.height.equalTo(44)
+            make.leading.trailing.equalToSuperview().inset(15)
         }
         customSearchBarView.snp.makeConstraints { make in
             make.height.equalToSuperview()
@@ -171,9 +173,16 @@ class FavoriteViewController: UIViewController, UITextFieldDelegate {
         }
         mealTypeCollectionView.snp.makeConstraints { make in
             make.height.equalTo(36)
+            make.width.equalToSuperview()
         }
         mealCollectionView.snp.makeConstraints { make in
-            make.width.equalToSuperview()
+            make.leading.trailing.equalToSuperview().inset(15)
+        }
+    }
+    
+    private func preselectFirstCategory() {
+        DispatchQueue.main.async {
+            self.mealTypeCollectionView.selectItem(at: self.selectedIndexPath, animated: false, scrollPosition: [])
         }
     }
 }
@@ -181,37 +190,59 @@ class FavoriteViewController: UIViewController, UITextFieldDelegate {
 //MARK: - Delegates
 extension FavoriteViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        if collectionView == mealCollectionView {
-            return mealsArray.count
-        }
+        if collectionView == mealCollectionView { return mealsArray.count }
         return categories.count
     }
     
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    func collectionView(_ collectionView: UICollectionView,
+                        cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         if collectionView == mealCollectionView {
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FavoriteMealCollectionViewCell", for: indexPath) as! FavoriteMealCollectionViewCell
-            let meal = mealsArray[indexPath.row]
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: FavoriteMealCollectionViewCell.reuseID, for: indexPath) as! FavoriteMealCollectionViewCell
+            let meal = mealsArray[indexPath.item]
             cell.configure(mealType: meal.type, mealName: meal.title)
             return cell
         }
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "MealTypeCollectionViewCell", for: indexPath) as! MealTypeCollectionViewCell
-        let isSelected = indexPath.item == selectedIndex
-        cell.configure(title: categories[indexPath.row], isSelected: isSelected)
+        
+        let cell = collectionView.dequeueReusableCell(
+            withReuseIdentifier: MealTypeCollectionViewCell.reuseID,
+            for: indexPath
+        ) as! MealTypeCollectionViewCell
+        cell.configure(title: categories[indexPath.item])
+        cell.isSelected = (indexPath == selectedIndexPath)
         return cell
     }
     
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        if collectionView == mealCollectionView {
-            let width = (collectionView.frame.width / 2) - 7
-            return CGSize(width: width, height: 212)
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        guard collectionView == mealTypeCollectionView else { return }
+        
+        if selectedIndexPath != indexPath {
+            if let oldCell = collectionView.cellForItem(at: selectedIndexPath) as? MealTypeCollectionViewCell {
+                oldCell.isSelected = false
+            }
+            selectedIndexPath = indexPath
         }
-        let textWidth = categories[indexPath.item].width(using: UIFont.dmSansRegular(11), padding: 30)
-        return CGSize(width: textWidth, height: 36)
+        
+        if let newCell = collectionView.cellForItem(at: indexPath) as? MealTypeCollectionViewCell {
+            newCell.isSelected = true
+        }
+        
+        print("Seçilen kategori: \(categories[indexPath.item])")
+        collectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
     }
     
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        selectedIndex = indexPath.item
-        collectionView.reloadData()
+    func collectionView(_ collectionView: UICollectionView,
+                        layout collectionViewLayout: UICollectionViewLayout,
+                        sizeForItemAt indexPath: IndexPath) -> CGSize {
+        if collectionView == mealCollectionView {
+            let width = (collectionView.bounds.width / 2) - 7
+            return CGSize(width: width, height: 212)
+        }
+        let text = categories[indexPath.item] as NSString
+        let font = UIFont.dmSansSemiBold(11)
+        let textSize = text.size(withAttributes: [.font: font])
+        let horizontalPadding: CGFloat = 20
+        let height: CGFloat = 36
+        return CGSize(width: ceil(textSize.width) + horizontalPadding, height: height)
     }
     
     func textFieldDidBeginEditing(_ textField: UITextField) {

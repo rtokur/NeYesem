@@ -49,6 +49,9 @@ class ProfileViewController: UIViewController {
         button.layer.shadowRadius = 3
         button.layer.shadowOpacity = 0.07
         button.layer.masksToBounds = false
+        button.addTarget(self,
+                         action: #selector(navigateToNotification),
+                         for: .touchUpInside)
         return button
     }()
     
@@ -110,7 +113,8 @@ class ProfileViewController: UIViewController {
         attributedTitle.foregroundColor = UIColor.white
         configuration.attributedTitle = attributedTitle
         
-        let symbolConfiguration = UIImage.SymbolConfiguration(pointSize: 11, weight: .bold)
+        let symbolConfiguration = UIImage.SymbolConfiguration(pointSize: 11,
+                                                              weight: .bold)
         configuration.image = UIImage(systemName: "square.and.pencil")?.withConfiguration(symbolConfiguration)
         
         configuration.imagePlacement = .trailing
@@ -161,16 +165,22 @@ class ProfileViewController: UIViewController {
     }()
     
     private lazy var optionsContainerStackView: UIStackView = {
-        let shoppingList = ProfileOptionView(icon: UIImage(systemName: "cart"), title: "Alışveriş Listelerim")
-        let settings = ProfileOptionView(icon: UIImage(systemName: "gearshape"), title: "Ayarlar")
-        let language = ProfileOptionView(icon: UIImage(systemName: "globe"), title: "Dil Seçenekleri")
-        let signOut = ProfileOptionView(icon: UIImage(systemName: "rectangle.portrait.and.arrow.right"), title: "Çıkış Yap")
+        let shoppingList = ProfileOptionView(icon: UIImage(systemName: "cart"),
+                                             title: "Alışveriş Listelerim")
+        let settings = ProfileOptionView(icon: UIImage(systemName: "gearshape"),
+                                         title: "Ayarlar")
+        let language = ProfileOptionView(icon: UIImage(systemName: "globe"),
+                                         title: "Dil Seçenekleri")
+        let signOut = ProfileOptionView(icon: UIImage(systemName: "rectangle.portrait.and.arrow.right"),
+                                        title: "Çıkış Yap")
 
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(signOutTapped))
+        let tapGesture = UITapGestureRecognizer(target: self,
+                                                action: #selector(signOutTapped))
         signOut.addGestureRecognizer(tapGesture)
         signOut.isUserInteractionEnabled = true
         
-        let tapGestureSettings = UITapGestureRecognizer(target: self, action: #selector(navigateToSettings))
+        let tapGestureSettings = UITapGestureRecognizer(target: self,
+                                                        action: #selector(navigateToSettings))
         settings.addGestureRecognizer(tapGestureSettings)
         settings.isUserInteractionEnabled = true
         
@@ -307,7 +317,8 @@ class ProfileViewController: UIViewController {
                 }
                 
                 let navigationController = UINavigationController(rootViewController: LoginRegisterViewController())
-                navigationController.setNavigationBarHidden(true, animated: false)
+                navigationController.setNavigationBarHidden(true,
+                                                            animated: false)
                 
                 sceneDelegate.window?.rootViewController = navigationController
                 sceneDelegate.window?.makeKeyAndVisible()
@@ -354,12 +365,20 @@ class ProfileViewController: UIViewController {
             self?.profileNameLabel.text = updatedUser.displayName
             self?.emailLabel.text = updatedUser.email
         }
-        navigationController?.pushViewController(editProfileViewController, animated: true)
+        navigationController?.pushViewController(editProfileViewController,
+                                                 animated: true)
     }
     
     @objc func navigateToSettings() {
         let settingsViewController = SettingsViewController()
-        navigationController?.pushViewController(settingsViewController, animated: true)
+        navigationController?.pushViewController(settingsViewController,
+                                                 animated: true)
+    }
+    
+    @objc func navigateToNotification() {
+        let notificationsViewController = NotificationsViewController()
+        navigationController?.pushViewController(notificationsViewController,
+                                                 animated: true)
     }
 }
 

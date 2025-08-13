@@ -120,6 +120,12 @@ final class SettingsViewController: UIViewController {
         settingSwitch.isOn = false
         settingSwitch.transform = CGAffineTransform(scaleX: switchScale, y: switchScale)
         settingSwitch.addTarget(self, action: action, for: .valueChanged)
+        settingSwitch.onTintColor = UIColor.primaryColor
+        settingSwitch.thumbTintColor = UIColor.textColor400
+
+        settingSwitch.addAction(UIAction { _ in
+            settingSwitch.thumbTintColor = settingSwitch.isOn ? .white : UIColor.textColor400
+        }, for: .valueChanged)
         return settingSwitch
     }
 

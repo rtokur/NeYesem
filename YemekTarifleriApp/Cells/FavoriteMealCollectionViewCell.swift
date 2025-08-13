@@ -8,6 +8,7 @@
 import UIKit
 
 class FavoriteMealCollectionViewCell: UICollectionViewCell {
+    static let reuseID = "FavoriteCell"
     //MARK: UI Elements
     private let stackView: UIStackView = {
         let stackView = UIStackView()

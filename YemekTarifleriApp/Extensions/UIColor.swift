@@ -87,5 +87,9 @@ extension UIColor {
     static var Text100: UIColor {
         return UIColor(named: "Text100")!
     }
+    
+    static var Text600: UIColor {
+        return UIColor(named: "Text600")!
+    }
 }
 
