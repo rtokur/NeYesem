@@ -33,6 +33,16 @@
 		<string>DMSans-Regular.ttf</string>
 		<string>DMSans-SemiBold.ttf</string>
 	</array>
+    
+    <key>NSCameraUsageDescription</key>
+    <string>Kamera ile fotoğraf çekebilmeniz için erişim izni gereklidir.</string>
+
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>Galeriden fotoğraf seçebilmeniz için erişim izni gereklidir.</string>
+
+    <key>NSPhotoLibraryAddUsageDescription</key>
+    <string>Fotoğraflarınızı kaydedebilmemiz için erişim izni gereklidir.</string>
+    
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>

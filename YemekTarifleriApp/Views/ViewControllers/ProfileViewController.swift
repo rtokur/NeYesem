@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Kingfisher
 
 class ProfileViewController: UIViewController {
     //MARK: - Properties
@@ -300,6 +301,11 @@ class ProfileViewController: UIViewController {
                 self?.currentUser = user
                 self?.profileNameLabel.text = user.displayName
                 self?.emailLabel.text = user.email
+                if let url = user.photoURL,
+                   let Url = URL(string: url) {
+                    self?.profileImageView.kf.setImage(with: Url)
+                }
+                
             }
         }
         

@@ -153,7 +153,8 @@ final class AuthManager: AuthServiceProtocol {
                 CoreDataManager.shared.saveUserProfile(
                     uid: user.uid,
                     email: user.email ?? "",
-                    username: username ?? user.displayName ?? "Kullanıcı"
+                    username: username ?? user.displayName ?? "Kullanıcı",
+                    photoURL: ""
                 )
                 completion(.success(()))
             }

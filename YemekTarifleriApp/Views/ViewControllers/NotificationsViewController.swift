@@ -24,7 +24,7 @@ class NotificationsViewController: UIViewController {
     }()
     
     private lazy var backButton: UIButton = {
-        let button = UIButton()
+        let button = UIButton(type: .system)
         button.setImage(UIImage(systemName: "arrow.backward"),
                         for: .normal)
         button.tintColor = UIColor.Color10

@@ -6,8 +6,9 @@
 //
 
 import UIKit
+import Photos
 
-class EditProfileViewController: UIViewController, UITextFieldDelegate {
+class EditProfileViewController: UIViewController{
     //MARK: Properties
     private let viewModel: EditProfileViewModel
     private var passwordToggleButton: (UITextField, UIButton)?
@@ -30,7 +31,7 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate {
     }()
     
     private lazy var backButton: UIButton = {
-        let button = UIButton()
+        let button = UIButton(type: .system)
         button.setImage(UIImage(systemName: "arrow.backward"),
                         for: .normal)
         button.tintColor = UIColor.Color10
@@ -64,6 +65,7 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate {
         button.setImage(UIImage(systemName: "camera.fill"),
                         for: .normal)
         button.clipsToBounds = true
+        button.addTarget(self, action: #selector(cameraButtonTapped), for: .touchUpInside)
         return button
     }()
     
@@ -274,23 +276,29 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate {
     }
     
     private func bindViewModel() {
-        viewModel.onLoaded = { [weak self] u in
+        viewModel.onLoaded = { [weak self] user in
             DispatchQueue.main.async {
-                self?.nameTextField.text = u.displayName ?? ""
-                self?.emailTextField.text = u.email ?? ""
-                self?.phoneTextField.text = u.phone ?? ""
+                self?.nameTextField.text = user.displayName ?? ""
+                self?.emailTextField.text = user.email ?? ""
+                self?.phoneTextField.text = user.phone ?? ""
                 self?.passwordTextField.text = ""
+                if let url = user.photoURL,
+                   let Url = URL(string: url) {
+                    self?.profileImageView.kf.setImage(with: Url)
+                }
             }
         }
         viewModel.onSaved = { [weak self] updated in
             DispatchQueue.main.async {
                 self?.onDidSave?(updated)
-                self?.showAlert(message: "Profil güncellendi")
+                self?.showAlert(title: "Başarılı",
+                                message: "Profil güncellendi")
                 self?.navigationController?.popViewController(animated: true)
             }
         }
         viewModel.onError = { [weak self] message in
-            DispatchQueue.main.async { self?.showAlert(message: message) }
+            DispatchQueue.main.async { self?.showAlert(title: "Hata",
+                                                       message: message) }
         }
     }
     
@@ -354,12 +362,75 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate {
     @objc private func saveTapped() {
         viewModel.save(
             name: nameTextField.text,
-            phone: phoneTextField.text
+            phone: phoneTextField.text,
+            image: profileImageView.image
         )
+    }
+    
+    @objc private func cameraButtonTapped() {
+        let alert = UIAlertController(title: "Fotoğraf Ekle", message: nil, preferredStyle: .actionSheet)
+
+        alert.addAction(UIAlertAction(title: "Kamera", style: .default, handler: { _ in
+            self.requestCameraAccess()
+        }))
+
+        alert.addAction(UIAlertAction(title: "Fotoğraf Galerisi", style: .default, handler: { _ in
+            self.requestPhotoLibraryAccess()
+        }))
+
+        alert.addAction(UIAlertAction(title: "İptal", style: .cancel, handler: nil))
+
+        present(alert, animated: true)
+    }
+    
+    private func requestCameraAccess() {
+        AVCaptureDevice.requestAccess(for: .video) { granted in
+            DispatchQueue.main.async {
+                if granted {
+                    self.openImagePicker(sourceType: .camera)
+                } else {
+                    self.showPermissionAlert(type: "kamera")
+                }
+            }
+        }
+    }
+
+    private func requestPhotoLibraryAccess() {
+        PHPhotoLibrary.requestAuthorization { status in
+            DispatchQueue.main.async {
+                if status == .authorized || status == .limited {
+                    self.openImagePicker(sourceType: .photoLibrary)
+                } else {
+                    self.showPermissionAlert(type: "fotoğraf galerisi")
+                }
+            }
+        }
+    }
+    
+    private func showPermissionAlert(type: String) {
+        let alert = UIAlertController(title: "\(type.capitalized) izni gerekli",
+                                      message: "Lütfen Ayarlar’dan \(type) iznini aktif edin.",
+                                      preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Ayarlar’a Git", style: .default, handler: { _ in
+            if let settingsURL = URL(string: UIApplication.openSettingsURLString) {
+                UIApplication.shared.open(settingsURL)
+            }
+        }))
+        alert.addAction(UIAlertAction(title: "İptal", style: .cancel))
+        present(alert, animated: true)
+    }
+
+    private func openImagePicker(sourceType: UIImagePickerController.SourceType) {
+        guard UIImagePickerController.isSourceTypeAvailable(sourceType) else { return }
+        let picker = UIImagePickerController()
+        picker.sourceType = sourceType
+        picker.delegate = self
+        picker.allowsEditing = true
+        present(picker, animated: true)
     }
 }
 
-extension EditProfileViewController {
+extension EditProfileViewController: UITextFieldDelegate  {
     func textFieldDidBeginEditing(_ textField: UITextField) {
         activeTextField = textField
         textField.setActiveBorder()
@@ -385,5 +456,18 @@ extension EditProfileViewController {
             textField.resignFirstResponder()
         }
         return true
+    }
+}
+
+extension EditProfileViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+    func imagePickerController(_ picker: UIImagePickerController,
+                               didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        picker.dismiss(animated: true)
+        
+        if let editedImage = info[.editedImage] as? UIImage {
+            profileImageView.image = editedImage
+        } else if let originalImage = info[.originalImage] as? UIImage {
+            profileImageView.image = originalImage
+        }
     }
 }

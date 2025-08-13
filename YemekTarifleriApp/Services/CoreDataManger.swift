@@ -26,11 +26,12 @@ final class CoreDataManager {
         }
     }
     
-    func saveUserProfile(uid: String, email: String, username: String) {
+    func saveUserProfile(uid: String, email: String, username: String, photoURL: String) {
         let entity = UserProfile(context: context)
         entity.uid = uid
         entity.email = email
         entity.username = username
+        entity.photoURL = photoURL
         
         saveContext()
     }
