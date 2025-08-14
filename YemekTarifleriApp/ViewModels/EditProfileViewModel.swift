@@ -36,27 +36,25 @@ final class EditProfileViewModel {
     }
     
     func save(name: String?, phone: String?, image: UIImage?) {
-            userService.updateUserProfile(name: name, phone: phone, image: image) { [weak self] result in
-                switch result {
-                case .failure(let e):
-                    self?.onError?(e.localizedDescription)
-                case .success:
-                    // Kaydetten sonra taze kullanıcıyı çek
-                    self?.userService.fetchCurrentUser { fetch in
-                        switch fetch {
-                        case .success(let fresh):
-                            self?.user = fresh
-                            // CoreData senkronu: photo da eklemek istersen modele göre güncelle
-                            CoreDataManager.shared.saveUserProfile(uid: fresh.uid,
-                                                                   email: fresh.email ?? "",
-                                                                   username: fresh.displayName ?? "",
-                                                                   photoURL: fresh.photoURL ?? "")
-                            self?.onSaved?(fresh)
-                        case .failure(let e):
-                            self?.onError?(e.localizedDescription)
-                        }
+        userService.updateUserProfile(name: name, phone: phone, image: image) { [weak self] result in
+            switch result {
+            case .failure(let e):
+                self?.onError?(e.localizedDescription)
+            case .success:
+                self?.userService.fetchCurrentUser { fetch in
+                    switch fetch {
+                    case .success(let fresh):
+                        self?.user = fresh
+                        CoreDataManager.shared.saveUserProfile(uid: fresh.uid,
+                                                               email: fresh.email ?? "",
+                                                               username: fresh.displayName ?? "",
+                                                               photoURL: fresh.photoURL ?? "")
+                        self?.onSaved?(fresh)
+                    case .failure(let e):
+                        self?.onError?(e.localizedDescription)
                     }
                 }
             }
         }
+    }
 }

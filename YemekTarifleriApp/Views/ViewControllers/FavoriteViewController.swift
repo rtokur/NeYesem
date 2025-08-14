@@ -11,7 +11,21 @@ import FirebaseAuth
 class FavoriteViewController: UIViewController, UITextFieldDelegate {
     
     //MARK: - Properties
-    private let categories = ["Tüm tarifler", "Kahvaltı", "Yemek", "Tatlı", "Salata"]
+    private let categories = ["Tüm tarifler",
+                              "Ana Yemek",
+                              "Yan Yemek",
+                              "Tatlı",
+                              "Meze",
+                              "Salata",
+                              "Ekmek",
+                              "Kahvaltılık",
+                              "Çorba",
+                              "İçecek",
+                              "Sos",
+                              "Marine",
+                              "Parmak Yiyecek",
+                              "Atıştırmalık",
+                              "İçecek"]
     private let mealsArray: [(title: String, type: String)] = [
         ("Kremalı Makarna", "Akşam yemeği"),
         ("Sezar Salata", "Salata"),
@@ -199,7 +213,10 @@ extension FavoriteViewController: UICollectionViewDelegate, UICollectionViewData
         if collectionView == mealCollectionView {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: FavoriteMealCollectionViewCell.reuseID, for: indexPath) as! FavoriteMealCollectionViewCell
             let meal = mealsArray[indexPath.item]
-            cell.configure(mealType: meal.type, mealName: meal.title)
+            cell.configure(mealType: "",
+                           mealName: meal.title,
+                           mealImageUrl: nil,
+                           mealTime: "30 dk.")
             return cell
         }
         

@@ -9,6 +9,7 @@ import UIKit
 
 class FavoriteMealCollectionViewCell: UICollectionViewCell {
     static let reuseID = "FavoriteCell"
+    
     //MARK: UI Elements
     private let stackView: UIStackView = {
         let stackView = UIStackView()
@@ -193,9 +194,19 @@ class FavoriteMealCollectionViewCell: UICollectionViewCell {
         }
     }
     
-    func configure(mealType: String, mealName: String) {
+    func configure(mealType: String, mealName: String, mealImageUrl: String?, mealTime: String?) {
         mealTypeLabel.text = mealType
         mealLabel.text = mealName
+        
+        if let urlString = mealImageUrl,
+           let url = URL(string: urlString) {
+            mealImageView.kf.setImage(with: url)
+        }
+        
+        if let mealTime = mealTime {
+            timeLabel.text = mealTime
+        }
+        
         let width = mealType.width(using: mealTypeLabel.font, padding: 11)
         mealTypeView.snp.updateConstraints { make in
             make.width.equalTo(width)

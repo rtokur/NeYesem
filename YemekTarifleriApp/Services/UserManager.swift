@@ -48,12 +48,10 @@ final class UserService: UserServiceProtocol {
             completion(.failure(NSError(domain: "User not logged in", code: 401))); return
         }
         
-        // Firestore’a yazılacak alanlar
         var updates: [String: Any] = [:]
         if let name = name { updates["username"] = name }
         if let phone = phone { updates["phone"] = phone }
         
-        // 🔹 Görsel varsa önce Storage’a yükle
         if let image = image, let data = image.jpegData(compressionQuality: 0.85) {
             let ref = storage.reference().child("users/\(uid)/profile.jpg")
             let meta = StorageMetadata(); meta.contentType = "image/jpeg"
@@ -66,7 +64,6 @@ final class UserService: UserServiceProtocol {
                 }
             }
         } else {
-            // 🔹 Görsel yoksa sadece metin alanlarını güncelle
             commitProfileChanges(uid: uid, updates: updates, photoURL: nil, name: name, completion: completion)
         }
     }
@@ -79,7 +76,6 @@ final class UserService: UserServiceProtocol {
         db.collection("users").document(uid).setData(updates, merge: true) { [weak self] err in
             if let err = err { completion(.failure(err)); return }
             
-            // Auth profile (isteğe bağlı ama güzel)
             if let current = self?.auth.currentUser {
                 let change = current.createProfileChangeRequest()
                 if let name = name { change.displayName = name }

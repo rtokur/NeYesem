@@ -1,0 +1,61 @@
+//
+//  RecipeModel.swift
+//  YemekTarifleriApp
+//
+//  Created by Rumeysa Tokur on 13.08.2025.
+//
+
+import Foundation
+
+struct RecipeSearchResponse: Codable {
+    let results: [Recipe]
+    let totalResults: Int?
+}
+
+struct Recipe: Codable {
+    let id: Int
+    let title: String
+    let image: String?
+    let readyInMinutes: Int?
+    let dishTypes: [String]?
+}
+
+struct RecipeDetail: Codable {
+    let id: Int
+    let title: String
+    let summary: String?
+    let servings: Int?
+    let readyInMinutes: Int?
+    let dishTypes: [String]?
+    let extendedIngredients: [Ingredient]?
+    let analyzedInstructions: [Instruction]?
+    let image: String?
+    let nutrition: NutritionInfo?
+}
+
+struct Ingredient: Codable {
+    let id: Int?
+    let name: String
+    let amount: Double?
+    let unit: String?
+}
+
+struct Instruction: Codable {
+    let name: String
+    let steps: [InstructionStep]
+}
+
+struct InstructionStep: Codable {
+    let number: Int
+    let step: String
+}
+
+struct NutritionInfo: Codable {
+    let nutrients: [Nutrient]
+}
+
+struct Nutrient: Codable {
+    let name: String
+    let amount: Double
+    let unit: String
+}
