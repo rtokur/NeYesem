@@ -6,21 +6,39 @@
 //
 
 import UIKit
+import SwiftUI
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
-
+/*
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         let window = UIWindow(windowScene: windowScene)
-        let loginRegisterViewController = LoginRegisterViewController()
-        let navigationController = UINavigationController(rootViewController: loginRegisterViewController)
+        let loginRegisterViewController = welcome1() //LoginRegisterViewController()
+        let navigationController = UINavigationController(rootViewController: welcome1() /*loginRegisterViewController*/)
         navigationController.setNavigationBarHidden(true, animated: false)
         window.rootViewController = navigationController
         self.window = window
         window.makeKeyAndVisible()
     }
+ */
+    
+    func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
+            guard let windowScene = (scene as? UIWindowScene) else { return }
+            let window = UIWindow(windowScene: windowScene)
+
+            // SwiftUI ekranını UIHostingController ile sarıyoruz
+            let welcomeView = welcome1()
+            let hostingController = UIHostingController(rootView: welcomeView)
+
+            let navigationController = UINavigationController(rootViewController: hostingController)
+            navigationController.setNavigationBarHidden(true, animated: false)
+
+            window.rootViewController = navigationController
+            self.window = window
+            window.makeKeyAndVisible()
+        }
 
     func sceneDidDisconnect(_ scene: UIScene) {
         // Called as the scene is being released by the system.

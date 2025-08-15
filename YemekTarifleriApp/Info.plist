@@ -2,8 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-    <key>GIDClientID</key>
-    <string>$(GID_CLIENT_ID)</string>
+    	<key>GIDClientID</key>
+	<string>190508290417-chjclkaru0bpush9met11evd1q3hiska.apps.googleusercontent.com</string>
     <key>FacebookAppID</key>
     <string>$(FACEBOOK_APP_ID)</string>
     <key>FacebookDisplayName</key>
@@ -17,7 +17,7 @@
 			<string>Google</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>$(GID_CLIENT_ID)</string>
+				<string>com.googleusercontent.apps.190508290417-chjclkaru0bpush9met11evd1q3hiska</string>
                 <string>fb$(FACEBOOK_APP_ID)</string>
 			</array>
 		</dict>

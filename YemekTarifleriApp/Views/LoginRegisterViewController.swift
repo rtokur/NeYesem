@@ -7,6 +7,7 @@
 
 import UIKit
 import SnapKit
+import SwiftUI
 
 class LoginRegisterViewController: UIViewController, UITextFieldDelegate {
     //MARK: - Properties
@@ -544,7 +545,8 @@ class LoginRegisterViewController: UIViewController, UITextFieldDelegate {
     }
     
     private func navigateToHome() {
-        print("Ana ekrana geçiliyor...")
+        let dietSelectionViewController = DietSelectionViewController()
+        navigationController?.pushViewController(dietSelectionViewController, animated: true)
     }
     
     // MARK: - Actions
