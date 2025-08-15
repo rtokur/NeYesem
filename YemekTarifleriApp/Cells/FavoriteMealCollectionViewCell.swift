@@ -42,8 +42,9 @@ class FavoriteMealCollectionViewCell: UICollectionViewCell {
     private lazy var favoriteButton: UIButton = {
         let button = UIButton()
         var configuration = UIButton.Configuration.plain()
-        configuration.image = UIImage(systemName: "heart.fill")
-        configuration.preferredSymbolConfigurationForImage = UIImage.SymbolConfiguration(pointSize: 11)
+        configuration.image = UIImage(systemName: "heart")
+        configuration.preferredSymbolConfigurationForImage = UIImage.SymbolConfiguration(pointSize: 11,
+                                        weight: .bold)
         button.configuration = configuration
         button.tintColor = UIColor.secondaryColor
         return button
@@ -57,8 +58,10 @@ class FavoriteMealCollectionViewCell: UICollectionViewCell {
     }()
     
     private lazy var favoriteImageView: UIImageView = {
-        let configuration = UIImage.SymbolConfiguration(pointSize: 17, weight: .bold)
+        let configuration = UIImage.SymbolConfiguration(pointSize: 11,
+                                                        weight: .bold)
         let imageView = UIImageView(image: UIImage(systemName: "heart", withConfiguration: configuration))
+        imageView.contentMode = .scaleAspectFit
         imageView.tintColor = UIColor.secondaryColor
         return imageView
     }()

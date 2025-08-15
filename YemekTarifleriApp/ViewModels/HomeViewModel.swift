@@ -7,13 +7,33 @@
 import Foundation
 
 final class HomeViewModel {
-    private(set) var recipes: [Recipe] = []
+    private(set) var recommendedRecipes: [Recipe] = []
+    private(set) var searchSuggestions: [Recipe] = []
+    private(set) var recentViewedRecipes: [Recipe] = []
     
     var diet: String?
     var intolerances: [String] = []
     var excludeIngredients: [String] = []
     
-    func fetchRecommendedRecipes(query: String? = nil, completion: @escaping () -> Void) {
+    func fetchRecommendedRecipes(completion: @escaping () -> Void) {
+        SpoonacularService.shared.searchRecipes(
+            query: nil,
+            diet: diet,
+            intolerances: intolerances,
+            excludeIngredients: excludeIngredients
+        ) { [weak self] result in
+            switch result {
+            case .success(let fetchedRecipes):
+                self?.recommendedRecipes = fetchedRecipes
+            case .failure(let error):
+                print("Error fetching recommended:", error)
+                self?.recommendedRecipes = []
+            }
+            completion()
+        }
+    }
+    
+    func fetchSearchSuggestions(query: String, completion: @escaping () -> Void) {
         SpoonacularService.shared.searchRecipes(
             query: query,
             diet: diet,
@@ -22,26 +42,25 @@ final class HomeViewModel {
         ) { [weak self] result in
             switch result {
             case .success(let fetchedRecipes):
-                self?.recipes = fetchedRecipes
+                self?.searchSuggestions = fetchedRecipes
             case .failure(let error):
-                print("Error fetching recipes:", error)
-                self?.recipes = []
+                print("Error fetching suggestions:", error)
+                self?.searchSuggestions = []
             }
             completion()
         }
     }
     
-    func fetchRecipes(query: String, completion: @escaping () -> Void) {
-        SpoonacularService.shared.searchRecipes(query: query) { [weak self] result in
+    func fetchRecentViewed(limit: Int = 20, completion: @escaping () -> Void) {
+        RecentViewService.shared.fetchRecentViews(limit: limit) { [weak self] result in
             switch result {
-            case .success(let fetchedRecipes):
-                self?.recipes = fetchedRecipes
-                completion()
-            case .failure(let error):
-                print("Error fetching recipes:", error)
-                self?.recipes = []
-                completion()
+            case .success(let items):
+                self?.recentViewedRecipes = items
+            case .failure(let err):
+                print("Error fetching recent:", err)
+                self?.recentViewedRecipes = []
             }
+            completion()
         }
     }
 }

@@ -33,6 +33,22 @@ final class RecipeDetailViewModel {
         }
     }
     
+    private func makeMinimalRecipe() -> Recipe? {
+        guard let recipeDetail = recipeDetail else { return nil }
+        return Recipe(
+            id: recipeDetail.id,
+            title: recipeDetail.title,
+            image: recipeDetail.image,
+            readyInMinutes: recipeDetail.readyInMinutes,
+            dishTypes: recipeDetail.dishTypes
+        )
+    }
+    
+    func trackCurrentAsRecent() {
+        guard let recipe = makeMinimalRecipe() else { return }
+        RecentViewService.shared.addOrUpdateRecentView(recipe, completion: nil)
+    }
+    
     var imageUrl: URL? {
         guard let urlString = recipeDetail?.image else { return nil }
         return URL(string: urlString)
@@ -48,20 +64,24 @@ final class RecipeDetailViewModel {
     }
     
     var servingsText: String {
-        "Kaç kişilik: \(recipeDetail?.servings ?? 0)"
+        "\(recipeDetail?.servings ?? 0)"
     }
     
     var timeText: String {
-        "Hazırlama Süresi: \(recipeDetail?.readyInMinutes ?? 0) dk"
+        "\(recipeDetail?.readyInMinutes ?? 0)"
     }
     
     var typeText: String {
-        "Tip: \(recipeDetail?.dishTypes?.joined(separator: ", ") ?? "-")"
+        if let firstType = recipeDetail?.dishTypes?.first {
+            return firstType
+        } else {
+            return "-"
+        }
     }
     
     var caloriesText: String {
         if let cal = recipeDetail?.nutrition?.nutrients.first(where: { $0.name == "Calories" }) {
-            return "Kalori: \(Int(cal.amount)) \(cal.unit)"
+            return "\(Int(cal.amount))"
         }
         return "Kalori bilgisi yok"
     }
@@ -69,7 +89,7 @@ final class RecipeDetailViewModel {
     var ingredientsText: String {
         guard let ingredients = recipeDetail?.extendedIngredients else { return "" }
         return ingredients.map { "- \($0.name) \($0.amount ?? 0) \($0.unit ?? "")" }
-                          .joined(separator: "\n")
+            .joined(separator: "\n")
     }
     
     var instructionsText: String {

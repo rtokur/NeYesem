@@ -27,7 +27,7 @@ final class SpoonacularService {
         var queryItems: [URLQueryItem] = [
             URLQueryItem(name: "apiKey", value: apiKey),
             URLQueryItem(name: "addRecipeInformation", value: "true"),
-            URLQueryItem(name: "number", value: "20")
+            URLQueryItem(name: "number", value: "8")
         ]
         
         if let query = query, !query.isEmpty {

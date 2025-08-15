@@ -34,7 +34,8 @@ class FavoriteViewController: UIViewController, UITextFieldDelegate {
         ("Çilekli Salata", "Salata"),
         ("Sebzeli Krep", "Kahvaltı")
     ]
-    private var selectedIndexPath: IndexPath = IndexPath(item: 0, section: 0)
+    private var selectedIndexPath: IndexPath = IndexPath(item: 0,
+                                                         section: 0)
     
     //MARK: UI Elements
     private lazy var stackView: UIStackView = {
@@ -110,13 +111,17 @@ class FavoriteViewController: UIViewController, UITextFieldDelegate {
         layout.scrollDirection = .horizontal
         layout.minimumInteritemSpacing = 7
         layout.minimumLineSpacing = 7
-        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        let collectionView = UICollectionView(frame: .zero,
+                                              collectionViewLayout: layout)
         collectionView.register(MealTypeCollectionViewCell.self, forCellWithReuseIdentifier: MealTypeCollectionViewCell.reuseID)
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.showsHorizontalScrollIndicator = false
         collectionView.backgroundColor = .clear
-        collectionView.contentInset = UIEdgeInsets(top: 0, left: 15, bottom: 0, right: 15)
+        collectionView.contentInset = UIEdgeInsets(top: 0,
+                                                   left: 15,
+                                                   bottom: 0,
+                                                   right: 15)
         return collectionView
     }()
     

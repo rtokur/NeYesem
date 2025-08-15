@@ -24,7 +24,8 @@ class HomeViewController: UIViewController{
                                                 "Marine": "",
                                                 "Parmak Yiyecek": "",
                                                 "Atıştırmalık": ""]
-    
+    private var selectedSuggestionIndex: Int?
+
     //MARK: UI Elements
     private lazy var scrollView: UIScrollView = {
         let scrollView = UIScrollView()
@@ -213,12 +214,42 @@ class HomeViewController: UIViewController{
         return button
     }()
     
+    private lazy var lastViewedCollectionView: UICollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .horizontal
+        layout.itemSize = CGSize(width: 153,
+                                 height: 216)
+        let collectionView = UICollectionView(frame: .zero,
+                                  collectionViewLayout: layout)
+        collectionView.showsHorizontalScrollIndicator = false
+        collectionView.dataSource = self
+        collectionView.delegate = self
+        collectionView.register(FavoriteMealCollectionViewCell.self,
+                    forCellWithReuseIdentifier: FavoriteMealCollectionViewCell.reuseID)
+        collectionView.contentInset = UIEdgeInsets(top: 0,
+                                       left: 15,
+                                       bottom: 0,
+                                       right: 15)
+        return collectionView
+    }()
+    
+    private let suggestionView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .white
+        view.layer.cornerRadius = 10
+        view.layer.shadowColor = UIColor.black.cgColor
+        view.layer.shadowOpacity = 0.1
+        view.layer.shadowOffset = CGSize(width: 0,
+                                         height: 2)
+        view.layer.shadowRadius = 4
+        view.layer.masksToBounds = false
+        view.isHidden = true
+        return view
+    }()
+    
     private let suggestionStackView: UIStackView = {
         let stack = UIStackView()
         stack.axis = .vertical
-        stack.spacing = 8
-        stack.isHidden = true
-        stack.backgroundColor = .white
         return stack
     }()
     
@@ -231,6 +262,16 @@ class HomeViewController: UIViewController{
         viewModel.intolerances = ["gluten", "dairy"]
         viewModel.excludeIngredients = ["peanut"]
         fetchInitialData()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        resetSuggestionHighlights()
+        viewModel.fetchRecentViewed { [weak self] in
+            DispatchQueue.main.async {
+                self?.lastViewedCollectionView.reloadData()
+            }
+        }
     }
     
     //MARK: - Setup Methods
@@ -259,7 +300,10 @@ class HomeViewController: UIViewController{
         stackView.addArrangedSubview(hStackView2)
         hStackView2.addArrangedSubview(lastViewedLabel)
         hStackView2.addArrangedSubview(seeAllButton2)
-        view.addSubview(suggestionStackView)
+        stackView.addArrangedSubview(lastViewedCollectionView)
+        stackView.setCustomSpacing(10, after: hStackView2)
+        view.addSubview(suggestionView)
+        suggestionView.addSubview(suggestionStackView)
         self.hideKeyboardOnTap()
     }
     
@@ -319,34 +363,51 @@ class HomeViewController: UIViewController{
         seeAllButton2.snp.makeConstraints { make in
             make.width.equalTo(70)
         }
-        suggestionStackView.snp.makeConstraints { make in
+        lastViewedCollectionView.snp.makeConstraints { make in
+            make.height.equalTo(216)
+            make.width.equalToSuperview()
+        }
+        suggestionView.snp.makeConstraints { make in
             make.top.equalTo(customSearchBarView.snp.bottom).offset(8)
             make.leading.trailing.equalToSuperview().inset(15)
+        }
+        suggestionStackView.snp.makeConstraints { make in
+            make.top.bottom.equalToSuperview().inset(15)
+            make.width.equalToSuperview()
         }
     }
     
     //MARK: - Functions
     private func updateSuggestions() {
         suggestionStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
-        
-        guard !viewModel.recipes.isEmpty else {
-            suggestionStackView.isHidden = true
+
+        guard !viewModel.searchSuggestions.isEmpty else {
+            suggestionView.isHidden = true
             return
         }
-        
-        suggestionStackView.isHidden = false
-        
-        for recipe in viewModel.recipes {
+        suggestionView.isHidden = false
+
+        for (index, recipe) in viewModel.searchSuggestions.enumerated() {
+            let container = UIView()
+            container.tag = index
+            container.layer.cornerRadius = 8
+            container.layer.masksToBounds = true
+            container.backgroundColor = (index == selectedSuggestionIndex) ? UIColor.Text50 : .white
+
             let label = UILabel()
             label.text = recipe.title
-            label.font = .systemFont(ofSize: 14)
-            label.textColor = .darkGray
-            label.isUserInteractionEnabled = true
-            
+            label.font = .dmSansRegular(14)
+            label.textColor = UIColor.textColor900
+            label.isUserInteractionEnabled = false
+
             let tap = UITapGestureRecognizer(target: self, action: #selector(suggestionTapped(_:)))
-            label.addGestureRecognizer(tap)
-            
-            suggestionStackView.addArrangedSubview(label)
+            container.addGestureRecognizer(tap)
+
+            suggestionStackView.addArrangedSubview(container)
+            container.addSubview(label)
+            label.snp.makeConstraints { make in
+                make.edges.equalToSuperview().inset(15)
+            }
         }
     }
     
@@ -356,12 +417,24 @@ class HomeViewController: UIViewController{
                 self?.suggestionCollectionView.reloadData()
             }
         }
+        viewModel.fetchRecentViewed { [weak self] in
+            DispatchQueue.main.async {
+                self?.lastViewedCollectionView.reloadData()
+            }
+        }
     }
     
+    private func resetSuggestionHighlights() {
+        suggestionStackView.arrangedSubviews.forEach { row in
+            row.backgroundColor = .white
+        }
+        selectedSuggestionIndex = nil
+    }
+
     //MARK: - Actions
     @objc private func searchTextChanged(_ textField: UITextField) {
         guard let query = textField.text, query.count >= 2 else {
-            suggestionStackView.isHidden = true
+            suggestionView.isHidden = true
             return
         }
         
@@ -370,7 +443,7 @@ class HomeViewController: UIViewController{
     }
     
     @objc private func performSearch(_ query: String) {
-        viewModel.fetchRecommendedRecipes(query: query) { [weak self] in
+        viewModel.fetchSearchSuggestions(query: query) { [weak self] in
             DispatchQueue.main.async {
                 self?.updateSuggestions()
             }
@@ -378,11 +451,18 @@ class HomeViewController: UIViewController{
     }
     
     @objc private func suggestionTapped(_ gesture: UITapGestureRecognizer) {
-        guard let label = gesture.view as? UILabel else { return }
-        searchTextField.text = label.text
-        suggestionStackView.isHidden = true
-        
-        print("Selected recipe:", label.text ?? "")
+        guard let container = gesture.view else { return }
+        selectedSuggestionIndex = container.tag
+
+        resetSuggestionHighlights()
+        container.backgroundColor = UIColor.Text50
+
+        let index = container.tag
+        let recipe = viewModel.searchSuggestions[index]
+        let recipeDetailViewModel = RecipeDetailViewModel(recipeId: recipe.id)
+        let mealDetailViewController = MealDetailViewController(viewModel: recipeDetailViewModel)
+        navigationController?.pushViewController(mealDetailViewController,
+                                                 animated: true)
     }
     
     @objc func navigateToNotification() {
@@ -398,8 +478,10 @@ extension HomeViewController: UITextFieldDelegate,
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if collectionView == popularCollectionView {
             return categories.count
+        } else if collectionView == lastViewedCollectionView {
+            return viewModel.recentViewedRecipes.count
         }
-        return viewModel.recipes.count
+        return viewModel.recommendedRecipes.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -410,9 +492,17 @@ extension HomeViewController: UITextFieldDelegate,
             cell.configure(mealPhotoName: categoryImage ?? "",
                            mealName: categoryName)
             return cell
+        } else if collectionView == lastViewedCollectionView {
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: FavoriteMealCollectionViewCell.reuseID, for: indexPath) as! FavoriteMealCollectionViewCell
+            let recipe = viewModel.recentViewedRecipes[indexPath.row]
+            cell.configure(mealType: recipe.dishTypes?[0] ?? "",
+                           mealName: recipe.title,
+                           mealImageUrl: recipe.image,
+                           mealTime: "\(recipe.readyInMinutes ?? 0) dk.")
+            return cell
         }
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: FavoriteMealCollectionViewCell.reuseID, for: indexPath) as! FavoriteMealCollectionViewCell
-        let recipe = viewModel.recipes[indexPath.row]
+        let recipe = viewModel.recommendedRecipes[indexPath.row]
         cell.configure(mealType: recipe.dishTypes?[0] ?? "",
                        mealName: recipe.title,
                        mealImageUrl: recipe.image,
@@ -422,7 +512,13 @@ extension HomeViewController: UITextFieldDelegate,
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if collectionView == suggestionCollectionView {
-            let selectedRecipe = viewModel.recipes[indexPath.item]
+            let selectedRecipe = viewModel.recommendedRecipes[indexPath.item]
+            let recipeDetailViewModel = RecipeDetailViewModel(recipeId: selectedRecipe.id)
+            let detailViewController = MealDetailViewController(viewModel: recipeDetailViewModel)
+            navigationController?.pushViewController(detailViewController,
+                                                     animated: true)
+        } else if collectionView == lastViewedCollectionView {
+            let selectedRecipe = viewModel.recentViewedRecipes[indexPath.item]
             let recipeDetailViewModel = RecipeDetailViewModel(recipeId: selectedRecipe.id)
             let detailViewController = MealDetailViewController(viewModel: recipeDetailViewModel)
             navigationController?.pushViewController(detailViewController,
@@ -438,6 +534,6 @@ extension HomeViewController: UITextFieldDelegate,
     func textFieldDidEndEditing(_ textField: UITextField) {
         customSearchBarView.layer.borderColor = UIColor.textColor300.cgColor
         iconImageView.tintColor = UIColor.textColor300
-        suggestionStackView.isHidden = true
+        suggestionView.isHidden = true
     }
 }
