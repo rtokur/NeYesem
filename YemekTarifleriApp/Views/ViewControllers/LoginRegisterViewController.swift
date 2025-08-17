@@ -7,6 +7,7 @@
 
 import UIKit
 import SnapKit
+import SwiftUI
 
 class LoginRegisterViewController: UIViewController, UITextFieldDelegate {
     //MARK: - Properties
@@ -538,8 +539,8 @@ class LoginRegisterViewController: UIViewController, UITextFieldDelegate {
     }
     
     private func navigateToHome() {
-        let mainTabBarController = MainTabBarController()
-        navigationController?.pushViewController(mainTabBarController, animated: true)
+        let dietSelectionViewController = DietSelectionViewController()
+        navigationController?.pushViewController(dietSelectionViewController, animated: true)
     }
     
     // MARK: - Actions
