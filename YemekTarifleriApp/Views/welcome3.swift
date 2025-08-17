@@ -54,7 +54,7 @@ struct welcome3: View {
                 HStack {
                     Text("Zaten hesabın var mı?")
                         .foregroundColor(.gray)
-                    Button("devam yap") {
+                    Button("Giriş yap") {
                         print("devam Yap butonuna tıklandı")
                         // Login ekranına yönlendirme yapılabilir
                         self.showLogin = true

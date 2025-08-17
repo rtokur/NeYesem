@@ -31,7 +31,10 @@ struct DietSelectionView1: View {
             VStack(alignment: .leading, spacing: 20) {
                 HStack {
                     Button(action: {
-                        // Geri gitme aksiyonu
+                        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                           let nav = windowScene.windows.first?.rootViewController as? UINavigationController {
+                            nav.popViewController(animated: true)
+                        }
                     }) {
                         Image(systemName: "chevron.left")
                             .font(.title3)
@@ -94,7 +97,14 @@ struct DietSelectionView1: View {
                 
                 HStack {
                     Button("Geç") {
-                        // Geç butonu aksiyonu
+                        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                           let window = windowScene.windows.first {
+                            
+                            let mainTabBar = MainTabBarController()
+                            
+                            window.rootViewController = mainTabBar
+                            window.makeKeyAndVisible()
+                        }
                     }
                     .foregroundColor(.gray)
                     

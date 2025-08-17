@@ -12,6 +12,7 @@ struct DietSelectionView2: View {
     @State private var allergyItems: [String] = ["Domates", "Peynir", "Yumurta", "Fıstık", "Kakao", "Biber"]
     @State private var selectedItems: Set<String> = []
     @State private var searchText: String = ""
+    @Environment(\.presentationMode) var presentationMode
     
     let columns = [
         GridItem(.adaptive(minimum: 100), spacing: 12)
@@ -22,7 +23,7 @@ struct DietSelectionView2: View {
             VStack(alignment: .leading, spacing: 20) {
                 HStack {
                     Button(action: {
-                        // Geri gitme aksiyonu
+                        presentationMode.wrappedValue.dismiss()
                     }) {
                         Image(systemName: "chevron.left")
                             .font(.title3)
@@ -96,7 +97,14 @@ struct DietSelectionView2: View {
                 // Alt butonlar
                 HStack {
                     Button("Geç") {
-                        // Geç aksiyonu
+                        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                           let window = windowScene.windows.first {
+                            
+                            let mainTabBar = MainTabBarController()
+                            
+                            window.rootViewController = mainTabBar
+                            window.makeKeyAndVisible()
+                        }
                     }
                     .foregroundColor(.gray)
                     

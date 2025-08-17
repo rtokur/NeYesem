@@ -539,10 +539,14 @@ class LoginRegisterViewController: UIViewController, UITextFieldDelegate {
     }
     
     private func navigateToHome() {
+        let mainTabBarController = MainTabBarController()
+        navigationController?.pushViewController(mainTabBarController, animated: true)
+    }
+    
+    private func navigateToSelection() {
         let dietSelectionViewController = DietSelectionViewController()
         navigationController?.pushViewController(dietSelectionViewController, animated: true)
     }
-    
     // MARK: - Actions
     @objc func segmentedControlClicked(_ sender: UISegmentedControl) {
         loginView.isHidden = sender.selectedSegmentIndex == 1
@@ -605,7 +609,7 @@ class LoginRegisterViewController: UIViewController, UITextFieldDelegate {
             if let error = error {
                 self?.showAlert(message: error)
             } else {
-                self?.navigateToHome()
+                self?.navigateToSelection()
             }
         }
     }
@@ -621,7 +625,7 @@ class LoginRegisterViewController: UIViewController, UITextFieldDelegate {
             if let error = error {
                 self?.showAlert(message: error)
             } else {
-                self?.navigateToHome()
+                self?.navigateToSelection()
             }
         }
     }
@@ -631,7 +635,7 @@ class LoginRegisterViewController: UIViewController, UITextFieldDelegate {
             if let error = error {
                 self?.showAlert(message: error)
             } else {
-                self?.navigateToHome()
+                self?.navigateToSelection()
             }
         }
     }
