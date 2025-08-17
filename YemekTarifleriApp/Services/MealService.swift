@@ -10,7 +10,7 @@ final class SpoonacularService {
     static let shared = SpoonacularService()
     private init() {}
     
-    private let apiKey = "9e8a593aff3a4cacaa86b6bbc0347da9"
+    private let apiKey = "6bceec2bcf254063805945f51e8dedb6"
     
     func searchRecipes(query: String, completion: @escaping (Result<[Recipe], Error>) -> Void) {
         searchRecipes(query: query, diet: nil, intolerances: [], excludeIngredients: [], completion: completion)

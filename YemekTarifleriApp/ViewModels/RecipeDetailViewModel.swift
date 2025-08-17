@@ -12,13 +12,27 @@ final class RecipeDetailViewModel {
     private let recipeId: Int
     private(set) var recipeDetail: RecipeDetail?
     
+    var onLikeCountChanged: ((Int) -> Void)?
     var onDataFetched: (() -> Void)?
     var onError: ((Error) -> Void)?
+    
+    var isFavorited: Bool = false {
+        didSet {
+            onFavoriteStatusChanged?(isFavorited)
+        }
+    }
+    
+    var likeCount: Int = 0 {
+         didSet { onLikeCountChanged?(likeCount) }
+     }
+    
+    var onFavoriteStatusChanged: ((Bool) -> Void)?
     
     init(recipeId: Int) {
         self.recipeId = recipeId
     }
     
+    // MARK: - Fetch Recipe Detail
     func fetchRecipeDetail() {
         SpoonacularService.shared.getRecipeDetail(recipeId: recipeId) { [weak self] result in
             DispatchQueue.main.async {
@@ -26,6 +40,8 @@ final class RecipeDetailViewModel {
                 case .success(let detail):
                     self?.recipeDetail = detail
                     self?.onDataFetched?()
+                    self?.updateFavoriteStatus()
+                    self?.fetchLikeCount()
                 case .failure(let error):
                     self?.onError?(error)
                 }
@@ -33,7 +49,8 @@ final class RecipeDetailViewModel {
         }
     }
     
-    private func makeMinimalRecipe() -> Recipe? {
+    // MARK: - Minimal Recipe (favori için kullanılacak)
+    func makeMinimalRecipe() -> Recipe? {
         guard let recipeDetail = recipeDetail else { return nil }
         return Recipe(
             id: recipeDetail.id,
@@ -44,11 +61,47 @@ final class RecipeDetailViewModel {
         )
     }
     
+    // MARK: - Favorite Check
+    private func updateFavoriteStatus() {
+        FavoriteService.shared.isFavorite(recipeId: recipeId) { [weak self] isFav in
+            DispatchQueue.main.async {
+                self?.isFavorited = isFav
+            }
+        }
+    }
+    
+    func toggleFavorite() {
+        guard let recipe = makeMinimalRecipe() else { return }
+        
+        FavoriteService.shared.toggleFavorite(recipe: recipe) { [weak self] success in
+            DispatchQueue.main.async {
+                guard let self = self else { return }
+                if success {
+                    self.isFavorited.toggle()
+                    self.fetchLikeCount()
+                } else {
+                    self.onError?(NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: "Favori güncellenemedi"]))
+                }
+            }
+        }
+    }
+    
+    // MARK: - Recent Tracking
     func trackCurrentAsRecent() {
         guard let recipe = makeMinimalRecipe() else { return }
         RecentViewService.shared.addOrUpdateRecentView(recipe, completion: nil)
     }
     
+    // MARK: - Like Count
+    func fetchLikeCount() {
+        FavoriteService.shared.getLikeCount(recipeId: recipeId) { [weak self] count in
+            DispatchQueue.main.async {
+                self?.likeCount = count
+            }
+        }
+    }
+    
+    // MARK: - Computed Properties for UI
     var imageUrl: URL? {
         guard let urlString = recipeDetail?.image else { return nil }
         return URL(string: urlString)
@@ -72,11 +125,7 @@ final class RecipeDetailViewModel {
     }
     
     var typeText: String {
-        if let firstType = recipeDetail?.dishTypes?.first {
-            return firstType
-        } else {
-            return "-"
-        }
+        recipeDetail?.dishTypes?.first ?? "-"
     }
     
     var caloriesText: String {
@@ -86,14 +135,18 @@ final class RecipeDetailViewModel {
         return "Kalori bilgisi yok"
     }
     
-    var ingredientsText: String {
-        guard let ingredients = recipeDetail?.extendedIngredients else { return "" }
-        return ingredients.map { "- \($0.name) \($0.amount ?? 0) \($0.unit ?? "")" }
-            .joined(separator: "\n")
+    var ingredientsText: [String] {
+        guard let ingredients = recipeDetail?.extendedIngredients else { return [] }
+        return ingredients.map { ing in
+            let name = ing.name.capitalized
+            let amt = (ing.amount ?? 0)
+            let unit = ing.unit?.isEmpty == false ? " \(ing.unit!)" : ""
+            return amt > 0 ? "\(Int(amt))\(unit) \(name)" : name
+        }
     }
     
-    var instructionsText: String {
-        guard let steps = recipeDetail?.analyzedInstructions?.first?.steps else { return "" }
-        return steps.map { "\($0.number). \($0.step)" }.joined(separator: "\n")
+    var instructionItems: [InstructionStep] {
+        guard let steps = recipeDetail?.analyzedInstructions?.first?.steps else { return [] }
+        return steps.map { InstructionStep(number: $0.number, step: $0.step) }
     }
 }

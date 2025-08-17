@@ -8,7 +8,15 @@
 import UIKit
 
 class FavoriteMealCollectionViewCell: UICollectionViewCell {
+    //MARK: Properties
     static let reuseID = "FavoriteCell"
+    var onFavoriteButtonTapped: (() -> Void)?
+    
+    var isFavorited: Bool = false {
+        didSet {
+            updateFavoriteIcon()
+        }
+    }
     
     //MARK: UI Elements
     private let stackView: UIStackView = {
@@ -39,7 +47,7 @@ class FavoriteMealCollectionViewCell: UICollectionViewCell {
         return view
     }()
     
-    private lazy var favoriteButton: UIButton = {
+    lazy var favoriteButton: UIButton = {
         let button = UIButton()
         var configuration = UIButton.Configuration.plain()
         configuration.image = UIImage(systemName: "heart")
@@ -47,6 +55,9 @@ class FavoriteMealCollectionViewCell: UICollectionViewCell {
                                         weight: .bold)
         button.configuration = configuration
         button.tintColor = UIColor.secondaryColor
+        button.addTarget(self,
+                         action: #selector(favoriteButtonAction),
+                         for: .touchUpInside)
         return button
     }()
     
@@ -60,7 +71,8 @@ class FavoriteMealCollectionViewCell: UICollectionViewCell {
     private lazy var favoriteImageView: UIImageView = {
         let configuration = UIImage.SymbolConfiguration(pointSize: 11,
                                                         weight: .bold)
-        let imageView = UIImageView(image: UIImage(systemName: "heart", withConfiguration: configuration))
+        let imageView = UIImageView(image: UIImage(systemName: "heart",
+                                                   withConfiguration: configuration))
         imageView.contentMode = .scaleAspectFit
         imageView.tintColor = UIColor.secondaryColor
         return imageView
@@ -68,7 +80,6 @@ class FavoriteMealCollectionViewCell: UICollectionViewCell {
     
     private lazy var favoriteLabel: UILabel = {
         let label = UILabel()
-        label.text = "78 kişi beğendi"
         label.textColor = UIColor.textColor300
         label.font = UIFont.dmSansRegular(11)
         return label
@@ -197,9 +208,11 @@ class FavoriteMealCollectionViewCell: UICollectionViewCell {
         }
     }
     
-    func configure(mealType: String, mealName: String, mealImageUrl: String?, mealTime: String?) {
+    func configure(mealType: String, mealName: String, mealImageUrl: String?, mealTime: String?, isFavorited: Bool, likeCount: Int) {
         mealTypeLabel.text = mealType
         mealLabel.text = mealName
+        favoriteLabel.text = "\(likeCount) kişi beğendi"
+        self.isFavorited = isFavorited
         
         if let urlString = mealImageUrl,
            let url = URL(string: urlString) {
@@ -207,12 +220,22 @@ class FavoriteMealCollectionViewCell: UICollectionViewCell {
         }
         
         if let mealTime = mealTime {
-            timeLabel.text = mealTime
+            timeLabel.text = "\(mealTime)"
         }
         
         let width = mealType.width(using: mealTypeLabel.font, padding: 11)
         mealTypeView.snp.updateConstraints { make in
             make.width.equalTo(width)
         }
+    }
+    
+    private func updateFavoriteIcon() {
+        let imageName = isFavorited ? "heart.fill" : "heart"
+        favoriteButton.setImage(UIImage(systemName: imageName), for: .normal)
+    }
+    
+    @objc private func favoriteButtonAction() {
+        isFavorited.toggle()
+        onFavoriteButtonTapped?()
     }
 }
