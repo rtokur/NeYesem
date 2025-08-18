@@ -17,6 +17,19 @@ struct welcome3: View {
                 
                 Image("eat") // Resmin adı Assets'e eklediğin isim olmalı
                 
+                HStack(spacing: 8) {
+                    Circle()
+                        .fill(Color.gray.opacity(0.4))
+                        .frame(width: 16, height: 16)
+                    Circle()
+                        .fill(Color.gray.opacity(0.4))
+                        .frame(width: 16, height: 16)
+                    Circle()
+                        .fill(Color.blue)
+                        .frame(width: 16, height: 16)
+                }
+                .padding(.bottom, 20)
+                
                 Text("Hoşgeldin!")
                     .font(.largeTitle)
                     .fontWeight(.bold)
@@ -30,6 +43,7 @@ struct welcome3: View {
                     .font(.subheadline)
                     .foregroundColor(.gray)
                     .multilineTextAlignment(.leading)
+                    .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.horizontal)
                     .padding(.top, 1)
                 
@@ -49,7 +63,7 @@ struct welcome3: View {
                         .cornerRadius(10)
                         .padding(.horizontal, 20)
                 }
-                
+                .padding(.bottom, 20)
                 
                 HStack {
                     Text("Zaten hesabın var mı?")

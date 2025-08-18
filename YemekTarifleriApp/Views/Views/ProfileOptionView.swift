@@ -13,7 +13,7 @@ class ProfileOptionView: UIView {
     private let iconImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFit
-        imageView.tintColor = UIColor.secondaryColor
+        imageView.tintColor = UIColor.primaryColor
         return imageView
     }()
     
@@ -27,7 +27,7 @@ class ProfileOptionView: UIView {
     
     private let arrowImageView: UIImageView = {
         let imageView = UIImageView()
-        let configuration = UIImage.SymbolConfiguration(pointSize: 12)
+        let configuration = UIImage.SymbolConfiguration(pointSize: 10)
         imageView.image = UIImage(systemName: "chevron.right")?.withConfiguration(configuration)
         imageView.contentMode = .scaleAspectFit
         imageView.tintColor = UIColor.textColor900
@@ -51,14 +51,17 @@ class ProfileOptionView: UIView {
         let stack = UIStackView(arrangedSubviews: [iconImageView, titleLabel, arrowImageView])
         stack.axis = .horizontal
         stack.spacing = 10
+        self.layer.cornerRadius = 10
+        self.layer.borderColor = UIColor.Text50.cgColor
+        self.layer.borderWidth = 1
         addSubview(stack)
         
         self.snp.makeConstraints { make in
-            make.height.equalTo(36)
+            make.height.equalTo(44)
         }
         
         stack.snp.makeConstraints { make in
-            make.edges.equalToSuperview().inset(4)
+            make.edges.equalToSuperview().inset(8)
         }
         
         iconImageView.snp.makeConstraints { make in

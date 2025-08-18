@@ -124,12 +124,27 @@ class HomeViewController: UIViewController{
         return textField
     }()
     
+    private lazy var hStackView3: UIStackView = {
+        let stackView = UIStackView()
+        stackView.axis = .horizontal
+        return stackView
+    }()
+    
     private lazy var popularLabel: UILabel = {
         let label = UILabel()
         label.text = "Popüler Kategoriler"
         label.font = .dmSansSemiBold(14)
         label.textColor = UIColor.Text950
         return label
+    }()
+    
+    private lazy var seeAllButton3: UIButton = {
+        let button = UIButton(type: .system)
+        button.setTitle("Tümünü gör",
+                        for: .normal)
+        button.titleLabel?.font = .dmSansSemiBold(12)
+        button.tintColor = .secondaryColor
+        return button
     }()
     
     private lazy var popularCollectionView: UICollectionView = {
@@ -286,8 +301,10 @@ class HomeViewController: UIViewController{
         searchBarStackView.addArrangedSubview(iconImageView)
         searchBarStackView.addArrangedSubview(searchTextField)
         searchTextField.delegate = self
-        stackView.addArrangedSubview(popularLabel)
-        stackView.setCustomSpacing(10, after: popularLabel)
+        stackView.addArrangedSubview(hStackView3)
+        hStackView3.addArrangedSubview(popularLabel)
+        hStackView3.addArrangedSubview(seeAllButton3)
+        stackView.setCustomSpacing(10, after: hStackView3)
         stackView.addArrangedSubview(popularCollectionView)
         stackView.addArrangedSubview(hStackView)
         hStackView.addArrangedSubview(suggestionLabel)
@@ -334,8 +351,12 @@ class HomeViewController: UIViewController{
         searchTextField.snp.makeConstraints { make in
             make.height.equalToSuperview()
         }
-        popularLabel.snp.makeConstraints { make in
-            make.leading.trailing.equalToSuperview().inset(15)
+        hStackView3.snp.makeConstraints { make in
+            make.width.equalToSuperview().inset(15)
+            make.height.equalTo(20)
+        }
+        seeAllButton3.snp.makeConstraints { make in
+            make.width.equalTo(70)
         }
         popularCollectionView.snp.makeConstraints { make in
             make.height.equalTo(105)

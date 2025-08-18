@@ -17,10 +17,11 @@ struct DietSelectionView1: View {
     
     let options: [DietOption] = [
         DietOption(title: "Klasik", imageName: "klasik"),
-        DietOption(title: "Şekersiz", imageName: "sekersiz"),
+        DietOption(title: "Pesketaryen", imageName: "pescetarian"),
         DietOption(title: "Vejeteryan", imageName: "vejeteryan"),
         DietOption(title: "Vegan", imageName: "vegan"),
-        DietOption(title: "Ketojenik", imageName: "ketojenik")
+        DietOption(title: "Ketojenik", imageName: "ketojenik"),
+        DietOption(title: "Glutensiz", imageName: "glutenfree")
     ]
     
     @State private var selectedOption: UUID?
@@ -36,7 +37,7 @@ struct DietSelectionView1: View {
                             nav.popViewController(animated: true)
                         }
                     }) {
-                        Image(systemName: "chevron.left")
+                        Image(systemName: "arrow.backward")
                             .font(.title3)
                             .foregroundColor(.black)
                     }
@@ -51,6 +52,7 @@ struct DietSelectionView1: View {
                         .foregroundColor(.gray)
                 }
                 .padding(.horizontal)
+                .padding(.bottom, 20)
                 
                 Text("Beslenme Tarzınızı Seçin")
                     .font(.subheadline)
@@ -61,6 +63,7 @@ struct DietSelectionView1: View {
                     .font(.subheadline)
                     .foregroundColor(.gray)
                     .padding(.horizontal)
+                    .padding(.bottom, 20)
                 
                 LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
                     ForEach(options) { option in

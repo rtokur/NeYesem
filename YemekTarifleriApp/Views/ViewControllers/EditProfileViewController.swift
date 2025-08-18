@@ -80,7 +80,7 @@ class EditProfileViewController: UIViewController{
     private lazy var nameLabel: UILabel = {
         let label = UILabel()
         label.textAlignment = .left
-        label.text = "Ad Soyad"
+        label.text = "Ad"
         label.font = UIFont.dmSansRegular(16)
         label.textColor = UIColor.textColor800
         return label
@@ -88,39 +88,22 @@ class EditProfileViewController: UIViewController{
 
     private lazy var nameTextField: UITextField = {
         let textField = UITextField()
-        textField.applyDefaultStyle(placeholder: "Ad Soyad")
+        textField.applyDefaultStyle(placeholder: "Ad")
         return textField
     }()
 
-    private lazy var emailLabel: UILabel = {
+    private lazy var surnameLabel: UILabel = {
         let label = UILabel()
-        label.text = "E-posta"
+        label.textAlignment = .left
+        label.text = "Soyad"
         label.font = UIFont.dmSansRegular(16)
         label.textColor = UIColor.textColor800
-        label.textAlignment = .left
         return label
     }()
 
-    private lazy var emailTextField: UITextField = {
+    private lazy var surnameTextField: UITextField = {
         let textField = UITextField()
-        textField.keyboardType = .emailAddress
-        textField.applyDefaultStyle(placeholder: "ornek@hotmail.com")
-        return textField
-    }()
-    
-    private lazy var passwordLabel: UILabel = {
-        let label = UILabel()
-        label.text = "Şifre"
-        label.font = UIFont.dmSansRegular(16)
-        label.textColor = UIColor.textColor800
-        label.textAlignment = .left
-        return label
-    }()
-
-    private lazy var passwordTextField: UITextField = {
-        let textField = UITextField()
-        textField.isSecureTextEntry = true
-        textField.applyDefaultStyle(placeholder: "***********")
+        textField.applyDefaultStyle(placeholder: "Soyad")
         return textField
     }()
     
@@ -167,7 +150,6 @@ class EditProfileViewController: UIViewController{
         setupDelegates()
         setupReturnKeys()
         setupKeyboardObservers()
-        setupPasswordTextField()
         
         bindViewModel()
         viewModel.load()
@@ -183,10 +165,8 @@ class EditProfileViewController: UIViewController{
         stackView.addArrangedSubview(editFormStackView)
         editFormStackView.addArrangedSubview(nameLabel)
         editFormStackView.addArrangedSubview(nameTextField)
-        editFormStackView.addArrangedSubview(emailLabel)
-        editFormStackView.addArrangedSubview(emailTextField)
-        editFormStackView.addArrangedSubview(passwordLabel)
-        editFormStackView.addArrangedSubview(passwordTextField)
+        editFormStackView.addArrangedSubview(surnameLabel)
+        editFormStackView.addArrangedSubview(surnameTextField)
         editFormStackView.addArrangedSubview(phoneLabel)
         editFormStackView.addArrangedSubview(phoneTextField)
         stackView.addArrangedSubview(saveButton)
@@ -227,11 +207,7 @@ class EditProfileViewController: UIViewController{
             make.height.equalTo(50)
             make.width.equalToSuperview()
         }
-        emailTextField.snp.makeConstraints { make in
-            make.height.equalTo(50)
-            make.width.equalToSuperview()
-        }
-        passwordTextField.snp.makeConstraints { make in
+        surnameTextField.snp.makeConstraints { make in
             make.height.equalTo(50)
             make.width.equalToSuperview()
         }
@@ -247,15 +223,13 @@ class EditProfileViewController: UIViewController{
     
     private func setupDelegates(){
         nameTextField.delegate = self
-        emailTextField.delegate = self
-        passwordTextField.delegate = self
+        surnameTextField.delegate = self
         phoneTextField.delegate = self
     }
     
     private func setupReturnKeys() {
         nameTextField.returnKeyType = .next
-        emailTextField.returnKeyType = .next
-        passwordTextField.returnKeyType = .next
+        surnameTextField.returnKeyType = .next
         phoneTextField.returnKeyType = .done
     }
     
@@ -271,17 +245,12 @@ class EditProfileViewController: UIViewController{
                                                object: nil)
     }
     
-    private func setupPasswordTextField() {
-        addPasswordToggleButton(to: passwordTextField)
-    }
-    
     private func bindViewModel() {
         viewModel.onLoaded = { [weak self] user in
             DispatchQueue.main.async {
                 self?.nameTextField.text = user.displayName ?? ""
-                self?.emailTextField.text = user.email ?? ""
+                self?.surnameTextField.text = user.displayName ?? ""
                 self?.phoneTextField.text = user.phone ?? ""
-                self?.passwordTextField.text = ""
                 if let url = user.photoURL,
                    let Url = URL(string: url) {
                     self?.profileImageView.kf.setImage(with: Url)
@@ -445,10 +414,8 @@ extension EditProfileViewController: UITextFieldDelegate  {
         switch textField {
             
         case nameTextField:
-            emailTextField.becomeFirstResponder()
-        case emailTextField:
-            passwordTextField.becomeFirstResponder()
-        case passwordTextField:
+            surnameTextField.becomeFirstResponder()
+        case surnameTextField:
             phoneTextField.becomeFirstResponder()
         case phoneTextField:
             textField.resignFirstResponder()

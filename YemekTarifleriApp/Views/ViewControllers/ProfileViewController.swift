@@ -83,10 +83,10 @@ class ProfileViewController: UIViewController {
     
     private let preferenceView: UIView = {
         let view = UIView()
-        view.backgroundColor = UIColor.Text50
+        view.backgroundColor = .clear
         view.layer.cornerRadius = 20
-        view.layer.borderColor = UIColor.Text100.cgColor
-        view.layer.borderWidth = 1
+        view.layer.borderColor = UIColor.Text50.cgColor
+        view.layer.borderWidth = 2
         return view
     }()
     
@@ -109,17 +109,10 @@ class ProfileViewController: UIViewController {
         let button = UIButton()
         var configuration = UIButton.Configuration.filled()
         
-        var attributedTitle = AttributedString("Profili Düzenle")
-        attributedTitle.font = .dmSansSemiBold(11)
-        attributedTitle.foregroundColor = UIColor.white
-        configuration.attributedTitle = attributedTitle
-        
-        let symbolConfiguration = UIImage.SymbolConfiguration(pointSize: 11,
+        let symbolConfiguration = UIImage.SymbolConfiguration(pointSize: 13,
                                                               weight: .bold)
         configuration.image = UIImage(systemName: "square.and.pencil")?.withConfiguration(symbolConfiguration)
         
-        configuration.imagePlacement = .trailing
-        configuration.imagePadding = 3
         configuration.baseForegroundColor = UIColor.white
         configuration.baseBackgroundColor = UIColor.primaryColor
 
@@ -170,8 +163,10 @@ class ProfileViewController: UIViewController {
                                              title: "Alışveriş Listelerim")
         let settings = ProfileOptionView(icon: UIImage(systemName: "gearshape"),
                                          title: "Ayarlar")
-        let language = ProfileOptionView(icon: UIImage(systemName: "globe"),
-                                         title: "Dil Seçenekleri")
+        let password = ProfileOptionView(icon: UIImage(systemName: "lock"),
+                                         title: "Şifre Değiştirme")
+        let email = ProfileOptionView(icon: UIImage(systemName: "envelope"),
+                                         title: "E posta Değiştirme")
         let signOut = ProfileOptionView(icon: UIImage(systemName: "rectangle.portrait.and.arrow.right"),
                                         title: "Çıkış Yap")
 
@@ -185,21 +180,28 @@ class ProfileViewController: UIViewController {
         settings.addGestureRecognizer(tapGestureSettings)
         settings.isUserInteractionEnabled = true
         
+        let tapGesturePassword = UITapGestureRecognizer(target: self,
+                                                        action: #selector(navigateToChangePassword))
+        password.addGestureRecognizer(tapGesturePassword)
+        password.isUserInteractionEnabled = true
+        
+        let tapGestureEmail = UITapGestureRecognizer(target: self,
+                                                        action: #selector(navigateToChangeEmail))
+        email.addGestureRecognizer(tapGestureEmail)
+        email.isUserInteractionEnabled = true
+        
         let stackView = UIStackView(arrangedSubviews: [
-            makeDivider(color: UIColor.Text100),
             shoppingList,
-            makeDivider(color: UIColor.Text100),
             settings,
-            makeDivider(color: UIColor.Text100),
-            language,
-            makeDivider(color: UIColor.Text100),
-            signOut,
-            makeDivider(color: UIColor.Text100)
+            password,
+            email,
+            signOut
         ])
         
         stackView.axis = .vertical
         stackView.alignment = .fill
         stackView.distribution = .fill
+        stackView.spacing = 10
         return stackView
     }()
     
@@ -267,7 +269,7 @@ class ProfileViewController: UIViewController {
             make.width.equalToSuperview()
         }
         preferenceStackView.snp.makeConstraints { make in
-            make.edges.equalToSuperview().inset(10)
+            make.edges.equalToSuperview().inset(15)
         }
         myPreferenceLabel.snp.makeConstraints { make in
             make.width.equalToSuperview()
@@ -282,15 +284,15 @@ class ProfileViewController: UIViewController {
             make.width.equalToSuperview()
         }
         editPreferenceButton.snp.makeConstraints { make in
-            make.top.trailing.equalToSuperview().inset(10)
-            make.height.equalTo(32)
-            make.width.equalTo(120)
+            make.top.trailing.equalToSuperview().inset(15)
+            make.height.equalTo(40)
+            make.width.equalTo(40)
         }
         optionsView.snp.makeConstraints { make in
             make.width.equalToSuperview()
         }
         optionsContainerStackView.snp.makeConstraints { make in
-            make.edges.equalToSuperview().inset(10)
+            make.edges.equalToSuperview()
         }
     }
     
@@ -332,22 +334,6 @@ class ProfileViewController: UIViewController {
         }
     }
     
-    private func makeDivider(length: CGFloat? = nil, color: UIColor) -> UIView {
-        let divider = UIView()
-        divider.backgroundColor = color
-        if let length = length {
-            divider.snp.makeConstraints { make in
-                make.width.equalTo(1)
-                make.height.equalTo(length)
-            }
-        } else {
-            divider.snp.makeConstraints { make in
-                make.height.equalTo(1)
-            }
-        }
-        return divider
-    }
-    
     //MARK: - Actions
     @objc private func favoriteTapped() {
         if let tabBarController = self.tabBarController {
@@ -384,6 +370,18 @@ class ProfileViewController: UIViewController {
     @objc func navigateToNotification() {
         let notificationsViewController = NotificationsViewController()
         navigationController?.pushViewController(notificationsViewController,
+                                                 animated: true)
+    }
+    
+    @objc func navigateToChangePassword() {
+        let changePasswordViewController = ChangePasswordViewController()
+        navigationController?.pushViewController(changePasswordViewController,
+                                                 animated: true)
+    }
+    
+    @objc func navigateToChangeEmail() {
+        let changeEmailViewController = ChangeEmailViewController()
+        navigationController?.pushViewController(changeEmailViewController,
                                                  animated: true)
     }
 }

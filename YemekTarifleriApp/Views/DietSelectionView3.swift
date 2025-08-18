@@ -25,7 +25,7 @@ struct DietSelectionView3: View {
                     Button(action: {
                         presentationMode.wrappedValue.dismiss()
                     }) {
-                        Image(systemName: "chevron.left")
+                        Image(systemName: "arrow.backward")
                             .font(.title3)
                             .foregroundColor(.black)
                     }
@@ -40,7 +40,7 @@ struct DietSelectionView3: View {
                         .foregroundColor(.gray)
                 }
                 .padding(.horizontal)
-                
+                .padding(.bottom, 20)
                 
                 // Başlık
                 Text("Sevmediğiniz ürünleri ekleyin")
@@ -52,6 +52,7 @@ struct DietSelectionView3: View {
                     .font(.subheadline)
                     .foregroundColor(.gray)
                     .padding(.horizontal)
+                    .padding(.bottom, 20)
                 
                 
                 LazyVGrid(columns: columns, spacing: 12) {
