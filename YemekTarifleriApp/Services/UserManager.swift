@@ -13,6 +13,7 @@ protocol UserServiceProtocol {
     func fetchCurrentUser(completion: @escaping (Result<UserModel, Error>) -> Void)
     func updateUserProfile(name: String?, phone: String?, image: UIImage?, completion: @escaping (Result<Void, Error>) -> Void)
     func signOut(completion: @escaping (Result<Void, Error>) -> Void)
+    func saveUserPreferences(diet: String?, allergies: [String], dislikes: [String], completion: @escaping (Result<Void, Error>) -> Void)
 }
 
 final class UserService: UserServiceProtocol {
@@ -86,6 +87,30 @@ final class UserService: UserServiceProtocol {
             }
         }
     }
+    
+    func saveUserPreferences(diet: String?, allergies: [String], dislikes: [String], completion: @escaping (Result<Void, Error>) -> Void) {
+        guard let uid = Auth.auth().currentUser?.uid else {
+            completion(.failure(NSError(domain: "Auth", code: 401, userInfo: [NSLocalizedDescriptionKey: "User not logged in"])))
+            return
+        }
+        let data: [String: Any] = [
+            "diet": diet ?? "",
+            "allergies": allergies,
+            "dislikes": dislikes
+        ]
+        
+        Firestore.firestore()
+            .collection("users")
+            .document(uid)
+            .setData(data, merge: true) { error in
+                if let error = error {
+                    completion(.failure(error))
+                } else {
+                    completion(.success(()))
+                }
+            }
+    }
+
     
     func signOut(completion: @escaping (Result<Void, Error>) -> Void) {
         do {

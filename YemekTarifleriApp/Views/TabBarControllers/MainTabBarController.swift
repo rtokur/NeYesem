@@ -8,7 +8,12 @@
 import UIKit
 
 class MainTabBarController: UITabBarController {
+    var selectedDiet: String?
+    var selectedAllergies: [String] = []
+    var selectedDislikes: [String] = []
     
+    private let viewModel = MainTabBarViewModel()
+
     //MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -22,6 +27,21 @@ class MainTabBarController: UITabBarController {
         (tabBar as? CustomTabBar)?.setCenterButtonAction(target: self, action: #selector(centerButtonTapped))
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        viewModel.savePreferences(
+            diet: selectedDiet,
+            allergies: selectedAllergies,
+            dislikes: selectedDislikes
+        ) { result in
+            switch result {
+            case .success:
+                print("✅ Preferences saved")
+            case .failure(let error):
+                print("❌ Save failed: \(error.localizedDescription)")
+            }
+        }
+    }
     //MARK: - Functions
     private func setupTabs() {
         let homeViewController = HomeViewController()

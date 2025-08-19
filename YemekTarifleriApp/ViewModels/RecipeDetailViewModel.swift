@@ -42,6 +42,7 @@ final class RecipeDetailViewModel {
                     self?.onDataFetched?()
                     self?.updateFavoriteStatus()
                     self?.fetchLikeCount()
+                    self?.trackCurrentAsRecent()
                 case .failure(let error):
                     self?.onError?(error)
                 }
@@ -49,7 +50,7 @@ final class RecipeDetailViewModel {
         }
     }
     
-    // MARK: - Minimal Recipe (favori için kullanılacak)
+    // MARK: - Minimal Recipe
     func makeMinimalRecipe() -> Recipe? {
         guard let recipeDetail = recipeDetail else { return nil }
         return Recipe(

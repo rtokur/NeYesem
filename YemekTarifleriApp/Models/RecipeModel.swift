@@ -59,3 +59,9 @@ struct Nutrient: Codable {
     let amount: Double
     let unit: String
 }
+
+struct RecipeUIModel {
+    let recipe: Recipe
+    var isFavorite: Bool
+    var likeCount: Int
+}

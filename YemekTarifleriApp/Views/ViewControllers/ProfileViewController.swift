@@ -307,6 +307,9 @@ class ProfileViewController: UIViewController {
                    let Url = URL(string: url) {
                     self?.profileImageView.kf.setImage(with: Url)
                 }
+                self?.allergyLabel.text = user.allergies.joined(separator: ", ")
+                self?.dietLabel.text = user.diet
+                self?.dontLikeLabel.text = user.dislikes.joined(separator: ", ")
                 
             }
         }
@@ -357,30 +360,35 @@ class ProfileViewController: UIViewController {
             self?.profileNameLabel.text = updatedUser.displayName
             self?.emailLabel.text = updatedUser.email
         }
+        editProfileViewController.hidesBottomBarWhenPushed = true
         navigationController?.pushViewController(editProfileViewController,
                                                  animated: true)
     }
     
     @objc func navigateToSettings() {
         let settingsViewController = SettingsViewController()
+        settingsViewController.hidesBottomBarWhenPushed = true
         navigationController?.pushViewController(settingsViewController,
                                                  animated: true)
     }
     
     @objc func navigateToNotification() {
         let notificationsViewController = NotificationsViewController()
+        notificationsViewController.hidesBottomBarWhenPushed = true
         navigationController?.pushViewController(notificationsViewController,
                                                  animated: true)
     }
     
     @objc func navigateToChangePassword() {
         let changePasswordViewController = ChangePasswordViewController()
+        changePasswordViewController.hidesBottomBarWhenPushed = true
         navigationController?.pushViewController(changePasswordViewController,
                                                  animated: true)
     }
     
     @objc func navigateToChangeEmail() {
         let changeEmailViewController = ChangeEmailViewController()
+        changeEmailViewController.hidesBottomBarWhenPushed = true
         navigationController?.pushViewController(changeEmailViewController,
                                                  animated: true)
     }

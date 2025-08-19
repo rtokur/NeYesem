@@ -8,21 +8,22 @@
 import UIKit
 
 class HomeViewController: UIViewController{
+    
     //MARK: - Properties
     private let viewModel = HomeViewModel()
     private var suggestions: [String] = []
-    private var categories: [String: String] = ["Kahvaltı": "breakfast",
-                                                "Ana Yemek": "meal",
-                                                "Tatlı": "dessert",
-                                                "Salata": "salad",
-                                                "Yan Yemek": "",
+    private var categories: [String: String] = ["Breakfast": "breakfast",
+                                                "": "meal",
+                                                "Dessert": "dessert",
+                                                "Salad": "salad",
+                                                "Side dish": "",
                                                 "Meze": "",
-                                                "Ekmek": "",
-                                                "Çorba": "",
-                                                "İçecek": "",
-                                                "Sos": "",
+                                                "Bread": "",
+                                                "Soupe": "",
+                                                "Beverage": "",
+                                                "Sauce": "",
                                                 "Marine": "",
-                                                "Parmak Yiyecek": "",
+                                                "Finger Food": "",
                                                 "Atıştırmalık": ""]
     private var selectedSuggestionIndex: Int?
     
@@ -157,7 +158,8 @@ class HomeViewController: UIViewController{
         
         collectionView.delegate = self
         collectionView.dataSource = self
-        collectionView.register(HomeMealTypeCollectionViewCell.self, forCellWithReuseIdentifier: HomeMealTypeCollectionViewCell.reuseID)
+        collectionView.register(HomeMealTypeCollectionViewCell.self,
+                                forCellWithReuseIdentifier: HomeMealTypeCollectionViewCell.reuseID)
         collectionView.showsHorizontalScrollIndicator = false
         collectionView.contentInset = UIEdgeInsets(top: 0,
                                                    left: 15,
@@ -274,9 +276,7 @@ class HomeViewController: UIViewController{
         setupViews()
         setupConstraints()
         setupDismissKeyboardTap()
-        viewModel.diet = "vegetarian"
-        viewModel.intolerances = ["gluten", "dairy"]
-        viewModel.excludeIngredients = ["peanut"]
+        bindViewModel()
         fetchInitialData()
     }
     
@@ -284,6 +284,31 @@ class HomeViewController: UIViewController{
         super.viewWillAppear(animated)
         resetSuggestionHighlights()
         fetchInitialData()
+    }
+    
+    // MARK: - Data
+    private func fetchInitialData() {
+        viewModel.fetchRecommendedRecipes()
+        viewModel.fetchRecentViewed()
+    }
+    
+    private func bindViewModel() {
+        viewModel.onRecommendedUpdated = { [weak self] in
+            DispatchQueue.main.async {
+                self?.suggestionCollectionView.reloadData()
+            }
+        }
+        viewModel.onRecentViewedUpdated = { [weak self] in
+            DispatchQueue.main.async {
+                self?.lastViewedCollectionView.reloadData()
+            }
+        }
+        viewModel.onError = { errorMessage in
+            print("Hata: \(errorMessage)")
+        }
+        viewModel.onSearchSuggestionsUpdated = { [weak self] in
+            self?.updateSuggestions()
+        }
     }
     
     //MARK: - Setup Methods
@@ -412,7 +437,7 @@ class HomeViewController: UIViewController{
             container.backgroundColor = (index == selectedSuggestionIndex) ? UIColor.Text50 : .white
             
             let label = UILabel()
-            label.text = recipe.title
+            label.text = recipe.recipe.title
             label.font = .dmSansRegular(14)
             label.textColor = UIColor.textColor900
             label.isUserInteractionEnabled = false
@@ -424,19 +449,6 @@ class HomeViewController: UIViewController{
             container.addSubview(label)
             label.snp.makeConstraints { make in
                 make.edges.equalToSuperview().inset(15)
-            }
-        }
-    }
-    
-    private func fetchInitialData() {
-        viewModel.fetchRecommendedRecipes { [weak self] in
-            DispatchQueue.main.async {
-                self?.suggestionCollectionView.reloadData()
-            }
-        }
-        viewModel.fetchRecentViewed { [weak self] in
-            DispatchQueue.main.async {
-                self?.lastViewedCollectionView.reloadData()
             }
         }
     }
@@ -462,16 +474,15 @@ class HomeViewController: UIViewController{
             return
         }
         
-        NSObject.cancelPreviousPerformRequests(withTarget: self, selector: #selector(performSearch(_:)), object: nil)
+        NSObject.cancelPreviousPerformRequests(withTarget: self,
+                                               selector: #selector(performSearch(_:)),
+                                               object: nil)
         perform(#selector(performSearch(_:)), with: query, afterDelay: 0.5)
     }
     
+    
     @objc private func performSearch(_ query: String) {
-        viewModel.fetchSearchSuggestions(query: query) { [weak self] in
-            DispatchQueue.main.async {
-                self?.updateSuggestions()
-            }
-        }
+        viewModel.fetchSearchSuggestions(query: query)
     }
     
     @objc private func dismissKeyboardAndHideSuggestions() {
@@ -488,15 +499,17 @@ class HomeViewController: UIViewController{
         container.backgroundColor = UIColor.Text50
         
         let index = container.tag
-        let recipe = viewModel.searchSuggestions[index]
+        let recipe = viewModel.searchSuggestions[index].recipe
         let recipeDetailViewModel = RecipeDetailViewModel(recipeId: recipe.id)
         let mealDetailViewController = MealDetailViewController(viewModel: recipeDetailViewModel)
+        mealDetailViewController.hidesBottomBarWhenPushed = true
         navigationController?.pushViewController(mealDetailViewController,
                                                  animated: true)
     }
     
     @objc func navigateToNotification() {
         let notificationsViewController = NotificationsViewController()
+        notificationsViewController.hidesBottomBarWhenPushed = true
         navigationController?.pushViewController(notificationsViewController,
                                                  animated: true)
     }
@@ -524,31 +537,13 @@ extension HomeViewController: UITextFieldDelegate,
             return cell
         } else if collectionView == lastViewedCollectionView {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: FavoriteMealCollectionViewCell.reuseID, for: indexPath) as! FavoriteMealCollectionViewCell
-            let recipe = viewModel.recentViewedRecipes[indexPath.row]
-            viewModel.isFavorite(recipeId: recipe.id) { isFav in
-                self.viewModel.getLikeCount(recipeId: recipe.id) { count in
-                    DispatchQueue.main.async {
-                        cell.configure(
-                            mealType: recipe.dishTypes?[0] ?? "",
-                            mealName: recipe.title,
-                            mealImageUrl: recipe.image ?? "",
-                            mealTime: "\(recipe.readyInMinutes ?? 0) dk.",
-                            isFavorited: isFav,
-                            likeCount: count
-                        )
-                    }
-                }
-            }
-            
+            let uiModel = viewModel.recentViewedRecipes[indexPath.row]
+            cell.configure(model: uiModel)
             cell.onFavoriteButtonTapped = { [weak self] in
-                guard let self = self else { return }
-                let recipe = self.viewModel.recentViewedRecipes[indexPath.row]
-                self.viewModel.toggleFavorite(recipe: recipe) { success in
+                self?.viewModel.toggleFavorite(in: .recent, at: indexPath.item) { success in
                     if success {
-                        print("Favori durumu güncellendi")
                         DispatchQueue.main.async {
-                            self.lastViewedCollectionView.reloadItems(at: [indexPath])
-                            self.suggestionCollectionView.reloadData()
+                            collectionView.reloadItems(at: [indexPath])
                         }
                     }
                 }
@@ -556,31 +551,14 @@ extension HomeViewController: UITextFieldDelegate,
             return cell
         }
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: FavoriteMealCollectionViewCell.reuseID, for: indexPath) as! FavoriteMealCollectionViewCell
-        let recipe = viewModel.recommendedRecipes[indexPath.row]
-        viewModel.isFavorite(recipeId: recipe.id) { isFav in
-            self.viewModel.getLikeCount(recipeId: recipe.id) { count in
-                DispatchQueue.main.async {
-                    cell.configure(
-                        mealType: recipe.dishTypes?[0] ?? "",
-                        mealName: recipe.title,
-                        mealImageUrl: recipe.image ?? "",
-                        mealTime: "\(recipe.readyInMinutes ?? 0) dk.",
-                        isFavorited: isFav,
-                        likeCount: count
-                    )
-                }
-            }
-        }
+        let uiModel = viewModel.recommendedRecipes[indexPath.row]
+        cell.configure(model: uiModel)
         
         cell.onFavoriteButtonTapped = { [weak self] in
-            guard let self = self else { return }
-            let recipe = self.viewModel.recommendedRecipes[indexPath.row]
-            self.viewModel.toggleFavorite(recipe: recipe) { success in
+            self?.viewModel.toggleFavorite(in: .recommended, at: indexPath.item) { success in
                 if success {
-                    print("Favori durumu güncellendi")
                     DispatchQueue.main.async {
-                        self.suggestionCollectionView.reloadItems(at: [indexPath])
-                        self.lastViewedCollectionView.reloadData()
+                        collectionView.reloadItems(at: [indexPath])
                     }
                 }
             }
@@ -590,15 +568,17 @@ extension HomeViewController: UITextFieldDelegate,
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if collectionView == suggestionCollectionView {
-            let selectedRecipe = viewModel.recommendedRecipes[indexPath.item]
+            let selectedRecipe = viewModel.recommendedRecipes[indexPath.item].recipe
             let recipeDetailViewModel = RecipeDetailViewModel(recipeId: selectedRecipe.id)
             let detailViewController = MealDetailViewController(viewModel: recipeDetailViewModel)
+            detailViewController.hidesBottomBarWhenPushed = true
             navigationController?.pushViewController(detailViewController,
                                                      animated: true)
         } else if collectionView == lastViewedCollectionView {
-            let selectedRecipe = viewModel.recentViewedRecipes[indexPath.item]
+            let selectedRecipe = viewModel.recentViewedRecipes[indexPath.item].recipe
             let recipeDetailViewModel = RecipeDetailViewModel(recipeId: selectedRecipe.id)
             let detailViewController = MealDetailViewController(viewModel: recipeDetailViewModel)
+            detailViewController.hidesBottomBarWhenPushed = true
             navigationController?.pushViewController(detailViewController,
                                                      animated: true)
         }

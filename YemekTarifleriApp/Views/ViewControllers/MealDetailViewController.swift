@@ -7,6 +7,7 @@
 
 import UIKit
 
+
 class MealDetailViewController: UIViewController {
     private let viewModel: RecipeDetailViewModel
     private var items: [(UIImage?, String)] = []
@@ -60,14 +61,8 @@ class MealDetailViewController: UIViewController {
         imageView.backgroundColor = .gray
         imageView.layer.cornerRadius = 20
         imageView.clipsToBounds = true
+        imageView.isUserInteractionEnabled = true
         return imageView
-    }()
-    
-    private let favoriteView: UIView = {
-        let view = UIView()
-        view.backgroundColor = .white
-        view.layer.cornerRadius = 18
-        return view
     }()
     
     private lazy var favoriteButton: UIButton = {
@@ -78,6 +73,9 @@ class MealDetailViewController: UIViewController {
                                                                                          weight: .bold)
         button.configuration = configuration
         button.tintColor = UIColor.secondaryColor
+        button.backgroundColor = .white
+        button.layer.cornerRadius = 18
+        button.clipsToBounds = true
         button.addTarget(self,
                          action: #selector(favoriteButtonAction),
                          for: .touchUpInside)
@@ -238,8 +236,7 @@ class MealDetailViewController: UIViewController {
         stackView.addArrangedSubview(descriptionLabel)
         stackView.setCustomSpacing(10, after: titleLabel)
         stackView.setCustomSpacing(10, after: likeStackView)
-        mealImageView.addSubview(favoriteView)
-        favoriteView.addSubview(favoriteButton)
+        mealImageView.addSubview(favoriteButton)
         stackView.addArrangedSubview(detailCollectionView)
         stackView.addArrangedSubview(segmentedControl)
         stackView.addArrangedSubview(ingredientsCollectionView)
@@ -270,6 +267,10 @@ class MealDetailViewController: UIViewController {
             make.height.equalTo(250)
             make.leading.trailing.equalToSuperview().inset(15)
         }
+        favoriteButton.snp.makeConstraints { make in
+            make.top.trailing.equalToSuperview().inset(10)
+            make.height.width.equalTo(36)
+        }
         titleLabel.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview().inset(15)
         }
@@ -282,13 +283,6 @@ class MealDetailViewController: UIViewController {
         }
         descriptionLabel.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview().inset(15)
-        }
-        favoriteView.snp.makeConstraints { make in
-            make.height.width.equalTo(36)
-            make.top.trailing.equalToSuperview().inset(10)
-        }
-        favoriteButton.snp.makeConstraints { make in
-            make.center.equalToSuperview()
         }
         detailCollectionView.snp.makeConstraints { make in
             make.height.equalTo(60)
@@ -321,9 +315,9 @@ class MealDetailViewController: UIViewController {
             self.titleLabel.text = self.viewModel.titleText
             self.descriptionLabel.text = self.viewModel.descriptionText
             self.items = [
-                (UIImage(named: "time"), "\(self.viewModel.timeText) dakika"),
+                (UIImage(named: "time"), "\(self.viewModel.timeText) minutes"),
                 (UIImage(named: "serving"), "\(self.viewModel.servingsText) kişilik"),
-                (UIImage(named: "calory"), "\(self.viewModel.caloriesText) kalori"),
+                (UIImage(named: "calory"), "\(self.viewModel.caloriesText) calorie"),
                 (UIImage(named: "type"), self.viewModel.typeText)
             ]
             self.detailCollectionView.reloadData()

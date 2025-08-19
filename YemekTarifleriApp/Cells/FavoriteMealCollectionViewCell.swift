@@ -140,6 +140,24 @@ class FavoriteMealCollectionViewCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        let width = mealTypeLabel.text?.width(using: mealTypeLabel.font, padding: 11) ?? 10
+        mealTypeView.snp.updateConstraints { make in
+            make.width.equalTo(width)
+        }
+    }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        mealImageView.image = nil
+        mealLabel.text = nil
+        mealTypeLabel.text = nil
+        favoriteLabel.text = nil
+        timeLabel.text = nil
+        isFavorited = false
+    }
+
     //MARK: - Setup Methods
     func setupViews(){
         contentView.layer.cornerRadius = 20
@@ -208,24 +226,22 @@ class FavoriteMealCollectionViewCell: UICollectionViewCell {
         }
     }
     
-    func configure(mealType: String, mealName: String, mealImageUrl: String?, mealTime: String?, isFavorited: Bool, likeCount: Int) {
-        mealTypeLabel.text = mealType
-        mealLabel.text = mealName
-        favoriteLabel.text = "\(likeCount) kişi beğendi"
-        self.isFavorited = isFavorited
+    func configure(model: RecipeUIModel) {
+        mealTypeLabel.text = model.recipe.dishTypes?.first
+        mealLabel.text = model.recipe.title
+        favoriteLabel.text = "\(model.likeCount) kişi beğendi"
+        self.isFavorited = model.isFavorite
         
-        if let urlString = mealImageUrl,
+        if let urlString = model.recipe.image,
            let url = URL(string: urlString) {
-            mealImageView.kf.setImage(with: url)
+            mealImageView.kf.setImage(
+                with: url,
+                options: [.transition(.fade(0.2)), .cacheOriginalImage]
+            )
         }
         
-        if let mealTime = mealTime {
-            timeLabel.text = "\(mealTime)"
-        }
-        
-        let width = mealType.width(using: mealTypeLabel.font, padding: 11)
-        mealTypeView.snp.updateConstraints { make in
-            make.width.equalTo(width)
+        if let mealTime = model.recipe.readyInMinutes {
+            timeLabel.text = "\(mealTime) dk."
         }
     }
     

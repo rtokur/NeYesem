@@ -7,7 +7,23 @@
 
 import SwiftUI
 
-struct DietOption: Identifiable {
+import Foundation
+
+class DietSelectionViewModel: ObservableObject {
+    @Published var selectedOption: DietOption? = nil
+    @Published var allergies: Set<String> = []
+    @Published var dislikes: Set<String> = []
+    
+    init(selectedOption: DietOption? = nil,
+         allergies: Set<String> = [],
+         dislikes: Set<String> = []) {
+        self.selectedOption = selectedOption
+        self.allergies = allergies
+        self.dislikes = dislikes
+    }
+}
+
+struct DietOption: Identifiable, Equatable {
     let id = UUID()
     let title: String
     let imageName: String
@@ -15,21 +31,21 @@ struct DietOption: Identifiable {
 
 struct DietSelectionView1: View {
     
+    @ObservedObject var viewModel: DietSelectionViewModel
+    
     let options: [DietOption] = [
-        DietOption(title: "Klasik", imageName: "klasik"),
-        DietOption(title: "Pesketaryen", imageName: "pescetarian"),
-        DietOption(title: "Vejeteryan", imageName: "vejeteryan"),
+        DietOption(title: "Classic", imageName: "klasik"),
+        DietOption(title: "Pescetarian", imageName: "pescetarian"),
+        DietOption(title: "Vegetarian", imageName: "vejeteryan"),
         DietOption(title: "Vegan", imageName: "vegan"),
-        DietOption(title: "Ketojenik", imageName: "ketojenik"),
-        DietOption(title: "Glutensiz", imageName: "glutenfree")
+        DietOption(title: "Ketogenic", imageName: "ketojenik"),
+        DietOption(title: "Gluten free", imageName: "glutenfree")
     ]
     
-    @State private var selectedOption: UUID?
-    
     var body: some View {
-        
         NavigationStack {
             VStack(alignment: .leading, spacing: 20) {
+                // progress header
                 HStack {
                     Button(action: {
                         if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
@@ -68,10 +84,10 @@ struct DietSelectionView1: View {
                 LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
                     ForEach(options) { option in
                         Button(action: {
-                            selectedOption = option.id
+                            viewModel.selectedOption = option
                         }) {
                             HStack(spacing: 8) {
-                                Image(option.imageName) // Senin görsellerin buraya gelecek
+                                Image(option.imageName)
                                     .resizable()
                                     .aspectRatio(contentMode: .fill)
                                     .frame(width: 64, height: 64)
@@ -80,8 +96,8 @@ struct DietSelectionView1: View {
                                 Text(option.title)
                                     .font(.subheadline)
                                     .foregroundColor(.black)
-                                    .lineLimit(1) // Metnin tek satırda kalmasını sağlar
-                                    .minimumScaleFactor(0.5) // Metin sığmazsa boyutunu %50'ye kadar küçültür
+                                    .lineLimit(1)
+                                    .minimumScaleFactor(0.5)
                                 
                                 Spacer()
                             }
@@ -89,7 +105,7 @@ struct DietSelectionView1: View {
                             .padding()
                             .background(
                                 RoundedRectangle(cornerRadius: 12)
-                                    .stroke(selectedOption == option.id ? Color.blue : Color.gray.opacity(0.2), lineWidth: 2)
+                                    .stroke(viewModel.selectedOption == option ? Color.blue : Color.gray.opacity(0.2), lineWidth: 2)
                             )
                         }
                     }
@@ -104,7 +120,7 @@ struct DietSelectionView1: View {
                            let window = windowScene.windows.first {
                             
                             let mainTabBar = MainTabBarController()
-                            
+                            mainTabBar.selectedDiet = viewModel.selectedOption?.title
                             window.rootViewController = mainTabBar
                             window.makeKeyAndVisible()
                         }
@@ -113,7 +129,7 @@ struct DietSelectionView1: View {
                     
                     Spacer()
                     
-                    NavigationLink(destination: DietSelectionView2()) {
+                    NavigationLink(destination: DietSelectionView2(viewModel: viewModel)) {
                         Image(systemName: "arrow.right")
                             .foregroundColor(.white)
                             .frame(width: 80, height: 50)
@@ -128,18 +144,16 @@ struct DietSelectionView1: View {
         }
         .navigationBarBackButtonHidden(true)
         .navigationBarTitleDisplayMode(.inline)
-        
     }
 }
 
 #Preview {
-    DietSelectionView1()
+    DietSelectionView1(viewModel: DietSelectionViewModel())
 }
 
-// MARK: - UIKit Wrapper
-import UIKit
-
 class DietSelectionViewController: UIViewController {
+    
+    private let viewModel = DietSelectionViewModel()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -147,15 +161,13 @@ class DietSelectionViewController: UIViewController {
     }
     
     private func setupSwiftUIView() {
-        let dietSelectionView = DietSelectionView1()
+        let dietSelectionView = DietSelectionView1(viewModel: viewModel)
         let hostingController = UIHostingController(rootView: dietSelectionView)
         
-        // Add the hosting controller as a child
         addChild(hostingController)
         view.addSubview(hostingController.view)
         hostingController.didMove(toParent: self)
         
-        // Setup constraints
         hostingController.view.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             hostingController.view.topAnchor.constraint(equalTo: view.topAnchor),

@@ -173,6 +173,29 @@ final class FavoriteService {
             }
     }
     
+    // MARK: - Fetch only favorite IDs
+    func fetchAllFavorites(completion: @escaping ([Int]) -> Void) {
+        guard let userId = currentUserId else {
+            completion([])
+            return
+        }
+        
+        db.collection("users")
+            .document(userId)
+            .collection("favorites")
+            .getDocuments { snapshot, error in
+                if let error = error {
+                    print("Favori ID'ler alınamadı:", error.localizedDescription)
+                    completion([])
+                } else {
+                    let ids = snapshot?.documents.compactMap { doc -> Int? in
+                        return doc["recipeId"] as? Int
+                    } ?? []
+                    completion(ids)
+                }
+            }
+    }
+
     // MARK: - Toggle favorite
     func toggleFavorite(recipe: Recipe, completion: @escaping (Bool) -> Void) {
         isFavorite(recipeId: recipe.id) { isFav in
