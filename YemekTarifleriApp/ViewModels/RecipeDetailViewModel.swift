@@ -9,25 +9,24 @@ import Foundation
 
 final class RecipeDetailViewModel {
     
+    // MARK: - Properties
     private let recipeId: Int
     private(set) var recipeDetail: RecipeDetail?
-    
+
     var onLikeCountChanged: ((Int) -> Void)?
     var onDataFetched: (() -> Void)?
     var onError: ((Error) -> Void)?
-    
-    var isFavorited: Bool = false {
-        didSet {
-            onFavoriteStatusChanged?(isFavorited)
-        }
+    var onFavoriteStatusChanged: ((Bool) -> Void)?
+
+    private(set) var isFavorited: Bool = false {
+        didSet { onFavoriteStatusChanged?(isFavorited) }
+    }
+
+    private(set) var likeCount: Int = 0 {
+        didSet { onLikeCountChanged?(likeCount) }
     }
     
-    var likeCount: Int = 0 {
-         didSet { onLikeCountChanged?(likeCount) }
-     }
-    
-    var onFavoriteStatusChanged: ((Bool) -> Void)?
-    
+    // MARK: - Init
     init(recipeId: Int) {
         self.recipeId = recipeId
     }
@@ -58,7 +57,8 @@ final class RecipeDetailViewModel {
             title: recipeDetail.title,
             image: recipeDetail.image,
             readyInMinutes: recipeDetail.readyInMinutes,
-            dishTypes: recipeDetail.dishTypes
+            dishTypes: recipeDetail.dishTypes,
+            missedIngredientCount: 0
         )
     }
     

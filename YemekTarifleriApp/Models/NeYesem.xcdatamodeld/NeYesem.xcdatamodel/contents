@@ -2,8 +2,10 @@
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="23788.4" systemVersion="24F74" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithSwiftData="YES" userDefinedModelVersionIdentifier="">
     <entity name="UserProfile" representedClassName="UserProfile" syncable="YES">
         <attribute name="email" optional="YES" attributeType="String"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="phone" optional="YES" attributeType="String"/>
         <attribute name="photoURL" optional="YES" attributeType="String"/>
+        <attribute name="surname" optional="YES" attributeType="String"/>
         <attribute name="uid" optional="YES" attributeType="String"/>
-        <attribute name="username" optional="YES" attributeType="String"/>
     </entity>
 </model>

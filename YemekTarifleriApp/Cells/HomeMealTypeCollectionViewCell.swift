@@ -8,7 +8,9 @@
 import UIKit
 
 class HomeMealTypeCollectionViewCell: UICollectionViewCell {
+    //MARK: - Properties
     static let reuseID = "HomeMealTypeCell"
+    
     //MARK: UI Elements
     private let stackView: UIStackView = {
         let stackView = UIStackView()
@@ -32,6 +34,7 @@ class HomeMealTypeCollectionViewCell: UICollectionViewCell {
         return label
     }()
     
+    //MARK: - Init
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupViews()
@@ -60,6 +63,7 @@ class HomeMealTypeCollectionViewCell: UICollectionViewCell {
         }
     }
     
+    //MARK: - Configure
     func configure(mealPhotoName: String, mealName: String) {
         mealLabel.text = mealName
         mealImageView.image = UIImage(named: mealPhotoName)

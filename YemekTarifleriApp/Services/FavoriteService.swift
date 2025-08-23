@@ -9,6 +9,7 @@ import FirebaseAuth
 import FirebaseFirestore
 
 final class FavoriteService {
+    // MARK: - Properties
     static let shared = FavoriteService()
     private init() {}
     
@@ -165,7 +166,8 @@ final class FavoriteService {
                             title: title,
                             image: image,
                             readyInMinutes: readyInMinutes,
-                            dishTypes: dishTypes
+                            dishTypes: dishTypes,
+                            missedIngredientCount: 0
                         )
                     } ?? []
                     completion(recipes)

@@ -85,6 +85,14 @@ class FavoriteMealCollectionViewCell: UICollectionViewCell {
         return label
     }()
     
+    private lazy var missedLabel: UILabel = {
+        let label = UILabel()
+        label.textColor = UIColor.textColor300
+        label.font = UIFont.dmSansRegular(11)
+        label.text = "2 eksik malzeme var!"
+        return label
+    }()
+    
     private let mealDetailStackView: UIStackView = {
         let stackView = UIStackView()
         stackView.axis = .horizontal
@@ -96,7 +104,6 @@ class FavoriteMealCollectionViewCell: UICollectionViewCell {
     
     let mealTypeView: UIView = {
         let view = UIView()
-        view.backgroundColor = UIColor.secondaryColor.withAlphaComponent(0.1)
         view.clipsToBounds = true
         view.layer.cornerRadius = 6
         return view
@@ -104,7 +111,6 @@ class FavoriteMealCollectionViewCell: UICollectionViewCell {
     
     lazy var mealTypeLabel: UILabel = {
         let label = UILabel()
-        label.textColor = UIColor.secondaryColor
         label.font = UIFont.dmSansRegular(11)
         return label
     }()
@@ -124,20 +130,16 @@ class FavoriteMealCollectionViewCell: UICollectionViewCell {
     
     private lazy var timeLabel: UILabel = {
         let label = UILabel()
-        label.text = "30 dk."
         label.textColor = UIColor.Color999999
         label.font = UIFont.dmSansRegular(12, weight: .thin)
         return label
     }()
     
+    //MARK: - Init
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupViews()
         setupConstraints()
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
     
     override func layoutSubviews() {
@@ -157,6 +159,10 @@ class FavoriteMealCollectionViewCell: UICollectionViewCell {
         timeLabel.text = nil
         isFavorited = false
     }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 
     //MARK: - Setup Methods
     func setupViews(){
@@ -164,6 +170,7 @@ class FavoriteMealCollectionViewCell: UICollectionViewCell {
         contentView.clipsToBounds = true
         contentView.layer.borderColor = UIColor.Text50.cgColor
         contentView.layer.borderWidth = 1
+        
         contentView.addSubview(stackView)
         stackView.addArrangedSubview(mealImageView)
         stackView.addArrangedSubview(mealLabel)
@@ -172,6 +179,7 @@ class FavoriteMealCollectionViewCell: UICollectionViewCell {
         stackView.addArrangedSubview(favoriteStackView)
         favoriteStackView.addArrangedSubview(favoriteImageView)
         favoriteStackView.addArrangedSubview(favoriteLabel)
+        stackView.addArrangedSubview(missedLabel)
         stackView.addArrangedSubview(mealDetailStackView)
         mealDetailStackView.addArrangedSubview(mealTypeView)
         mealTypeView.addSubview(mealTypeLabel)
@@ -226,10 +234,13 @@ class FavoriteMealCollectionViewCell: UICollectionViewCell {
         }
     }
     
+    //MARK: - Functions
     func configure(model: RecipeUIModel) {
-        mealTypeLabel.text = model.recipe.dishTypes?.first
+        mealTypeLabel.text = model.recipe.dishTypes?.first?.capitalized
+        mealTypeLabel.textColor = model.color
+        mealTypeView.backgroundColor = model.color.withAlphaComponent(0.1)
         mealLabel.text = model.recipe.title
-        favoriteLabel.text = "\(model.likeCount) kişi beğendi"
+        favoriteLabel.text = "Liked by \(model.likeCount) users"
         self.isFavorited = model.isFavorite
         
         if let urlString = model.recipe.image,
@@ -241,7 +252,7 @@ class FavoriteMealCollectionViewCell: UICollectionViewCell {
         }
         
         if let mealTime = model.recipe.readyInMinutes {
-            timeLabel.text = "\(mealTime) dk."
+            timeLabel.text = "\(mealTime) mn."
         }
     }
     
@@ -250,6 +261,7 @@ class FavoriteMealCollectionViewCell: UICollectionViewCell {
         favoriteButton.setImage(UIImage(systemName: imageName), for: .normal)
     }
     
+    //MARK: - Actions
     @objc private func favoriteButtonAction() {
         isFavorited.toggle()
         onFavoriteButtonTapped?()

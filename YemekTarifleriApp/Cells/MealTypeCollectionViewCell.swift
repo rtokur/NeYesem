@@ -8,7 +8,17 @@
 import UIKit
 
 class MealTypeCollectionViewCell: UICollectionViewCell {
+    //MARK: - Properties
     static let reuseID = "MealTypeCollectionViewCell"
+    
+    override var isSelected: Bool {
+        didSet { updateAppearance() }
+    }
+    
+    var selectedBackground: UIColor = UIColor.secondaryColor
+    var deselectedBackground: UIColor = .white
+    var selectedTextColor: UIColor = .white
+    var deselectedTextColor: UIColor = UIColor.textColor400
     
     //MARK: UI Elements
     lazy var titleLabel: UILabel = {
@@ -18,17 +28,10 @@ class MealTypeCollectionViewCell: UICollectionViewCell {
         return label
     }()
     
-    var selectedBackground: UIColor = UIColor.secondaryColor
-    var deselectedBackground: UIColor = .white
-    var selectedTextColor: UIColor = .white
-    var deselectedTextColor: UIColor = UIColor.textColor400
-    
-    override var isSelected: Bool {
-        didSet { updateAppearance() }
-    }
-    
+    //MARK: - Init
     override init(frame: CGRect) {
         super.init(frame: frame)
+        
         contentView.layer.cornerRadius = 10
         contentView.layer.borderWidth = 1
         contentView.layer.borderColor = UIColor.Text50.cgColor
@@ -44,6 +47,7 @@ class MealTypeCollectionViewCell: UICollectionViewCell {
     
     required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
     
+    //MARK: - Functions
     func configure(title: String) {
         titleLabel.text = title
     }

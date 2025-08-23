@@ -15,7 +15,7 @@ struct welcome3: View {
             VStack {
                 Spacer()
                 
-                Image("eat") // Resmin adı Assets'e eklediğin isim olmalı
+                Image("eat")
                 
                 HStack(spacing: 8) {
                     Circle()
@@ -30,7 +30,7 @@ struct welcome3: View {
                 }
                 .padding(.bottom, 20)
                 
-                Text("Hoşgeldin!")
+                Text("Welcome!")
                     .font(.largeTitle)
                     .fontWeight(.bold)
                     .foregroundColor(Color(red: 215/255, green: 94/255, blue: 83/255))
@@ -39,7 +39,7 @@ struct welcome3: View {
                     .padding(.top, 1)
                 
                 
-                Text("Bugün ne yesem diye düşünme! Tarzına, damak zevkine ve dolabına göre en uygun tarifler burada.")
+                Text("No more thinking “What should I eat today?” Find the best recipes for your style, taste, and ingredients on hand.")
                     .font(.subheadline)
                     .foregroundColor(.gray)
                     .multilineTextAlignment(.leading)
@@ -51,10 +51,9 @@ struct welcome3: View {
                 
                 Button(action: {
                     print("Başla butonuna tıklandı")
-                    // Burada ana ekrana yönlendirme yapılabilir
                     self.showLogin = true
                 }) {
-                    Text("Başla")
+                    Text("Get Started")
                         .fontWeight(.semibold)
                         .frame(maxWidth: .infinity)
                         .frame(height: 50)
@@ -66,16 +65,15 @@ struct welcome3: View {
                 .padding(.bottom, 20)
                 
                 HStack {
-                    Text("Zaten hesabın var mı?")
+                    Text("Already have an account?")
                         .foregroundColor(.gray)
-                    Button("Giriş yap") {
+                    Button("Log in") {
                         print("devam Yap butonuna tıklandı")
-                        // Login ekranına yönlendirme yapılabilir
                         self.showLogin = true
                     }
                     .foregroundColor(Color(red: 38/255, green: 81/255, blue: 100/255))
                     .fullScreenCover(isPresented: $showLogin) {
-                        LoginRegisterWrapper() // SwiftUI içinde UIKit ekranı
+                        LoginRegisterWrapper()
                     }
                 }
                 .padding(.top, 10)

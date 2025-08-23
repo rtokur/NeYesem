@@ -8,18 +8,21 @@
 import FirebaseAuth
 import FirebaseFirestore
 
+// MARK: - Protocol
 protocol RecentViewServiceProtocol {
     func addOrUpdateRecentView(_ recipe: Recipe, completion: ((Result<Void, Error>) -> Void)?)
     func fetchRecentViews(limit: Int, completion: @escaping (Result<[Recipe], Error>) -> Void)
 }
 
 final class RecentViewService: RecentViewServiceProtocol {
+    // MARK: - Properties
     static let shared = RecentViewService()
     private init() {}
 
     private let db = Firestore.firestore()
     private var auth: Auth { Auth.auth() }
 
+    // MARK: - Firestore Collection Reference
     private func collectionRef() throws -> CollectionReference {
         guard let uid = auth.currentUser?.uid else {
             throw NSError(domain: "RecentViewService", code: 401, userInfo: [NSLocalizedDescriptionKey: "User not authenticated"])
@@ -27,6 +30,7 @@ final class RecentViewService: RecentViewServiceProtocol {
         return db.collection("users").document(uid).collection("recentViews")
     }
 
+    // MARK: - Add or Update Recent View
     func addOrUpdateRecentView(_ recipe: Recipe, completion: ((Result<Void, Error>) -> Void)? = nil) {
         do {
             let col = try collectionRef()
@@ -47,6 +51,7 @@ final class RecentViewService: RecentViewServiceProtocol {
         }
     }
 
+    // MARK: - Fetch Recent Views
     func fetchRecentViews(limit: Int = 20, completion: @escaping (Result<[Recipe], Error>) -> Void) {
         do {
             let col = try collectionRef()
@@ -59,7 +64,8 @@ final class RecentViewService: RecentViewServiceProtocol {
                         title: data["title"] as? String ?? "",
                         image: data["image"] as? String,
                         readyInMinutes: data["readyInMinutes"] as? Int,
-                        dishTypes: data["dishTypes"] as? [String]
+                        dishTypes: data["dishTypes"] as? [String],
+                        missedIngredientCount: 0
                     )
                 } ?? []
                 completion(.success(items))

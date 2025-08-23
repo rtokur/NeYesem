@@ -9,19 +9,6 @@ import SwiftUI
 
 import Foundation
 
-class DietSelectionViewModel: ObservableObject {
-    @Published var selectedOption: DietOption? = nil
-    @Published var allergies: Set<String> = []
-    @Published var dislikes: Set<String> = []
-    
-    init(selectedOption: DietOption? = nil,
-         allergies: Set<String> = [],
-         dislikes: Set<String> = []) {
-        self.selectedOption = selectedOption
-        self.allergies = allergies
-        self.dislikes = dislikes
-    }
-}
 
 struct DietOption: Identifiable, Equatable {
     let id = UUID()
@@ -45,7 +32,6 @@ struct DietSelectionView1: View {
     var body: some View {
         NavigationStack {
             VStack(alignment: .leading, spacing: 20) {
-                // progress header
                 HStack {
                     Button(action: {
                         if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
@@ -70,7 +56,7 @@ struct DietSelectionView1: View {
                 .padding(.horizontal)
                 .padding(.bottom, 20)
                 
-                Text("Beslenme Tarzınızı Seçin")
+                Text("Choose Your Diet Preference")
                     .font(.subheadline)
                     .fontWeight(.semibold)
                     .padding(.horizontal)
@@ -115,12 +101,11 @@ struct DietSelectionView1: View {
                 Spacer()
                 
                 HStack {
-                    Button("Geç") {
+                    Button("Skip") {
                         if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
                            let window = windowScene.windows.first {
                             
                             let mainTabBar = MainTabBarController()
-                            mainTabBar.selectedDiet = viewModel.selectedOption?.title
                             window.rootViewController = mainTabBar
                             window.makeKeyAndVisible()
                         }

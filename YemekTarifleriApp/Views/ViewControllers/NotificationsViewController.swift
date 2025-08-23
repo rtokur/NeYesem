@@ -16,11 +16,11 @@ class NotificationsViewController: UIViewController {
     }()
     
     private lazy var stackView: UIStackView = {
-        let stack = UIStackView()
-        stack.axis = .vertical
-        stack.alignment = .center
-        stack.spacing = 20
-        return stack
+        let stackView = UIStackView()
+        stackView.axis = .vertical
+        stackView.alignment = .center
+        stackView.spacing = 20
+        return stackView
     }()
     
     private lazy var backButton: UIButton = {
@@ -28,13 +28,15 @@ class NotificationsViewController: UIViewController {
         button.setImage(UIImage(systemName: "arrow.backward"),
                         for: .normal)
         button.tintColor = UIColor.Color10
-        button.addTarget(self, action: #selector(backButtonAction), for: .touchUpInside)
+        button.addTarget(self,
+                         action: #selector(backButtonAction),
+                         for: .touchUpInside)
         return button
     }()
     
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
-        label.text = "Bildirimler"
+        label.text = "Notifications"
         label.font = .dmSansSemiBold(18)
         label.textColor = UIColor.Color10
         label.textAlignment = .center
@@ -76,7 +78,7 @@ class NotificationsViewController: UIViewController {
         }
     }
 
-    
+    //MARK: - Actions
     @objc func backButtonAction() {
         navigationController?.popViewController(animated: true)
     }

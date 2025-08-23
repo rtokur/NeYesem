@@ -8,6 +8,7 @@
 import UIKit
 
 class DetailCollectionViewCell: UICollectionViewCell {
+    //MARK: Properties
     static let reuseID = "DetailCell"
     
     //MARK: UI Elements
@@ -33,7 +34,7 @@ class DetailCollectionViewCell: UICollectionViewCell {
         return label
     }()
     
-        
+    //MARK: Init
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupViews()
@@ -63,6 +64,7 @@ class DetailCollectionViewCell: UICollectionViewCell {
         }
     }
     
+    //MARK: Configure
     func configure(image: UIImage?, name: String) {
         imageView.image = image
         label.text = name

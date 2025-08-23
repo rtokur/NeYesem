@@ -91,5 +91,51 @@ extension UIColor {
     static var Text600: UIColor {
         return UIColor(named: "Text600")!
     }
+    
+    static var Color226A0D: UIColor {
+        return UIColor(named: "226A0D")!
+    }
+    
+    static var Color4B24CB: UIColor {
+        return UIColor(named: "4B24CB")!
+    }
+    
+    static var ColorCB2488: UIColor {
+        return UIColor(named: "CB2488")!
+    }
+    
+    static var Color97CE4E: UIColor {
+        return UIColor(named: "97CE4E")!
+    }
+    
+    static var Color53D5D7: UIColor {
+        return UIColor(named: "53D5D7")!
+    }
+    
+    static var ColorA81FE3: UIColor {
+        return UIColor(named: "A81FE3")!
+    }
+    
+    static var ColorD92427: UIColor {
+        return UIColor(named: "D92427")!
+    }
+    
+    convenience init?(hex: String) {
+        var hexFormatted = hex.trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
+        
+        if hexFormatted.hasPrefix("#") {
+            hexFormatted.remove(at: hexFormatted.startIndex)
+        }
+        
+        guard hexFormatted.count == 6,
+              let rgbValue = UInt64(hexFormatted, radix: 16) else { return nil }
+        
+        self.init(
+            red: CGFloat((rgbValue & 0xFF0000) >> 16) / 255,
+            green: CGFloat((rgbValue & 0x00FF00) >> 8) / 255,
+            blue: CGFloat(rgbValue & 0x0000FF) / 255,
+            alpha: 1.0
+        )
+    }
 }
 

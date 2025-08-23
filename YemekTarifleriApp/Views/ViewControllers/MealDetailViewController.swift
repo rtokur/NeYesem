@@ -9,6 +9,7 @@ import UIKit
 
 
 class MealDetailViewController: UIViewController {
+    //MARK: - Properties
     private let viewModel: RecipeDetailViewModel
     private var items: [(UIImage?, String)] = []
     private var didTrackRecentOnce = false
@@ -21,11 +22,11 @@ class MealDetailViewController: UIViewController {
     }()
     
     private lazy var stackView: UIStackView = {
-        let stack = UIStackView()
-        stack.axis = .vertical
-        stack.alignment = .center
-        stack.spacing = 20
-        return stack
+        let stackView = UIStackView()
+        stackView.axis = .vertical
+        stackView.alignment = .center
+        stackView.spacing = 20
+        return stackView
     }()
     
     private lazy var headStackView: UIStackView = {
@@ -39,21 +40,15 @@ class MealDetailViewController: UIViewController {
         button.setImage(UIImage(systemName: "arrow.backward"),
                         for: .normal)
         button.tintColor = UIColor.Color10
-        button.addTarget(self, action: #selector(backButtonAction), for: .touchUpInside)
+        button.addTarget(self,
+                         action: #selector(backButtonAction),
+                         for: .touchUpInside)
         return button
     }()
     
     private let emptyView: UIView = {
         let view = UIView()
         return view
-    }()
-    
-    private lazy var exportButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.setImage(UIImage(named: "export"),
-                        for: .normal)
-        button.tintColor = UIColor.Color10
-        return button
     }()
     
     private lazy var mealImageView: UIImageView = {
@@ -127,7 +122,8 @@ class MealDetailViewController: UIViewController {
         collectionView.showsHorizontalScrollIndicator = false
         collectionView.dataSource = self
         collectionView.delegate = self
-        collectionView.register(DetailCollectionViewCell.self, forCellWithReuseIdentifier: DetailCollectionViewCell.reuseID)
+        collectionView.register(DetailCollectionViewCell.self,
+                                forCellWithReuseIdentifier: DetailCollectionViewCell.reuseID)
         collectionView.contentInset = UIEdgeInsets(top: 0,
                                                    left: 15,
                                                    bottom: 0,
@@ -136,8 +132,8 @@ class MealDetailViewController: UIViewController {
     }()
     
     private lazy var segmentedControl: UISegmentedControl = {
-        let segmentedControl = UISegmentedControl(items: ["Malzemeler",
-                                                          "Yapılışı"])
+        let segmentedControl = UISegmentedControl(items: ["Ingredients",
+                                                          "Instructions"])
         segmentedControl.selectedSegmentIndex = 0
         
         let selectedAttributes: [NSAttributedString.Key: Any] = [
@@ -195,7 +191,7 @@ class MealDetailViewController: UIViewController {
     
     private lazy var createRecipeButton: UIButton = {
         let button = UIButton()
-        button.setTitle("Başka tarif oluştur", for: .normal)
+        button.setTitle("Create Another Recipe", for: .normal)
         button.titleLabel?.font = .dmSansBold(16)
         button.tintColor = .white
         button.backgroundColor = UIColor.primaryColor
@@ -204,12 +200,14 @@ class MealDetailViewController: UIViewController {
         return button
     }()
     
+    //MARK: - Init
     init(viewModel: RecipeDetailViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
     
     required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
+    
     //MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -227,7 +225,6 @@ class MealDetailViewController: UIViewController {
         stackView.addArrangedSubview(headStackView)
         headStackView.addArrangedSubview(backButton)
         headStackView.addArrangedSubview(emptyView)
-        headStackView.addArrangedSubview(exportButton)
         stackView.addArrangedSubview(mealImageView)
         stackView.addArrangedSubview(titleLabel)
         stackView.addArrangedSubview(likeStackView)
@@ -258,9 +255,6 @@ class MealDetailViewController: UIViewController {
             make.height.equalTo(44)
         }
         backButton.snp.makeConstraints { make in
-            make.width.equalTo(44)
-        }
-        exportButton.snp.makeConstraints { make in
             make.width.equalTo(44)
         }
         mealImageView.snp.makeConstraints { make in
@@ -306,6 +300,7 @@ class MealDetailViewController: UIViewController {
         }
     }
 
+    // MARK: - Bind ViewModel
     private func bindViewModel() {
         viewModel.onDataFetched = { [weak self] in
             guard let self = self else { return }
@@ -316,9 +311,9 @@ class MealDetailViewController: UIViewController {
             self.descriptionLabel.text = self.viewModel.descriptionText
             self.items = [
                 (UIImage(named: "time"), "\(self.viewModel.timeText) minutes"),
-                (UIImage(named: "serving"), "\(self.viewModel.servingsText) kişilik"),
-                (UIImage(named: "calory"), "\(self.viewModel.caloriesText) calorie"),
-                (UIImage(named: "type"), self.viewModel.typeText)
+                (UIImage(named: "serving"), "Serves \(self.viewModel.servingsText)"),
+                (UIImage(named: "calory"), "\(self.viewModel.caloriesText) Calories"),
+                (UIImage(named: "type"), self.viewModel.typeText.capitalized)
             ]
             self.detailCollectionView.reloadData()
             if !self.didTrackRecentOnce {
@@ -344,11 +339,11 @@ class MealDetailViewController: UIViewController {
         }
         
         viewModel.onLikeCountChanged = { [weak self] count in
-            self?.likeLabel.text = "\(count) kişi bu tarifi beğendi"
+            self?.likeLabel.text = "Liked by \(count) users"
         }
         
         viewModel.onError = { error in
-            print("Hata:", error.localizedDescription)
+            print("Error:", error.localizedDescription)
         }
     }
 
@@ -367,6 +362,7 @@ class MealDetailViewController: UIViewController {
     }
 }
 
+// MARK: - Delegates and Data Source
 extension MealDetailViewController: UICollectionViewDelegate,
                                     UICollectionViewDataSource,
                                     UICollectionViewDelegateFlowLayout{
@@ -381,7 +377,8 @@ extension MealDetailViewController: UICollectionViewDelegate,
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         if collectionView == ingredientsCollectionView {
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: IngredientsCollectionViewCell.reuseID, for: indexPath) as! IngredientsCollectionViewCell
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: IngredientsCollectionViewCell.reuseID,
+                                                          for: indexPath) as! IngredientsCollectionViewCell
             let ingredient = viewModel.ingredientsText[indexPath.row]
             cell.configure(text: ingredient)
             return cell
@@ -389,10 +386,12 @@ extension MealDetailViewController: UICollectionViewDelegate,
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: InstructionsCollectionViewCell.reuseID,
                                                           for: indexPath) as! InstructionsCollectionViewCell
             let instruction = viewModel.instructionItems[indexPath.row]
-            cell.configure(number: instruction.number, text: instruction.step)
+            cell.configure(number: instruction.number,
+                           text: instruction.step)
             return cell
         }
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: DetailCollectionViewCell.reuseID, for: indexPath) as! DetailCollectionViewCell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: DetailCollectionViewCell.reuseID,
+                                                      for: indexPath) as! DetailCollectionViewCell
         let item = items[indexPath.item]
         cell.configure(image: item.0,
                        name: item.1)
@@ -406,7 +405,9 @@ extension MealDetailViewController: UICollectionViewDelegate,
             let availableWidth = collectionView.bounds.width - 50
             let font = UIFont.dmSansRegular(14)
             
-            let textHeight = text.sizeAndLineCount(using: font, maxWidth: availableWidth, padding: 30).height
+            let textHeight = text.sizeAndLineCount(using: font,
+                                                   maxWidth: availableWidth,
+                                                   padding: 30).height
             
             return CGSize(width: collectionView.bounds.width, height: textHeight)
         } else if collectionView == ingredientsCollectionView {

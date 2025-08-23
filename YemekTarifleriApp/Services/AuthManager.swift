@@ -11,6 +11,7 @@ import GoogleSignIn
 import FirebaseCore
 import FBSDKLoginKit
 
+//MARK: - Protocol
 protocol AuthServiceProtocol {
     func signUp(email: String, password: String, username: String, completion: @escaping (Result<Void, Error>) -> Void)
     func signIn(email: String, password: String, completion: @escaping (Result<Void, Error>) -> Void)
@@ -21,7 +22,7 @@ protocol AuthServiceProtocol {
 }
 
 final class AuthManager: AuthServiceProtocol {
-    
+    //MARK: - Properties
     static let shared = AuthManager()
     private let auth = Auth.auth()
     private let db = Firestore.firestore()
@@ -43,7 +44,9 @@ final class AuthManager: AuthServiceProtocol {
                 return
             }
             
-            self?.saveUserToFirestore(user: user, username: username, completion: completion)
+            self?.saveUserToFirestore(user: user,
+                                      username: username,
+                                      completion: completion)
         }
     }
     
@@ -60,7 +63,8 @@ final class AuthManager: AuthServiceProtocol {
                 return
             }
             
-            self?.saveUserToFirestore(user: user, completion: completion)
+            self?.saveUserToFirestore(user: user,
+                                      completion: completion)
         }
     }
     
@@ -88,7 +92,8 @@ final class AuthManager: AuthServiceProtocol {
             
             let credential = GoogleAuthProvider.credential(withIDToken: idToken,
                                                            accessToken: accessToken)
-            self.firebaseSignIn(with: credential, completion: completion)
+            self.firebaseSignIn(with: credential,
+                                completion: completion)
         }
     }
     
@@ -112,7 +117,8 @@ final class AuthManager: AuthServiceProtocol {
             }
             
             let credential = FacebookAuthProvider.credential(withAccessToken: tokenString)
-            self?.firebaseSignIn(with: credential, completion: completion)
+            self?.firebaseSignIn(with: credential,
+                                 completion: completion)
         }
     }
     
@@ -138,7 +144,7 @@ final class AuthManager: AuthServiceProtocol {
         
         var userData: [String: Any] = [
             "email": user.email ?? "",
-            "username": username ?? user.displayName ?? "Kullanıcı",
+            "name": username ?? user.displayName ?? "Kullanıcı",
             "lastLogin": FieldValue.serverTimestamp()
         ]
         
@@ -153,7 +159,8 @@ final class AuthManager: AuthServiceProtocol {
                 CoreDataManager.shared.saveUserProfile(
                     uid: user.uid,
                     email: user.email ?? "",
-                    username: username ?? user.displayName ?? "Kullanıcı",
+                    name: user.displayName ?? "",
+                    surname: "",
                     photoURL: ""
                 )
                 completion(.success(()))

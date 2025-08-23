@@ -27,7 +27,7 @@ final class FavoriteViewModel {
                     .compactMap { $0.value.first }
                 
                 self.favorites = uniqueRecipes.map { recipe in
-                    RecipeUIModel(recipe: recipe, isFavorite: true, likeCount: 0)
+                    RecipeUIModel(recipe: recipe, isFavorite: true, likeCount: 0, color: .gray)
                 }
                 
                 for (index, item) in self.favorites.enumerated() {
@@ -54,6 +54,15 @@ final class FavoriteViewModel {
                     self?.onError?("Favori güncellenemedi")
                 }
             }
+        }
+    }
+    
+    func favorites(for mealType: String?) -> [RecipeUIModel] {
+        guard let mealType = mealType, !mealType.isEmpty, mealType != "All recipes" else {
+            return favorites
+        }
+        return favorites.filter { model in
+            model.recipe.dishTypes?.contains(where: { $0.lowercased() == mealType.lowercased() }) ?? false
         }
     }
     

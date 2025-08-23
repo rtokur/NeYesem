@@ -6,22 +6,27 @@
 //
 
 import Foundation
-import FirebaseAuth
 import UIKit
 
 final class EditProfileViewModel {
+    // MARK: - Dependencies
     private let userService: UserServiceProtocol
+    
+    // MARK: - Properties
     private(set) var user: UserModel?
     
+    // MARK: - Callbacks
     var onLoaded: ((UserModel) -> Void)?
     var onSaved: ((UserModel) -> Void)?
     var onError: ((String) -> Void)?
     
+    // MARK: - Initialization
     init(userService: UserServiceProtocol = UserService(), preloadedUser: UserModel? = nil) {
         self.userService = userService
         self.user = preloadedUser
     }
     
+    // MARK: - Public Methods
     func load() {
         if let user = user {
             onLoaded?(user)
@@ -35,8 +40,8 @@ final class EditProfileViewModel {
         }
     }
     
-    func save(name: String?, phone: String?, image: UIImage?) {
-        userService.updateUserProfile(name: name, phone: phone, image: image) { [weak self] result in
+    func save(name: String?, surname: String?, phone: String?, image: UIImage?) {
+        userService.updateUserProfile(name: name, surname: surname, phone: phone, image: image) { [weak self] result in
             switch result {
             case .failure(let e):
                 self?.onError?(e.localizedDescription)
@@ -45,10 +50,13 @@ final class EditProfileViewModel {
                     switch fetch {
                     case .success(let fresh):
                         self?.user = fresh
-                        CoreDataManager.shared.saveUserProfile(uid: fresh.uid,
-                                                               email: fresh.email ?? "",
-                                                               username: fresh.displayName ?? "",
-                                                               photoURL: fresh.photoURL ?? "")
+                        CoreDataManager.shared.saveUserProfile(
+                            uid: fresh.uid,
+                            email: fresh.email ?? "",
+                            name: fresh.name ?? "",
+                            surname: fresh.surname ?? "",
+                            photoURL: fresh.photoURL ?? ""
+                        )
                         self?.onSaved?(fresh)
                     case .failure(let e):
                         self?.onError?(e.localizedDescription)

@@ -21,16 +21,16 @@ class ProfileViewController: UIViewController {
     }()
     
     private lazy var stackView: UIStackView = {
-        let stack = UIStackView()
-        stack.axis = .vertical
-        stack.alignment = .center
-        stack.spacing = 25
-        return stack
+        let stackView = UIStackView()
+        stackView.axis = .vertical
+        stackView.alignment = .center
+        stackView.spacing = 25
+        return stackView
     }()
     
     private lazy var myProfileLabel: UILabel = {
         let label = UILabel()
-        label.text = "Profilim"
+        label.text = "My Profile"
         label.font = .dmSansSemiBold(18)
         label.textColor = UIColor.Color10
         label.textAlignment = .center
@@ -46,7 +46,8 @@ class ProfileViewController: UIViewController {
         button.configuration = configuration
         
         button.layer.shadowColor = UIColor.black.cgColor
-        button.layer.shadowOffset = CGSize(width: 0, height: 1)
+        button.layer.shadowOffset = CGSize(width: 0,
+                                           height: 1)
         button.layer.shadowRadius = 3
         button.layer.shadowOpacity = 0.07
         button.layer.masksToBounds = false
@@ -98,7 +99,7 @@ class ProfileViewController: UIViewController {
     
     private lazy var myPreferenceLabel: UILabel = {
         let label = UILabel()
-        label.text = "Tercihlerim"
+        label.text = "My Preferences"
         label.font = .dmSansSemiBold(17)
         label.textColor = UIColor.textColor900
         label.textAlignment = .left
@@ -111,7 +112,8 @@ class ProfileViewController: UIViewController {
         
         let symbolConfiguration = UIImage.SymbolConfiguration(pointSize: 13,
                                                               weight: .bold)
-        configuration.image = UIImage(systemName: "square.and.pencil")?.withConfiguration(symbolConfiguration)
+        configuration.image = UIImage(systemName: "square.and.pencil")?
+            .withConfiguration(symbolConfiguration)
         
         configuration.baseForegroundColor = UIColor.white
         configuration.baseBackgroundColor = UIColor.primaryColor
@@ -127,7 +129,7 @@ class ProfileViewController: UIViewController {
     
     private lazy var dietLabel: UILabel = {
         let label = UILabel()
-        label.text = "Beslenme tarzı: "
+        label.text = "Diet: "
         label.font = .dmSansRegular(14)
         label.textColor = UIColor.Text950
         label.textAlignment = .left
@@ -136,7 +138,6 @@ class ProfileViewController: UIViewController {
     
     private lazy var allergyLabel: UILabel = {
         let label = UILabel()
-        label.text = "Alerji: "
         label.font = .dmSansRegular(14)
         label.textColor = UIColor.Text950
         label.textAlignment = .left
@@ -145,7 +146,6 @@ class ProfileViewController: UIViewController {
     
     private lazy var dontLikeLabel: UILabel = {
         let label = UILabel()
-        label.text = "Sevmediğim ürünler: "
         label.font = .dmSansRegular(14)
         label.textColor = UIColor.Text950
         label.textAlignment = .left
@@ -158,46 +158,60 @@ class ProfileViewController: UIViewController {
         return view
     }()
     
-    private lazy var optionsContainerStackView: UIStackView = {
-        let shoppingList = ProfileOptionView(icon: UIImage(systemName: "cart"),
-                                             title: "Alışveriş Listelerim")
-        let settings = ProfileOptionView(icon: UIImage(systemName: "gearshape"),
-                                         title: "Ayarlar")
-        let password = ProfileOptionView(icon: UIImage(systemName: "lock"),
-                                         title: "Şifre Değiştirme")
-        let email = ProfileOptionView(icon: UIImage(systemName: "envelope"),
-                                         title: "E posta Değiştirme")
-        let signOut = ProfileOptionView(icon: UIImage(systemName: "rectangle.portrait.and.arrow.right"),
-                                        title: "Çıkış Yap")
+    private lazy var shoppingListOption: ProfileOptionView = {
+        let view = ProfileOptionView(icon: UIImage(systemName: "cart"),
+                                     title: "My Shopping Lists")
+        return view
+    }()
 
-        let tapGesture = UITapGestureRecognizer(target: self,
-                                                action: #selector(signOutTapped))
-        signOut.addGestureRecognizer(tapGesture)
-        signOut.isUserInteractionEnabled = true
-        
-        let tapGestureSettings = UITapGestureRecognizer(target: self,
-                                                        action: #selector(navigateToSettings))
-        settings.addGestureRecognizer(tapGestureSettings)
-        settings.isUserInteractionEnabled = true
-        
-        let tapGesturePassword = UITapGestureRecognizer(target: self,
-                                                        action: #selector(navigateToChangePassword))
-        password.addGestureRecognizer(tapGesturePassword)
-        password.isUserInteractionEnabled = true
-        
-        let tapGestureEmail = UITapGestureRecognizer(target: self,
-                                                        action: #selector(navigateToChangeEmail))
-        email.addGestureRecognizer(tapGestureEmail)
-        email.isUserInteractionEnabled = true
-        
+    private lazy var settingsOption: ProfileOptionView = {
+        let view = ProfileOptionView(icon: UIImage(systemName: "gearshape"),
+                                     title: "Settings")
+        let tap = UITapGestureRecognizer(target: self,
+                                         action: #selector(navigateToSettings))
+        view.addGestureRecognizer(tap)
+        view.isUserInteractionEnabled = true
+        return view
+    }()
+
+    private lazy var passwordOption: ProfileOptionView = {
+        let view = ProfileOptionView(icon: UIImage(systemName: "lock"),
+                                     title: "Change Password")
+        let tap = UITapGestureRecognizer(target: self,
+                                         action: #selector(navigateToChangePassword))
+        view.addGestureRecognizer(tap)
+        view.isUserInteractionEnabled = true
+        return view
+    }()
+
+    private lazy var emailOption: ProfileOptionView = {
+        let view = ProfileOptionView(icon: UIImage(systemName: "envelope"),
+                                     title: "Change Email")
+        let tap = UITapGestureRecognizer(target: self,
+                                         action: #selector(navigateToChangeEmail))
+        view.addGestureRecognizer(tap)
+        view.isUserInteractionEnabled = true
+        return view
+    }()
+
+    private lazy var signOutOption: ProfileOptionView = {
+        let view = ProfileOptionView(icon: UIImage(systemName: "rectangle.portrait.and.arrow.right"),
+                                     title: "Log Out")
+        let tap = UITapGestureRecognizer(target: self,
+                                         action: #selector(signOutTapped))
+        view.addGestureRecognizer(tap)
+        view.isUserInteractionEnabled = true
+        return view
+    }()
+
+    private lazy var optionsContainerStackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [
-            shoppingList,
-            settings,
-            password,
-            email,
-            signOut
+            shoppingListOption,
+            settingsOption,
+            passwordOption,
+            emailOption,
+            signOutOption
         ])
-        
         stackView.axis = .vertical
         stackView.alignment = .fill
         stackView.distribution = .fill
@@ -212,11 +226,13 @@ class ProfileViewController: UIViewController {
         setupConstraints()
         bindViewModel()
         viewModel.loadUserProfile()
+        self.hideKeyboardOnTap()
     }
     
     //MARK: - Setup Methods
     func setupViews(){
         view.backgroundColor = .white
+        
         view.addSubview(scrollView)
         scrollView.addSubview(stackView)
         stackView.addArrangedSubview(myProfileLabel)
@@ -235,7 +251,6 @@ class ProfileViewController: UIViewController {
         optionsView.addSubview(optionsContainerStackView)
         stackView.setCustomSpacing(10, after: profileImageView)
         stackView.setCustomSpacing(10, after: profileNameLabel)
-        self.hideKeyboardOnTap()
     }
     
     func setupConstraints(){
@@ -296,21 +311,20 @@ class ProfileViewController: UIViewController {
         }
     }
     
-    //MARK: - Functions
+    //MARK: - Bind ViewModel
     private func bindViewModel() {
         viewModel.onUserDataFetched = { [weak self] user in
             DispatchQueue.main.async {
                 self?.currentUser = user
-                self?.profileNameLabel.text = user.displayName
+                self?.profileNameLabel.text = "\(user.name ?? "") \(user.surname ?? "")"
                 self?.emailLabel.text = user.email
                 if let url = user.photoURL,
                    let Url = URL(string: url) {
                     self?.profileImageView.kf.setImage(with: Url)
                 }
-                self?.allergyLabel.text = user.allergies.joined(separator: ", ")
-                self?.dietLabel.text = user.diet
-                self?.dontLikeLabel.text = user.dislikes.joined(separator: ", ")
-                
+                self?.allergyLabel.text = "Allergy: \(user.allergies.joined(separator: ", "))"
+                self?.dietLabel.text = "Diet: \(user.diet ?? "")"
+                self?.dontLikeLabel.text = "Disliked Ingredients: \(user.dislikes.joined(separator: ", "))"
             }
         }
         
@@ -320,19 +334,17 @@ class ProfileViewController: UIViewController {
             }
         }
         
-        viewModel.onSignOut = { [weak self] in
-            DispatchQueue.main.async {
-                guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-                      let sceneDelegate = windowScene.delegate as? SceneDelegate else {
-                    return
-                }
+        viewModel.onSignOut = { 
+            let loginViewController = LoginRegisterViewController()
+            let navigationController = UINavigationController(rootViewController: loginViewController)
+            navigationController.setNavigationBarHidden(true, animated: false)
+            
+            if let window = UIApplication.shared.connectedScenes
+                .compactMap({ $0 as? UIWindowScene })
+                .first?.windows.first {
                 
-                let navigationController = UINavigationController(rootViewController: LoginRegisterViewController())
-                navigationController.setNavigationBarHidden(true,
-                                                            animated: false)
-                
-                sceneDelegate.window?.rootViewController = navigationController
-                sceneDelegate.window?.makeKeyAndVisible()
+                window.rootViewController = navigationController
+                window.makeKeyAndVisible()
             }
         }
     }
@@ -345,7 +357,9 @@ class ProfileViewController: UIViewController {
     }
     
     @objc private func signOutTapped() {
-        let alert = LogoutAlertView()
+        let alert = CustomAlertView(titleText: "Do you want to log out?",
+                                    confirmText: "Yes", cancelText: "No",
+                                    isConfirmHidden: false)
         alert.onConfirm = { [weak self] in
             self?.viewModel.signOut()
         }
@@ -357,7 +371,7 @@ class ProfileViewController: UIViewController {
         let editProfileViewController = EditProfileViewController(viewModel: viewModel)
         editProfileViewController.onDidSave = { [weak self] updatedUser in
             self?.currentUser = updatedUser
-            self?.profileNameLabel.text = updatedUser.displayName
+            self?.profileNameLabel.text = "\(updatedUser.name ?? "") \(updatedUser.surname ?? "")"
             self?.emailLabel.text = updatedUser.email
         }
         editProfileViewController.hidesBottomBarWhenPushed = true

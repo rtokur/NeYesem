@@ -16,11 +16,12 @@ extension UserProfile {
     }
 
     @NSManaged public var uid: String?
-    @NSManaged public var username: String?
+    @NSManaged public var name: String?
+    @NSManaged public var surname: String?
     @NSManaged public var email: String?
+    @NSManaged public var phone: String?
     @NSManaged public var photoURL: String?
 }
 
-extension UserProfile : Identifiable {
+extension UserProfile: Identifiable {}
 
-}

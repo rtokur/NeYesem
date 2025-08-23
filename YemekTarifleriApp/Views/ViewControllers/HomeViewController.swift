@@ -11,20 +11,6 @@ class HomeViewController: UIViewController{
     
     //MARK: - Properties
     private let viewModel = HomeViewModel()
-    private var suggestions: [String] = []
-    private var categories: [String: String] = ["Breakfast": "breakfast",
-                                                "": "meal",
-                                                "Dessert": "dessert",
-                                                "Salad": "salad",
-                                                "Side dish": "",
-                                                "Meze": "",
-                                                "Bread": "",
-                                                "Soupe": "",
-                                                "Beverage": "",
-                                                "Sauce": "",
-                                                "Marine": "",
-                                                "Finger Food": "",
-                                                "Atıştırmalık": ""]
     private var selectedSuggestionIndex: Int?
     
     //MARK: UI Elements
@@ -35,28 +21,28 @@ class HomeViewController: UIViewController{
     }()
     
     private lazy var stackView: UIStackView = {
-        let stack = UIStackView()
-        stack.axis = .vertical
-        stack.alignment = .center
-        stack.spacing = 20
-        return stack
+        let stackView = UIStackView()
+        stackView.axis = .vertical
+        stackView.alignment = .center
+        stackView.spacing = 20
+        return stackView
     }()
     
     private lazy var helloStackView: UIStackView = {
-        let stack = UIStackView()
-        stack.axis = .horizontal
-        return stack
+        let stackView = UIStackView()
+        stackView.axis = .horizontal
+        return stackView
     }()
     
     private lazy var titleStackView: UIStackView = {
-        let stack = UIStackView()
-        stack.axis = .vertical
-        return stack
+        let stackView = UIStackView()
+        stackView.axis = .vertical
+        return stackView
     }()
     
     private lazy var helloLabel: UILabel = {
         let label = UILabel()
-        label.text = "Merhaba"
+        label.text = "Hello"
         label.font = .dmSansSemiBold(18)
         label.textColor = UIColor.Text950
         return label
@@ -64,7 +50,7 @@ class HomeViewController: UIViewController{
     
     private lazy var cookLabel: UILabel = {
         let label = UILabel()
-        label.text = "Bugün ne pişireceksin?"
+        label.text = "What will you cook today?"
         label.font = .dmSansRegular(14)
         label.textColor = UIColor.Text600
         return label
@@ -117,11 +103,15 @@ class HomeViewController: UIViewController{
         textField.font = UIFont.dmSansRegular(14)
         let attributes: [NSAttributedString.Key: Any] = [
             .foregroundColor: UIColor.textColor300,
-            .font: UIFont.dmSansRegular(14, weight: .thin)
+            .font: UIFont.dmSansRegular(14,
+                                        weight: .thin)
         ]
         textField.tintColor = UIColor.textColor300
-        textField.attributedPlaceholder = NSAttributedString(string: "Tarif ara", attributes: attributes)
-        textField.addTarget(self, action: #selector(searchTextChanged(_:)), for: .editingChanged)
+        textField.attributedPlaceholder = NSAttributedString(string: "Search Recipes",
+                                                             attributes: attributes)
+        textField.addTarget(self,
+                            action: #selector(searchTextChanged(_:)),
+                            for: .editingChanged)
         return textField
     }()
     
@@ -133,7 +123,7 @@ class HomeViewController: UIViewController{
     
     private lazy var popularLabel: UILabel = {
         let label = UILabel()
-        label.text = "Popüler Kategoriler"
+        label.text = "Popular Categories"
         label.font = .dmSansSemiBold(14)
         label.textColor = UIColor.Text950
         return label
@@ -141,10 +131,13 @@ class HomeViewController: UIViewController{
     
     private lazy var seeAllButton3: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("Tümünü gör",
+        button.setTitle("See All",
                         for: .normal)
         button.titleLabel?.font = .dmSansSemiBold(12)
         button.tintColor = .secondaryColor
+        button.addTarget(self,
+                         action: #selector(navigateToCategories),
+                         for: .touchUpInside)
         return button
     }()
     
@@ -168,33 +161,20 @@ class HomeViewController: UIViewController{
         return collectionView
     }()
     
-    private lazy var hStackView: UIStackView = {
-        let stackView = UIStackView()
-        stackView.axis = .horizontal
-        return stackView
-    }()
-    
     private lazy var suggestionLabel: UILabel = {
         let label = UILabel()
-        label.text = "Senin için önerilenler"
+        label.text = "Recommended for You"
         label.font = .dmSansSemiBold(14)
         label.textColor = UIColor.Text950
+        label.textAlignment = .left
         return label
-    }()
-    
-    private lazy var seeAllButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.setTitle("Tümünü gör",
-                        for: .normal)
-        button.titleLabel?.font = .dmSansSemiBold(12)
-        button.tintColor = .secondaryColor
-        return button
     }()
     
     private lazy var suggestionCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
-        layout.itemSize = CGSize(width: 153, height: 212)
+        layout.itemSize = CGSize(width: 153,
+                                 height: 234)
         let collectionView = UICollectionView(frame: .zero,
                                               collectionViewLayout: layout)
         collectionView.showsHorizontalScrollIndicator = false
@@ -208,34 +188,20 @@ class HomeViewController: UIViewController{
         return collectionView
     }()
     
-    private lazy var hStackView2: UIStackView = {
-        let stackView = UIStackView()
-        stackView.axis = .horizontal
-        return stackView
-    }()
-    
     private lazy var lastViewedLabel: UILabel = {
         let label = UILabel()
-        label.text = "En son görüntülenenler"
+        label.text = "Recently Viewed"
         label.font = .dmSansSemiBold(14)
         label.textColor = UIColor.Text950
+        label.textAlignment = .left
         return label
-    }()
-    
-    private lazy var seeAllButton2: UIButton = {
-        let button = UIButton(type: .system)
-        button.setTitle("Tümünü gör",
-                        for: .normal)
-        button.titleLabel?.font = .dmSansSemiBold(12)
-        button.tintColor = .secondaryColor
-        return button
     }()
     
     private lazy var lastViewedCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
         layout.itemSize = CGSize(width: 153,
-                                 height: 212)
+                                 height: 234)
         let collectionView = UICollectionView(frame: .zero,
                                               collectionViewLayout: layout)
         collectionView.showsHorizontalScrollIndicator = false
@@ -265,9 +231,9 @@ class HomeViewController: UIViewController{
     }()
     
     private let suggestionStackView: UIStackView = {
-        let stack = UIStackView()
-        stack.axis = .vertical
-        return stack
+        let stackView = UIStackView()
+        stackView.axis = .vertical
+        return stackView
     }()
     
     // MARK: - Lifecycle
@@ -292,6 +258,7 @@ class HomeViewController: UIViewController{
         viewModel.fetchRecentViewed()
     }
     
+    // MARK: - Bind ViewModel
     private func bindViewModel() {
         viewModel.onRecommendedUpdated = { [weak self] in
             DispatchQueue.main.async {
@@ -314,6 +281,7 @@ class HomeViewController: UIViewController{
     //MARK: - Setup Methods
     func setupViews(){
         view.backgroundColor = .white
+        
         view.addSubview(scrollView)
         scrollView.addSubview(stackView)
         stackView.addArrangedSubview(helloStackView)
@@ -331,16 +299,12 @@ class HomeViewController: UIViewController{
         hStackView3.addArrangedSubview(seeAllButton3)
         stackView.setCustomSpacing(10, after: hStackView3)
         stackView.addArrangedSubview(popularCollectionView)
-        stackView.addArrangedSubview(hStackView)
-        hStackView.addArrangedSubview(suggestionLabel)
-        hStackView.addArrangedSubview(seeAllButton)
+        stackView.addArrangedSubview(suggestionLabel)
         stackView.addArrangedSubview(suggestionCollectionView)
-        stackView.setCustomSpacing(10, after: hStackView)
-        stackView.addArrangedSubview(hStackView2)
-        hStackView2.addArrangedSubview(lastViewedLabel)
-        hStackView2.addArrangedSubview(seeAllButton2)
+        stackView.setCustomSpacing(10, after: suggestionLabel)
+        stackView.addArrangedSubview(lastViewedLabel)
         stackView.addArrangedSubview(lastViewedCollectionView)
-        stackView.setCustomSpacing(10, after: hStackView2)
+        stackView.setCustomSpacing(10, after: lastViewedLabel)
         view.addSubview(suggestionView)
         suggestionView.addSubview(suggestionStackView)
     }
@@ -387,23 +351,17 @@ class HomeViewController: UIViewController{
             make.height.equalTo(105)
             make.width.equalToSuperview()
         }
-        hStackView.snp.makeConstraints { make in
+        suggestionLabel.snp.makeConstraints { make in
             make.width.equalToSuperview().inset(15)
             make.height.equalTo(20)
-        }
-        seeAllButton.snp.makeConstraints { make in
-            make.width.equalTo(70)
         }
         suggestionCollectionView.snp.makeConstraints { make in
             make.height.equalTo(216)
             make.width.equalToSuperview()
         }
-        hStackView2.snp.makeConstraints { make in
+        lastViewedLabel.snp.makeConstraints { make in
             make.width.equalToSuperview().inset(15)
             make.height.equalTo(20)
-        }
-        seeAllButton2.snp.makeConstraints { make in
-            make.width.equalTo(70)
         }
         lastViewedCollectionView.snp.makeConstraints { make in
             make.height.equalTo(216)
@@ -482,7 +440,7 @@ class HomeViewController: UIViewController{
     
     
     @objc private func performSearch(_ query: String) {
-        viewModel.fetchSearchSuggestions(query: query)
+        viewModel.fetchAutocompleteSuggestions(query: query)
     }
     
     @objc private func dismissKeyboardAndHideSuggestions() {
@@ -513,14 +471,22 @@ class HomeViewController: UIViewController{
         navigationController?.pushViewController(notificationsViewController,
                                                  animated: true)
     }
+    
+    @objc func navigateToCategories() {
+        let categoriesViewController = CategoriesViewController()
+        categoriesViewController.hidesBottomBarWhenPushed = true
+        navigationController?.pushViewController(categoriesViewController,
+                                                 animated: true)
+    }
 }
 
+// MARK: - Delegate And Data Sources
 extension HomeViewController: UITextFieldDelegate,
                               UICollectionViewDelegate,
                               UICollectionViewDataSource{
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if collectionView == popularCollectionView {
-            return categories.count
+            return viewModel.categories.count
         } else if collectionView == lastViewedCollectionView {
             return viewModel.recentViewedRecipes.count
         }
@@ -529,14 +495,16 @@ extension HomeViewController: UITextFieldDelegate,
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         if collectionView == popularCollectionView {
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: HomeMealTypeCollectionViewCell.reuseID, for: indexPath) as! HomeMealTypeCollectionViewCell
-            let categoryName = Array(categories.keys)[indexPath.row]
-            let categoryImage = categories[categoryName]
-            cell.configure(mealPhotoName: categoryImage ?? "",
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: HomeMealTypeCollectionViewCell.reuseID,
+                                                          for: indexPath) as! HomeMealTypeCollectionViewCell
+            let categoryName = viewModel.categories[indexPath.row].title
+            let categoryImage = viewModel.categories[indexPath.row].type
+            cell.configure(mealPhotoName: categoryImage,
                            mealName: categoryName)
             return cell
         } else if collectionView == lastViewedCollectionView {
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: FavoriteMealCollectionViewCell.reuseID, for: indexPath) as! FavoriteMealCollectionViewCell
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: FavoriteMealCollectionViewCell.reuseID,
+                                                          for: indexPath) as! FavoriteMealCollectionViewCell
             let uiModel = viewModel.recentViewedRecipes[indexPath.row]
             cell.configure(model: uiModel)
             cell.onFavoriteButtonTapped = { [weak self] in
@@ -544,21 +512,25 @@ extension HomeViewController: UITextFieldDelegate,
                     if success {
                         DispatchQueue.main.async {
                             collectionView.reloadItems(at: [indexPath])
+                            self?.suggestionCollectionView.reloadData()
                         }
                     }
                 }
             }
             return cell
         }
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: FavoriteMealCollectionViewCell.reuseID, for: indexPath) as! FavoriteMealCollectionViewCell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: FavoriteMealCollectionViewCell.reuseID,
+                                                      for: indexPath) as! FavoriteMealCollectionViewCell
         let uiModel = viewModel.recommendedRecipes[indexPath.row]
         cell.configure(model: uiModel)
         
         cell.onFavoriteButtonTapped = { [weak self] in
-            self?.viewModel.toggleFavorite(in: .recommended, at: indexPath.item) { success in
+            self?.viewModel.toggleFavorite(in: .recommended,
+                                           at: indexPath.item) { success in
                 if success {
                     DispatchQueue.main.async {
                         collectionView.reloadItems(at: [indexPath])
+                        self?.lastViewedCollectionView.reloadData()
                     }
                 }
             }
@@ -580,6 +552,13 @@ extension HomeViewController: UITextFieldDelegate,
             let detailViewController = MealDetailViewController(viewModel: recipeDetailViewModel)
             detailViewController.hidesBottomBarWhenPushed = true
             navigationController?.pushViewController(detailViewController,
+                                                     animated: true)
+        } else {
+            let categoryViewController = CategoryViewController()
+            let category = viewModel.categories[indexPath.row]
+            categoryViewController.selectedCategory = category.title
+            categoryViewController.hidesBottomBarWhenPushed = true
+            navigationController?.pushViewController(categoryViewController,
                                                      animated: true)
         }
     }

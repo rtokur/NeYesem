@@ -17,7 +17,6 @@ struct DietSelectionView3: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
             
-            // Header
             HStack {
                 Button(action: {
                     presentationMode.wrappedValue.dismiss()
@@ -39,8 +38,7 @@ struct DietSelectionView3: View {
             .padding(.horizontal)
             .padding(.bottom, 20)
             
-            // Başlık
-            Text("Sevmediğiniz ürünleri ekleyin")
+            Text("Add ingredients you don’t like")
                 .font(.title3)
                 .fontWeight(.semibold)
                 .padding(.horizontal)
@@ -51,7 +49,6 @@ struct DietSelectionView3: View {
                 .padding(.horizontal)
                 .padding(.bottom, 20)
             
-            // Grid
             LazyVGrid(columns: [GridItem(.adaptive(minimum: 100), spacing: 12)], spacing: 12) {
                 ForEach(dontlikeItems, id: \.self) { item in
                     Button(action: {
@@ -77,11 +74,10 @@ struct DietSelectionView3: View {
             }
             .padding(.horizontal)
             
-            // Arama kutusu
             HStack {
                 Image(systemName: "magnifyingglass")
                     .foregroundColor(.gray)
-                TextField("Ürün ekle", text: $searchText3, onCommit: {
+                TextField("Add Ingredient", text: $searchText3, onCommit: {
                     if !searchText3.isEmpty {
                         viewModel.dislikes.insert(searchText3)
                         if !dontlikeItems.contains(searchText3) {
@@ -100,24 +96,30 @@ struct DietSelectionView3: View {
             
             Spacer()
             
-            // Alt buton - Bitir
             Button(action: {
                 print("Selected Diet:", viewModel.selectedOption?.title ?? "nil")
                 print("Selected Allergies:", viewModel.allergies)
                 print("Selected Dislikes:", viewModel.dislikes)
-                if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-                   let window = windowScene.windows.first {
-                    
-                    let mainTabBar = MainTabBarController()
-                    mainTabBar.selectedDiet = viewModel.selectedOption?.title
-                    mainTabBar.selectedAllergies = Array(viewModel.allergies)
-                    mainTabBar.selectedDislikes = Array(viewModel.dislikes)
-                    
-                    window.rootViewController = mainTabBar
-                    window.makeKeyAndVisible()
-                }
+                viewModel.savePreferences { result in
+                        switch result {
+                        case .success:
+                            print("✅ Preferences saved")
+
+                            if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                               let window = windowScene.windows.first {
+                                
+                                let mainTabBar = MainTabBarController()
+                                
+                                window.rootViewController = mainTabBar
+                                window.makeKeyAndVisible()
+                            }
+                            
+                        case .failure(let error):
+                            print("❌ Save failed: \(error.localizedDescription)")
+                        }
+                    }
             }) {
-                Text("Başla")
+                Text("Get Started")
                     .fontWeight(.semibold)
                     .frame(maxWidth: .infinity)
                     .frame(height: 50)

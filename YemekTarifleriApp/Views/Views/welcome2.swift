@@ -18,10 +18,8 @@ struct welcome2: View {
         VStack {
             Spacer()
             
-            Image("choose") // Assets.xcassets içine eklemen gerekiyor.
-                
-            
-            // Boncuk Indicators (ilk sayfa aktif)
+            Image("choose")
+
             HStack(spacing: 8) {
                 Circle()
                     .fill(Color.gray.opacity(0.4))
@@ -35,14 +33,14 @@ struct welcome2: View {
             }
             .padding(.bottom, 20)
             
-            Text("Bugünün Tarifi Hazır!")
+            Text("Today’s Recipe is Ready!")
                 .font(.title2)
                 .fontWeight(.bold)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal)
                 .padding(.top, 20)
             
-            Text("Bugün ne pişirsem? diye düşünme. Dolabına uygun tarif önerisi ve eksikler listen hazır!")
+            Text("Stop wondering “What should I cook today?” Get recipes tailored to your fridge and see what’s missing from your pantry.")
                 .font(.body)
                 .foregroundColor(.gray)
                 .multilineTextAlignment(.center)
@@ -54,12 +52,12 @@ struct welcome2: View {
             
             
             HStack {
-                Button("Geç") {
+                Button("Skip") {
                     showLogin = true
                 }
                 .foregroundColor(.gray)
                 .fullScreenCover(isPresented: $showLogin) {
-                    LoginRegisterWrapper() // SwiftUI içinde UIKit ekranı
+                    LoginRegisterWrapper() 
                 }
                 
                 Spacer()

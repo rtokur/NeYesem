@@ -7,25 +7,31 @@
 
 import UIKit
 
-final class LogoutAlertView: UIView {
+final class CustomAlertView: UIView {
 
     // MARK: - Callbacks
     var onConfirm: (() -> Void)?
     var onCancel: (() -> Void)?
 
     // MARK: - Init
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    init(titleText: String, confirmText: String, cancelText: String, isConfirmHidden: Bool) {
+        super.init(frame: .zero)
         setupViews()
         setupConstraints()
+        titleLabel.text = titleText
+        confirmButton.setTitle(confirmText, for: .normal)
+        cancelButton.setTitle(cancelText, for: .normal)
+        confirmButton.isHidden = isConfirmHidden
     }
     required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
-    
+
     // MARK: - UI Elements
     private let backgroundView: UIControl = {
         let view = UIControl()
         view.backgroundColor = UIColor.black.withAlphaComponent(0.5)
-        view.addTarget(self, action: #selector(handleBackgroundTap), for: .touchUpInside)
+        view.addTarget(self,
+                       action: #selector(handleBackgroundTap),
+                       for: .touchUpInside)
         return view
     }()
 
@@ -44,12 +50,11 @@ final class LogoutAlertView: UIView {
         stackView.spacing = 16
         return stackView
     }()
-    
+
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.font = .dmSansRegular(16)
         label.textColor = .black
-        label.text = "Çıkış yapmak istiyor musunuz?"
         label.textAlignment = .center
         label.numberOfLines = 0
         return label
@@ -63,12 +68,11 @@ final class LogoutAlertView: UIView {
         stackView.spacing = 30
         return stackView
     }()
-    
+
     private let confirmButton: UIButton = {
         let button = UIButton()
-        button.setTitle("Evet", for: .normal)
         button.backgroundColor = .white
-        button.setTitleColor(UIColor.primaryColor, for: .normal)
+        button.setTitleColor(.primaryColor, for: .normal)
         button.titleLabel?.font = .dmSansBold(16)
         button.layer.borderColor = UIColor.primaryColor.cgColor
         button.layer.borderWidth = 1
@@ -78,10 +82,9 @@ final class LogoutAlertView: UIView {
                          for: .touchUpInside)
         return button
     }()
-    
+
     private let cancelButton: UIButton = {
         let button = UIButton()
-        button.setTitle("Hayır", for: .normal)
         button.backgroundColor = UIColor.primaryColor
         button.setTitleColor(.white, for: .normal)
         button.titleLabel?.font = .dmSansBold(16)
@@ -116,7 +119,7 @@ final class LogoutAlertView: UIView {
             make.height.equalTo(45)
         }
     }
-    
+
     // MARK: - Functions
     func present(on viewController: UIViewController) {
         guard let host = viewController.view else { return }
@@ -134,17 +137,11 @@ final class LogoutAlertView: UIView {
         }
 
         backgroundView.alpha = 0
-        containerView.transform = CGAffineTransform(scaleX: 0.9,
-                                                    y: 0.9)
+        containerView.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
         UIView.animate(withDuration: 0.22) { self.backgroundView.alpha = 1 }
-        UIView.animate(withDuration: 0.24,
-                       delay: 0.02,
-                       usingSpringWithDamping: 0.9,
-                       initialSpringVelocity: 0.8) {
+        UIView.animate(withDuration: 0.24, delay: 0.02, usingSpringWithDamping: 0.9, initialSpringVelocity: 0.8) {
             self.containerView.transform = .identity
         }
-
-        UIAccessibility.post(notification: .screenChanged, argument: titleLabel)
     }
 
     func dismiss(_ completion: (() -> Void)? = nil) {
@@ -152,8 +149,7 @@ final class LogoutAlertView: UIView {
                        animations: {
             self.backgroundView.alpha = 0
             self.containerView.alpha = 0
-            self.containerView.transform = CGAffineTransform(scaleX: 0.92,
-                                                             y: 0.92)
+            self.containerView.transform = CGAffineTransform(scaleX: 0.92, y: 0.92)
         }, completion: { _ in
             self.removeFromSuperview()
             self.backgroundView.removeFromSuperview()
@@ -162,18 +158,8 @@ final class LogoutAlertView: UIView {
     }
 
     // MARK: - Actions
-    @objc private func handleBackgroundTap() {
-        UIImpactFeedbackGenerator(style: .light).impactOccurred()
-        dismiss { [weak self] in self?.onCancel?() }
-    }
-    
-    @objc private func handleCancel() {
-        UIImpactFeedbackGenerator(style: .light).impactOccurred()
-        dismiss { [weak self] in self?.onCancel?() }
-    }
-    
-    @objc private func handleConfirm() {
-        UINotificationFeedbackGenerator().notificationOccurred(.warning)
-        dismiss { [weak self] in self?.onConfirm?() }
-    }
+    @objc private func handleBackgroundTap() { dismiss { [weak self] in self?.onCancel?() } }
+    @objc private func handleCancel() { dismiss { [weak self] in self?.onCancel?() } }
+    @objc private func handleConfirm() { dismiss { [weak self] in self?.onConfirm?() } }
 }
+

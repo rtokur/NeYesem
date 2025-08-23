@@ -40,8 +40,8 @@ class LoginRegisterViewController: UIViewController, UITextFieldDelegate {
     }()
 
     private lazy var segmentedControl: UISegmentedControl = {
-        let segmentedControl = UISegmentedControl(items: ["Giriş Yap",
-                                                          "Kayıt Ol"])
+        let segmentedControl = UISegmentedControl(items: ["Log In",
+                                                          "Sign Up"])
         segmentedControl.selectedSegmentIndex = 0
         
         let selectedAttributes: [NSAttributedString.Key: Any] = [
@@ -73,16 +73,16 @@ class LoginRegisterViewController: UIViewController, UITextFieldDelegate {
     }()
     
     private lazy var loginFormStackView: UIStackView = {
-        let stack = UIStackView()
-        stack.axis = .vertical
-        stack.spacing = 12
-        stack.alignment = .fill
-        return stack
+        let stackView = UIStackView()
+        stackView.axis = .vertical
+        stackView.spacing = 12
+        stackView.alignment = .fill
+        return stackView
     }()
 
     private lazy var emailLabel: UILabel = {
         let label = UILabel()
-        label.text = "E-posta"
+        label.text = "Email"
         label.font = UIFont.dmSansRegular(16)
         label.textColor = UIColor.textColor800
         return label
@@ -91,13 +91,13 @@ class LoginRegisterViewController: UIViewController, UITextFieldDelegate {
     private lazy var emailTextField: UITextField = {
         let textField = UITextField()
         textField.keyboardType = .emailAddress
-        textField.applyDefaultStyle(placeholder: "ornek@hotmail.com")
+        textField.applyDefaultStyle(placeholder: "example@hotmail.com")
         return textField
     }()
 
     private lazy var passwordLabel: UILabel = {
         let label = UILabel()
-        label.text = "Şifre"
+        label.text = "Password"
         label.font = UIFont.dmSansRegular(16)
         label.textColor = UIColor.textColor800
         return label
@@ -112,7 +112,7 @@ class LoginRegisterViewController: UIViewController, UITextFieldDelegate {
 
     private lazy var forgotPasswordLabel: UILabel = {
         let label = UILabel()
-        let text = "Şifreni mi unuttun?"
+        let text = "Forgot your password?"
         let attributed = NSMutableAttributedString(string: text)
         attributed.addAttribute(.underlineStyle,
                                 value: NSUnderlineStyle.single.rawValue,
@@ -131,7 +131,7 @@ class LoginRegisterViewController: UIViewController, UITextFieldDelegate {
 
     private lazy var loginButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("Giriş Yap",
+        button.setTitle("Log In",
                         for: .normal)
         button.setTitleColor(.white,
                              for: .normal)
@@ -149,16 +149,16 @@ class LoginRegisterViewController: UIViewController, UITextFieldDelegate {
     }()
     
     private lazy var signUpFormStackView: UIStackView = {
-        let stack = UIStackView()
-        stack.axis = .vertical
-        stack.spacing = 12
-        stack.alignment = .fill
-        return stack
+        let stackView = UIStackView()
+        stackView.axis = .vertical
+        stackView.spacing = 12
+        stackView.alignment = .fill
+        return stackView
     }()
     
     private lazy var emailSignUpLabel: UILabel = {
         let label = UILabel()
-        label.text = "E-posta"
+        label.text = "Email"
         label.font = UIFont.dmSansRegular(16)
         label.textColor = UIColor.textColor800
         return label
@@ -167,13 +167,13 @@ class LoginRegisterViewController: UIViewController, UITextFieldDelegate {
     private lazy var emailSignUpTextField: UITextField = {
         let textField = UITextField()
         textField.keyboardType = .emailAddress
-        textField.applyDefaultStyle(placeholder: "ornek@hotmail.com")
+        textField.applyDefaultStyle(placeholder: "example@hotmail.com")
         return textField
     }()
 
     private lazy var newPasswordLabel: UILabel = {
         let label = UILabel()
-        label.text = "Yeni Şifre"
+        label.text = "New Password"
         label.font = UIFont.dmSansRegular(16)
         label.textColor = UIColor.textColor800
         return label
@@ -188,7 +188,7 @@ class LoginRegisterViewController: UIViewController, UITextFieldDelegate {
 
     private lazy var confirmPasswordLabel: UILabel = {
         let label = UILabel()
-        label.text = "Şifreyi Doğrula"
+        label.text = "Confirm Password"
         label.font = UIFont.dmSansRegular(16)
         label.textColor = UIColor.textColor800
         return label
@@ -203,21 +203,23 @@ class LoginRegisterViewController: UIViewController, UITextFieldDelegate {
     
     private lazy var signUpButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("Kayıt Ol",
+        button.setTitle("Sign Up",
                         for: .normal)
         button.setTitleColor(.white,
                              for: .normal)
         button.backgroundColor = UIColor.primaryColor
         button.layer.cornerRadius = 15
         button.titleLabel?.font = UIFont.dmSansBold(16)
-        button.addTarget(self, action: #selector(handleRegister), for: .touchUpInside)
+        button.addTarget(self,
+                         action: #selector(handleRegister),
+                         for: .touchUpInside)
         return button
     }()
     
     private lazy var orLineStack: UIStackView = {
         let leftLine = makeLineView()
         let rightLine = makeLineView()
-        let label = makeLabel("ya da",
+        let label = makeLabel("or",
                               fontSize: 14,
                               color: UIColor.textColor400)
         let stack = UIStackView(arrangedSubviews: [leftLine,
@@ -230,12 +232,12 @@ class LoginRegisterViewController: UIViewController, UITextFieldDelegate {
     }()
     
     private lazy var socialButtonsStack: UIStackView = {
-        let stack = UIStackView(arrangedSubviews: [facebookButton,
+        let stackView = UIStackView(arrangedSubviews: [facebookButton,
                                                    googleButton])
-        stack.axis = .horizontal
-        stack.spacing = 16
-        stack.distribution = .equalSpacing
-        return stack
+        stackView.axis = .horizontal
+        stackView.spacing = 16
+        stackView.distribution = .equalSpacing
+        return stackView
     }()
     
     private lazy var googleButton: UIButton = {
@@ -264,7 +266,7 @@ class LoginRegisterViewController: UIViewController, UITextFieldDelegate {
     
     private lazy var bottomTextLabel: UILabel = {
         let label = UILabel()
-        label.text = "Hesabın yok mu?"
+        label.text = "Don’t have an account?"
         label.font = UIFont.dmSansRegular(14)
         label.textColor = .darkGray
         return label
@@ -272,7 +274,7 @@ class LoginRegisterViewController: UIViewController, UITextFieldDelegate {
 
     private lazy var signUpLoginLabel: UILabel = {
         let label = UILabel()
-        let text = "Kayıt Ol"
+        let text = "Sign Up"
         let attributedString = NSMutableAttributedString(string: text)
         attributedString.addAttribute(.underlineStyle,
                                       value: NSUnderlineStyle.single.rawValue,
@@ -287,7 +289,6 @@ class LoginRegisterViewController: UIViewController, UITextFieldDelegate {
         label.isUserInteractionEnabled = true
         return label
     }()
-
     
     // MARK: - Lifecycle
     override func viewDidLoad() {
@@ -299,11 +300,13 @@ class LoginRegisterViewController: UIViewController, UITextFieldDelegate {
         setupDelegates()
         setupReturnKeys()
         setupKeyboardObservers()
+        hideKeyboardOnTap()
     }
     
     //MARK: - Setup Methods
     func setupViews(){
         view.backgroundColor = .white
+        
         view.addSubview(scrollView)
         scrollView.addSubview(stackView)
         stackView.addArrangedSubview(logoImageView)
@@ -330,8 +333,7 @@ class LoginRegisterViewController: UIViewController, UITextFieldDelegate {
         bottomStack.addArrangedSubview(bottomTextLabel)
         bottomStack.addArrangedSubview(signUpLoginLabel)
         stackView.addArrangedSubview(bottomStack)
-        
-        self.hideKeyboardOnTap()
+
     }
     
     func setupConstraints(){
@@ -457,6 +459,13 @@ class LoginRegisterViewController: UIViewController, UITextFieldDelegate {
                                                name: UIResponder.keyboardWillHideNotification,
                                                object: nil)
     }
+    
+    private func setupPasswordTextField() {
+        addPasswordToggleButton(to: passwordTextField)
+        addPasswordToggleButton(to: confirmPasswordTextField)
+        addPasswordToggleButton(to: newPasswordTextField)
+    }
+    
     //MARK: - Functions
     private func updateSignUpLoginLabel(text: String) {
         let attributes = NSMutableAttributedString(string: text)
@@ -511,12 +520,6 @@ class LoginRegisterViewController: UIViewController, UITextFieldDelegate {
         label.textAlignment = .center
         return label
     }
-
-    private func setupPasswordTextField() {
-        addPasswordToggleButton(to: passwordTextField)
-        addPasswordToggleButton(to: confirmPasswordTextField)
-        addPasswordToggleButton(to: newPasswordTextField)
-    }
     
     private func addPasswordToggleButton(to textField: UITextField) {
         let button = UIButton(type: .custom)
@@ -547,13 +550,14 @@ class LoginRegisterViewController: UIViewController, UITextFieldDelegate {
         let dietSelectionViewController = DietSelectionViewController()
         navigationController?.pushViewController(dietSelectionViewController, animated: true)
     }
+    
     // MARK: - Actions
     @objc func segmentedControlClicked(_ sender: UISegmentedControl) {
         loginView.isHidden = sender.selectedSegmentIndex == 1
         signUpView.isHidden = sender.selectedSegmentIndex == 0
         
-        bottomTextLabel.text = sender.selectedSegmentIndex == 0 ? "Hesabın yok mu?" : "Zaten bir hesabın var mı?"
-        updateSignUpLoginLabel(text: sender.selectedSegmentIndex == 0 ? "Kayıt Ol" : "Giriş Yap")
+        bottomTextLabel.text = sender.selectedSegmentIndex == 0 ? "Don’t have an account?" : "Already have an account?"
+        updateSignUpLoginLabel(text: sender.selectedSegmentIndex == 0 ? "Sign Up" : "Log In")
     }
 
     @objc private func togglePasswordVisibility(_ sender: UIButton) {
@@ -567,7 +571,8 @@ class LoginRegisterViewController: UIViewController, UITextFieldDelegate {
                           duration: 0.2,
                           options: .transitionCrossDissolve,
                           animations: {
-            sender.setImage(UIImage(systemName: imageName), for: .normal)
+            sender.setImage(UIImage(systemName: imageName),
+                            for: .normal)
         })
     }
     
@@ -583,8 +588,10 @@ class LoginRegisterViewController: UIViewController, UITextFieldDelegate {
             scrollView.verticalScrollIndicatorInsets.bottom = keyboardHeight + 20
             
             if let activeTextField = activeTextField {
-                let textFieldFrame = activeTextField.convert(activeTextField.bounds, to: scrollView)
-                scrollView.scrollRectToVisible(textFieldFrame, animated: true)
+                let textFieldFrame = activeTextField.convert(activeTextField.bounds,
+                                                             to: scrollView)
+                scrollView.scrollRectToVisible(textFieldFrame,
+                                               animated: true)
             }
         }
     }
@@ -595,7 +602,8 @@ class LoginRegisterViewController: UIViewController, UITextFieldDelegate {
     }
     
     @objc private func handleLogin(){
-        loginRegisterViewModel.login(email: emailTextField.text, password: passwordTextField.text) { [weak self] error in
+        loginRegisterViewModel.login(email: emailTextField.text,
+                                     password: passwordTextField.text) { [weak self] error in
             if let error = error {
                 self?.showAlert(message: error)
             } else {
@@ -605,7 +613,9 @@ class LoginRegisterViewController: UIViewController, UITextFieldDelegate {
     }
     
     @objc private func handleRegister(){
-        loginRegisterViewModel.register(email: emailSignUpTextField.text, password: newPasswordTextField.text, confirmPassword: confirmPasswordTextField.text) { [weak self] error in
+        loginRegisterViewModel.register(email: emailSignUpTextField.text,
+                                        password: newPasswordTextField.text,
+                                        confirmPassword: confirmPasswordTextField.text) { [weak self] error in
             if let error = error {
                 self?.showAlert(message: error)
             } else {

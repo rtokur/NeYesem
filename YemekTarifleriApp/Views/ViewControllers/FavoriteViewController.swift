@@ -33,16 +33,16 @@ class FavoriteViewController: UIViewController, UITextFieldDelegate {
     
     //MARK: UI Elements
     private lazy var stackView: UIStackView = {
-        let stack = UIStackView()
-        stack.axis = .vertical
-        stack.alignment = .center
-        stack.spacing = 20
-        return stack
+        let stackView = UIStackView()
+        stackView.axis = .vertical
+        stackView.alignment = .center
+        stackView.spacing = 20
+        return stackView
     }()
     
     private lazy var favoritesLabel: UILabel = {
         let label = UILabel()
-        label.text = "Favorilerim"
+        label.text = "My Favorites"
         label.font = .dmSansSemiBold(18)
         label.textColor = UIColor.Color10
         label.textAlignment = .center
@@ -50,9 +50,9 @@ class FavoriteViewController: UIViewController, UITextFieldDelegate {
     }()
     
     private lazy var searchStackView: UIStackView = {
-        let stack = UIStackView()
-        stack.axis = .horizontal
-        return stack
+        let stackView = UIStackView()
+        stackView.axis = .horizontal
+        return stackView
     }()
     
     private let customSearchBarView: UIView = {
@@ -83,14 +83,26 @@ class FavoriteViewController: UIViewController, UITextFieldDelegate {
         textField.font = UIFont.dmSansRegular(14)
         let attributes: [NSAttributedString.Key: Any] = [
             .foregroundColor: UIColor.textColor300,
-            .font: UIFont.dmSansRegular(14, weight: .thin)
+            .font: UIFont.dmSansRegular(14,
+                                        weight: .thin)
         ]
         textField.addTarget(self,
                             action: #selector(searchTextChanged(_:)),
                             for: .editingChanged)
         textField.tintColor = UIColor.textColor300
-        textField.attributedPlaceholder = NSAttributedString(string: "Tarif ara", attributes: attributes)
+        textField.attributedPlaceholder = NSAttributedString(string: "Search Recipes",
+                                                             attributes: attributes)
         return textField
+    }()
+    
+    private lazy var sortButton: UIButton = {
+        let button = UIButton()
+        var configuration = UIButton.Configuration.plain()
+        configuration.image = UIImage(named: "sort")
+        configuration.preferredSymbolConfigurationForImage = UIImage.SymbolConfiguration(pointSize: 16)
+        button.configuration = configuration
+        button.tintColor = UIColor.textColor500
+        return button
     }()
     
     private lazy var filterButton: UIButton = {
@@ -103,25 +115,6 @@ class FavoriteViewController: UIViewController, UITextFieldDelegate {
         return button
     }()
     
-    private lazy var mealTypeCollectionView: UICollectionView = {
-        let layout = UICollectionViewFlowLayout()
-        layout.scrollDirection = .horizontal
-        layout.minimumInteritemSpacing = 7
-        layout.minimumLineSpacing = 7
-        let collectionView = UICollectionView(frame: .zero,
-                                              collectionViewLayout: layout)
-        collectionView.register(MealTypeCollectionViewCell.self, forCellWithReuseIdentifier: MealTypeCollectionViewCell.reuseID)
-        collectionView.delegate = self
-        collectionView.dataSource = self
-        collectionView.showsHorizontalScrollIndicator = false
-        collectionView.backgroundColor = .clear
-        collectionView.contentInset = UIEdgeInsets(top: 0,
-                                                   left: 15,
-                                                   bottom: 0,
-                                                   right: 15)
-        return collectionView
-    }()
-    
     private lazy var mealCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
@@ -131,7 +124,8 @@ class FavoriteViewController: UIViewController, UITextFieldDelegate {
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.showsVerticalScrollIndicator = false
-        collectionView.register(FavoriteMealCollectionViewCell.self, forCellWithReuseIdentifier: FavoriteMealCollectionViewCell.reuseID)
+        collectionView.register(FavoriteMealCollectionViewCell.self,
+                                forCellWithReuseIdentifier: FavoriteMealCollectionViewCell.reuseID)
         return collectionView
     }()
     
@@ -151,16 +145,18 @@ class FavoriteViewController: UIViewController, UITextFieldDelegate {
 
     private let emptyTitleLabel: UILabel = {
         let label = UILabel()
-        label.text = "Henüz favorilerine tarif eklemedin"
+        label.text = "You haven’t added any recipes to your favorites yet"
         label.font = .dmSansBold(18)
         label.textColor = UIColor.Text600
         label.textAlignment = .center
+        label.numberOfLines = 0
+        label.lineBreakMode = .byWordWrapping
         return label
     }()
 
     private let emptySubtitleLabel: UILabel = {
         let label = UILabel()
-        label.text = "Şimdi keşfetmeye başla ve beğendiğin tarifleri kaydet! 🔖"
+        label.text = "Start exploring now and save the recipes you love! 🔖"
         label.font = .dmSansRegular(16)
         label.textColor = UIColor.textColor400
         label.textAlignment = .center
@@ -184,9 +180,9 @@ class FavoriteViewController: UIViewController, UITextFieldDelegate {
     }()
     
     private let suggestionStackView: UIStackView = {
-        let stack = UIStackView()
-        stack.axis = .vertical
-        return stack
+        let stackView = UIStackView()
+        stackView.axis = .vertical
+        return stackView
     }()
     
     //MARK: - Lifecycle
@@ -194,18 +190,8 @@ class FavoriteViewController: UIViewController, UITextFieldDelegate {
         super.viewDidLoad()
         setupViews()
         setupConstraints()
-        preselectFirstCategory()
-        viewModel.onFavoritesUpdated = { [weak self] in
-            DispatchQueue.main.async {
-                guard let self = self else { return }
-                let selectedCategory = self.categories[self.selectedIndexPath.item]
-                self.filteredFavorites = self.viewModel.filterFavorites(by: selectedCategory)
-                self.mealCollectionView.reloadData()
-                self.updateEmptyState()
-            }
-        }
-        viewModel.fetchFavorites()
-        setupDismissKeyboardTap()
+        bindViewModel()
+        hideKeyboardOnTap()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -216,6 +202,7 @@ class FavoriteViewController: UIViewController, UITextFieldDelegate {
     //MARK: - Setup Methods
     func setupViews(){
         view.backgroundColor = .white
+        
         view.addSubview(stackView)
         stackView.addArrangedSubview(favoritesLabel)
         stackView.addArrangedSubview(searchStackView)
@@ -224,8 +211,8 @@ class FavoriteViewController: UIViewController, UITextFieldDelegate {
         searchBarStackView.addArrangedSubview(iconImageView)
         searchBarStackView.addArrangedSubview(searchTextField)
         searchTextField.delegate = self
+        searchStackView.addArrangedSubview(sortButton)
         searchStackView.addArrangedSubview(filterButton)
-        stackView.addArrangedSubview(mealTypeCollectionView)
         stackView.addArrangedSubview(mealCollectionView)
         view.addSubview(emptyStateView)
         emptyStateView.addSubview(emptyImageView)
@@ -258,12 +245,11 @@ class FavoriteViewController: UIViewController, UITextFieldDelegate {
         searchTextField.snp.makeConstraints { make in
             make.height.equalToSuperview()
         }
-        filterButton.snp.makeConstraints { make in
+        sortButton.snp.makeConstraints { make in
             make.width.equalTo(44)
         }
-        mealTypeCollectionView.snp.makeConstraints { make in
-            make.height.equalTo(36)
-            make.width.equalToSuperview()
+        filterButton.snp.makeConstraints { make in
+            make.width.equalTo(44)
         }
         mealCollectionView.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview().inset(15)
@@ -296,19 +282,21 @@ class FavoriteViewController: UIViewController, UITextFieldDelegate {
         }
     }
     
-    private func setupDismissKeyboardTap() {
-        let tap = UITapGestureRecognizer(target: self,
-                                         action: #selector(dismissKeyboardAndHideSuggestions))
-        tap.cancelsTouchesInView = false
-        view.addGestureRecognizer(tap)
-    }
-    
-    private func preselectFirstCategory() {
-        DispatchQueue.main.async {
-            self.mealTypeCollectionView.selectItem(at: self.selectedIndexPath, animated: false, scrollPosition: [])
+    // MARK: - Bind ViewModel
+    private func bindViewModel() {
+        viewModel.onFavoritesUpdated = { [weak self] in
+            DispatchQueue.main.async {
+                guard let self = self else { return }
+                let selectedCategory = self.categories[self.selectedIndexPath.item]
+                self.filteredFavorites = self.viewModel.filterFavorites(by: selectedCategory)
+                self.mealCollectionView.reloadData()
+                self.updateEmptyState()
+            }
         }
+        viewModel.fetchFavorites()
     }
     
+    // MARK: - Update Suggestions
     private func updateSearchSuggestions() {
         suggestionStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
         
@@ -325,7 +313,8 @@ class FavoriteViewController: UIViewController, UITextFieldDelegate {
             label.textColor = UIColor.textColor900
             label.isUserInteractionEnabled = true
             label.tag = recipe.recipe.id
-            let tap = UITapGestureRecognizer(target: self, action: #selector(suggestionTapped(_:)))
+            let tap = UITapGestureRecognizer(target: self,
+                                             action: #selector(suggestionTapped(_:)))
             label.addGestureRecognizer(tap)
             suggestionStackView.addArrangedSubview(label)
             label.snp.makeConstraints { make in
@@ -353,11 +342,6 @@ class FavoriteViewController: UIViewController, UITextFieldDelegate {
         suggestionView.isHidden = true
     }
     
-    @objc private func dismissKeyboardAndHideSuggestions() {
-        view.endEditing(true)
-        suggestionView.isHidden = true
-    }
-    
     @objc private func searchTextChanged(_ textField: UITextField) {
         guard let text = textField.text, text.count >= 2 else {
             filteredFavorites.removeAll()
@@ -369,84 +353,45 @@ class FavoriteViewController: UIViewController, UITextFieldDelegate {
         filteredFavorites = viewModel.favorites.filter { $0.recipe.title.lowercased().contains(text.lowercased()) }
         updateSearchSuggestions()
     }
-
 }
 
 //MARK: - Delegates
 extension FavoriteViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        if collectionView == mealCollectionView {
-            return filteredFavorites.count
-        }
-        return categories.count
+        return filteredFavorites.count
     }
     
     func collectionView(_ collectionView: UICollectionView,
                         cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        if collectionView == mealCollectionView {
-            let cell = collectionView.dequeueReusableCell(
-                withReuseIdentifier: FavoriteMealCollectionViewCell.reuseID,
-                for: indexPath
-            ) as! FavoriteMealCollectionViewCell
-            
-            let uiModel = filteredFavorites[indexPath.row]
-            cell.configure(model: uiModel)
-            cell.onFavoriteButtonTapped = { [weak self] in
-                self?.viewModel.toggleFavorite(recipe: uiModel.recipe)
-            }
-            return cell
-        }
-        
         let cell = collectionView.dequeueReusableCell(
-            withReuseIdentifier: MealTypeCollectionViewCell.reuseID,
+            withReuseIdentifier: FavoriteMealCollectionViewCell.reuseID,
             for: indexPath
-        ) as! MealTypeCollectionViewCell
-        cell.configure(title: categories[indexPath.item])
-        cell.isSelected = (indexPath == selectedIndexPath)
+        ) as! FavoriteMealCollectionViewCell
+        
+        let uiModel = filteredFavorites[indexPath.row]
+        cell.configure(model: uiModel)
+        cell.onFavoriteButtonTapped = { [weak self] in
+            self?.viewModel.toggleFavorite(recipe: uiModel.recipe)
+        }
         return cell
+        
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        if collectionView == mealCollectionView {
-            guard let selectedRecipe = viewModel.item(at: indexPath.row) else { return }
-            let recipeDetailViewModel = RecipeDetailViewModel(recipeId: selectedRecipe.recipe.id)
-            let detailViewController = MealDetailViewController(viewModel: recipeDetailViewModel)
-            detailViewController.hidesBottomBarWhenPushed = true
-            navigationController?.pushViewController(detailViewController,
-                                                     animated: true)
-        } else {
-            if selectedIndexPath != indexPath {
-                if let oldCell = collectionView.cellForItem(at: selectedIndexPath) as? MealTypeCollectionViewCell {
-                    oldCell.isSelected = false
-                }
-                selectedIndexPath = indexPath
-            }
-            
-            if let newCell = collectionView.cellForItem(at: indexPath) as? MealTypeCollectionViewCell {
-                newCell.isSelected = true
-            }
-            
-            collectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
-            
-            let selectedCategory = categories[indexPath.item]
-            filteredFavorites = viewModel.filterFavorites(by: selectedCategory)
-            mealCollectionView.reloadData()
-        }
+        guard let selectedRecipe = viewModel.item(at: indexPath.row) else { return }
+        let recipeDetailViewModel = RecipeDetailViewModel(recipeId: selectedRecipe.recipe.id)
+        let detailViewController = MealDetailViewController(viewModel: recipeDetailViewModel)
+        detailViewController.hidesBottomBarWhenPushed = true
+        navigationController?.pushViewController(detailViewController,
+                                                 animated: true)
+        
     }
     
     func collectionView(_ collectionView: UICollectionView,
                         layout collectionViewLayout: UICollectionViewLayout,
                         sizeForItemAt indexPath: IndexPath) -> CGSize {
-        if collectionView == mealCollectionView {
             let width = (collectionView.bounds.width / 2) - 7
             return CGSize(width: width, height: 212)
-        }
-        let text = categories[indexPath.item] as NSString
-        let font = UIFont.dmSansSemiBold(11)
-        let textSize = text.size(withAttributes: [.font: font])
-        let horizontalPadding: CGFloat = 20
-        let height: CGFloat = 36
-        return CGSize(width: ceil(textSize.width) + horizontalPadding, height: height)
     }
     
     func textFieldDidBeginEditing(_ textField: UITextField) {
@@ -457,5 +402,6 @@ extension FavoriteViewController: UICollectionViewDelegate, UICollectionViewData
     func textFieldDidEndEditing(_ textField: UITextField) {
         customSearchBarView.layer.borderColor = UIColor.textColor300.cgColor
         iconImageView.tintColor = UIColor.textColor300
+        suggestionView.isHidden = true
     }
 }

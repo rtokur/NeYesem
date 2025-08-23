@@ -9,31 +9,32 @@ import Foundation
 import FirebaseAuth
 
 final class ChangePasswordViewModel {
-    
+    // MARK: - Callbacks
     var onSuccess: (() -> Void)?
     var onError: ((String) -> Void)?
     
+    // MARK: - Change Password
     func changePassword(current: String?, new: String?, confirm: String?) {
         guard let current = current, !current.isEmpty,
               let new = new, !new.isEmpty,
               let confirm = confirm, !confirm.isEmpty else {
-            onError?("Lütfen tüm alanları doldurun")
+            onError?("Please fill in all fields.")
             return
         }
         
         guard new == confirm else {
-            onError?("Yeni şifreler eşleşmiyor")
+            onError?("New passwords do not match.")
             return
         }
         
         guard new.count >= 6 else {
-            onError?("Yeni şifre en az 6 karakter olmalı")
+            onError?("New password must be at least 6 characters long.")
             return
         }
         
         guard let user = Auth.auth().currentUser,
               let email = user.email else {
-            onError?("Kullanıcı oturumu bulunamadı")
+            onError?("User session not found.")
             return
         }
         
@@ -41,13 +42,13 @@ final class ChangePasswordViewModel {
         
         user.reauthenticate(with: credential) { [weak self] _, error in
             if let error = error {
-                self?.onError?("Mevcut şifre hatalı: \(error.localizedDescription)")
+                self?.onError?("Current password is incorrect: \(error.localizedDescription)")
                 return
             }
             
             user.updatePassword(to: new) { error in
                 if let error = error {
-                    self?.onError?("Şifre güncellenemedi: \(error.localizedDescription)")
+                    self?.onError?("Password could not be updated: \(error.localizedDescription)")
                     return
                 }
                 self?.onSuccess?()

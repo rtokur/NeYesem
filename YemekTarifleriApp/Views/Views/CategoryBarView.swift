@@ -9,13 +9,12 @@ import UIKit
 import SnapKit
 
 final class CategoryBarView: UIView, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
-
-    var categories: [String] = ["🥬 Sebzeler", "🍞 Tahıllar", "🥩 Et ve Proteinler", "🧀 Süt Ürünler", "🍫 Atıştırmalıklar"] {
+    // MARK: - Properties
+    var categories: [String] = [] {
         didSet { collectionView.reloadData() }
     }
 
     private var selectedIndexPath: IndexPath? = IndexPath(item: 0, section: 0)
-
     var onSelectionChanged: ((String, Int) -> Void)?
 
     private lazy var collectionView: UICollectionView = {
@@ -24,36 +23,36 @@ final class CategoryBarView: UIView, UICollectionViewDataSource, UICollectionVie
         layout.minimumInteritemSpacing = 8
         layout.estimatedItemSize = .zero
 
-        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        collectionView.register(CategoryCollectionViewCell.self, forCellWithReuseIdentifier: CategoryCollectionViewCell.reuseID)
+        let collectionView = UICollectionView(frame: .zero,
+                                              collectionViewLayout: layout)
+        collectionView.register(CategoryCollectionViewCell.self,
+                                forCellWithReuseIdentifier: CategoryCollectionViewCell.reuseID)
         collectionView.dataSource = self
         collectionView.delegate = self
         collectionView.showsHorizontalScrollIndicator = false
         collectionView.backgroundColor = .clear
-        collectionView.contentInset = UIEdgeInsets(top: 0, left: 15, bottom: 0, right: 15)
+        collectionView.contentInset = UIEdgeInsets(top: 0,
+                                                   left: 15,
+                                                   bottom: 0,
+                                                   right: 15)
         return collectionView
     }()
 
+    // MARK: - Init
     override init(frame: CGRect) {
         super.init(frame: frame)
         addSubview(collectionView)
         collectionView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
-
-        DispatchQueue.main.async { [weak self] in
-            guard let self, let selected = self.selectedIndexPath, self.categories.indices.contains(selected.item) else { return }
-            self.collectionView.selectItem(at: selected, animated: false, scrollPosition: [])
-            self.onSelectionChanged?(self.categories[selected.item], selected.item)
-        }
     }
 
     required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
 
+    // MARK: - Functions
     func select(index: Int, animated: Bool = true) {
         guard index >= 0, index < categories.count else { return }
         let new = IndexPath(item: index, section: 0)
-
         if let old = selectedIndexPath, old != new {
             collectionView.deselectItem(at: old, animated: animated)
         }
@@ -61,7 +60,12 @@ final class CategoryBarView: UIView, UICollectionViewDataSource, UICollectionVie
         collectionView.selectItem(at: new, animated: animated, scrollPosition: .centeredHorizontally)
         onSelectionChanged?(categories[index], index)
     }
-
+    
+    func addCategory(_ category: String) {
+        guard !categories.contains(category) else { return }
+        categories.append(category)
+        collectionView.reloadData()
+    }
     // MARK: - DataSource
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         categories.count
@@ -95,10 +99,8 @@ final class CategoryBarView: UIView, UICollectionViewDataSource, UICollectionVie
                         layout collectionViewLayout: UICollectionViewLayout,
                         sizeForItemAt indexPath: IndexPath) -> CGSize {
         let title = categories[indexPath.item] as NSString
-        let font = UIFont.dmSansSemiBold(11)
+        let font = UIFont.dmSansSemiBold(12)
         let textSize = title.size(withAttributes: [.font: font])
-        let horizontalPadding: CGFloat = 20
-        let height: CGFloat = 36
-        return CGSize(width: ceil(textSize.width) + horizontalPadding, height: height)
+        return CGSize(width: ceil(textSize.width) + 20, height: 36)
     }
 }

@@ -8,7 +8,9 @@
 import UIKit
 
 class SuccessChangingViewController: UIViewController {
+    //MARK: Properties
     var successMessage: String?
+    private let viewModel = ProfileViewModel()
     
     //MARK: UI Elements
     private lazy var scrollView: UIScrollView = {
@@ -18,11 +20,11 @@ class SuccessChangingViewController: UIViewController {
     }()
     
     private lazy var stackView: UIStackView = {
-        let stack = UIStackView()
-        stack.axis = .vertical
-        stack.alignment = .center
-        stack.spacing = 60
-        return stack
+        let stackView = UIStackView()
+        stackView.axis = .vertical
+        stackView.alignment = .center
+        stackView.spacing = 60
+        return stackView
     }()
     
     private lazy var backButton: UIButton = {
@@ -45,7 +47,7 @@ class SuccessChangingViewController: UIViewController {
     
     private lazy var successLabel: UILabel = {
         let label = UILabel()
-        label.text = "Şifren Başarıyla Değiştirildi"
+        label.text = "Password Successfully Changed"
         label.font = .dmSansBold(18)
         label.textColor = UIColor.Primary950
         label.textAlignment = .center
@@ -54,7 +56,7 @@ class SuccessChangingViewController: UIViewController {
 
     private lazy var successLabel2: UILabel = {
         let label = UILabel()
-        label.text = "Şimdi hesabına yeni şifrenle giriş yapabilirsin."
+        label.text = "You can now log in with your new password."
         label.font = .dmSansRegular(14)
         label.numberOfLines = 0
         label.lineBreakMode = .byWordWrapping
@@ -65,7 +67,7 @@ class SuccessChangingViewController: UIViewController {
     
     private lazy var loginButton: UIButton = {
         let button = UIButton()
-        button.setTitle("Giriş yap", for: .normal)
+        button.setTitle("Log In", for: .normal)
         button.backgroundColor = UIColor.primaryColor
         button.setTitleColor(.white, for: .normal)
         button.titleLabel?.font = .dmSansBold(16)
@@ -86,6 +88,7 @@ class SuccessChangingViewController: UIViewController {
     //MARK: - Setup Methods
     func setupViews(){
         view.backgroundColor = .white
+        
         view.addSubview(scrollView)
         scrollView.addSubview(stackView)
         stackView.addArrangedSubview(successImageView)
@@ -96,7 +99,7 @@ class SuccessChangingViewController: UIViewController {
         view.addSubview(backButton)
         
         if let successMessage = successMessage {
-            successLabel.text = "Doğrulama Linki Gönderildi"
+            successLabel.text = "Verification Link Sent"
             successLabel2.text = successMessage
         }
     }
@@ -137,18 +140,18 @@ class SuccessChangingViewController: UIViewController {
     }
     
     @objc func loginTapped() {
-        DispatchQueue.main.async {
-            guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-                  let sceneDelegate = windowScene.delegate as? SceneDelegate else {
-                return
-            }
+        viewModel.signOut()
             
-            let navigationController = UINavigationController(rootViewController: LoginRegisterViewController())
-            navigationController.setNavigationBarHidden(true,
-                                                        animated: false)
+        let loginViewController = LoginRegisterViewController()
+        let navigationController = UINavigationController(rootViewController: loginViewController)
+        navigationController.setNavigationBarHidden(true, animated: false)
+        
+        if let window = UIApplication.shared.connectedScenes
+            .compactMap({ $0 as? UIWindowScene })
+            .first?.windows.first {
             
-            sceneDelegate.window?.rootViewController = navigationController
-            sceneDelegate.window?.makeKeyAndVisible()
+            window.rootViewController = navigationController
+            window.makeKeyAndVisible()
         }
     }
 }

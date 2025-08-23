@@ -84,7 +84,7 @@ struct HeaderView: View {
 struct TitleSection: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("Alerjiniz olan ürünleri ekleyin")
+            Text("Add ingredients you’re allergic to")
                 .font(.title3)
                 .fontWeight(.semibold)
             
@@ -133,7 +133,7 @@ struct SearchBar: View {
         HStack {
             Image(systemName: "magnifyingglass")
                 .foregroundColor(.gray)
-            TextField("Ürün ekle", text: $text, onCommit: onCommit)
+            TextField("Add Ingredient", text: $text, onCommit: onCommit)
         }
         .padding()
         .background(
@@ -148,13 +148,11 @@ struct FooterButtons: View {
     
     var body: some View {
         HStack {
-            Button("Geç") {
+            Button("Skip") {
                 if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
                    let window = windowScene.windows.first {
                     
                     let mainTabBar = MainTabBarController()
-                    mainTabBar.selectedDiet = viewModel.selectedOption?.title
-                    mainTabBar.selectedAllergies = Array(viewModel.allergies)
                     window.rootViewController = mainTabBar
                     window.makeKeyAndVisible()
                 }

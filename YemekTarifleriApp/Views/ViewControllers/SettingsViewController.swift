@@ -12,31 +12,31 @@ final class SettingsViewController: UIViewController {
 
     // MARK: - UI Elements
     private let scrollView = UIScrollView()
+    
     private let contentStackView: UIStackView = {
-        let view = UIStackView()
-        view.axis = .vertical
-        view.spacing = 16
-        view.alignment = .fill
-        return view
+        let stackView = UIStackView()
+        stackView.axis = .vertical
+        stackView.spacing = 16
+        stackView.alignment = .fill
+        return stackView
     }()
 
     private let backButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setImage(UIImage(systemName: "arrow.backward"), for: .normal)
+        button.setImage(UIImage(systemName: "arrow.backward"),
+                        for: .normal)
         button.tintColor = UIColor.Color10
         return button
     }()
 
     private let titleLabel: UILabel = {
         let label = UILabel()
-        label.text = "Ayarlar"
+        label.text = "Settings"
         label.font = .dmSansSemiBold(18)
         label.textColor = UIColor.Color10
         label.textAlignment = .center
         return label
     }()
-
-    private let switchScale: CGFloat = 0.7
 
     // MARK: - Lifecycle
     override func viewDidLoad() {
@@ -74,9 +74,9 @@ final class SettingsViewController: UIViewController {
     // MARK: - Content
     private func setupContent() {
         let items: [(String, Selector)] = [
-            ("Tarif Hatırlatma", #selector(onRecipeToggle(_:))),
-            ("E‑posta Bildirimi Al", #selector(onEmailToggle(_:))),
-            ("Alışveriş Hatırlatma", #selector(onShoppingToggle(_:)))
+            ("Recipe Reminder", #selector(onRecipeToggle(_:))),
+            ("Receive Email Notification", #selector(onEmailToggle(_:))),
+            ("Shopping Reminder", #selector(onShoppingToggle(_:)))
         ]
 
         for (title, action) in items {
@@ -102,7 +102,8 @@ final class SettingsViewController: UIViewController {
         label.text = title
         label.font = .dmSansSemiBold(14)
         label.textColor = UIColor.Text950
-        label.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+        label.setContentCompressionResistancePriority(.defaultLow,
+                                                      for: .horizontal)
 
         card.addSubview(row)
         row.snp.makeConstraints { make in
@@ -118,8 +119,11 @@ final class SettingsViewController: UIViewController {
     private func makeSwitch(action: Selector) -> UISwitch {
         let settingSwitch = UISwitch()
         settingSwitch.isOn = false
-        settingSwitch.transform = CGAffineTransform(scaleX: switchScale, y: switchScale)
-        settingSwitch.addTarget(self, action: action, for: .valueChanged)
+        settingSwitch.transform = CGAffineTransform(scaleX: 0.7,
+                                                    y: 0.7)
+        settingSwitch.addTarget(self,
+                                action: action,
+                                for: .valueChanged)
         settingSwitch.onTintColor = UIColor.primaryColor
         settingSwitch.thumbTintColor = UIColor.textColor400
 
@@ -135,11 +139,12 @@ final class SettingsViewController: UIViewController {
         view.layer.borderColor = UIColor.Text50.cgColor
     }
 
-    // MARK: - Actions
     private func bindActions() {
-        backButton.addTarget(self, action: #selector(backButtonAction), for: .touchUpInside)
+        backButton.addTarget(self,
+                             action: #selector(backButtonAction),
+                             for: .touchUpInside)
     }
-
+    // MARK: - Actions
     @objc private func backButtonAction() {
         navigationController?.popViewController(animated: true)
     }

@@ -8,7 +8,7 @@
 import SwiftUI
 import UIKit
 
-// UIKit ekranını SwiftUI'da kullanabilmek için wrapper
+
 struct LoginRegisterWrapper: UIViewControllerRepresentable {
     func makeUIViewController(context: Context) -> UINavigationController {
         let loginVC = LoginRegisterViewController()
@@ -18,7 +18,7 @@ struct LoginRegisterWrapper: UIViewControllerRepresentable {
     }
     
     func updateUIViewController(_ uiViewController: UINavigationController, context: Context) {
-        // Gerekirse güncelleme yapılır
+
     }
 }
 
@@ -31,9 +31,8 @@ struct welcome1: View {
             VStack {
                 Spacer()
                 
-                Image("dream") // Assets.xcassets içine ekle
+                Image("dream")
                 
-                // Boncuk Indicators (ilk sayfa aktif)
                 HStack(spacing: 8) {
                     Circle()
                         .fill(Color.blue)
@@ -47,14 +46,14 @@ struct welcome1: View {
                 }
                 .padding(.bottom, 20)
                 
-                Text("Evdeki Malzemelerle Neler Yapabilirim?")
+                Text("What Can I Cook with What I Have at Home?")
                     .font(.title2)
                     .fontWeight(.bold)
                     .multilineTextAlignment(.center)
                     .padding(.horizontal)
                     .padding(.top, 20)
                 
-                Text("Dolabındaki malzemeleri gir, onlara özel tarif önerileri al")
+                Text("Enter the ingredients in your fridge and get personalized recipe suggestions")
                     .font(.body)
                     .foregroundColor(.gray)
                     .multilineTextAlignment(.center)
@@ -64,17 +63,16 @@ struct welcome1: View {
                 Spacer()
                 
                 HStack {
-                    Button("Geç") {
+                    Button("Skip") {
                         showLogin = true
                     }
                     .foregroundColor(.gray)
                     .fullScreenCover(isPresented: $showLogin) {
-                        LoginRegisterWrapper() // SwiftUI içinde UIKit ekranı
+                        LoginRegisterWrapper()
                     }
                     
                     Spacer()
                     
-                    // NavigationLink BUTON gibi davranacak
                     NavigationLink(destination: welcome2()) {
                         Image(systemName: "arrow.right")
                             .foregroundColor(.white)

@@ -19,11 +19,11 @@ class ForgotPasswordViewController: UIViewController, UITextFieldDelegate {
     }()
     
     private lazy var mainStackView: UIStackView = {
-        let stack = UIStackView()
-        stack.axis = .vertical
-        stack.alignment = .fill
-        stack.spacing = 25
-        return stack
+        let stackView = UIStackView()
+        stackView.axis = .vertical
+        stackView.alignment = .fill
+        stackView.spacing = 25
+        return stackView
     }()
     
     private lazy var backButtonContainer: UIView = {
@@ -43,16 +43,16 @@ class ForgotPasswordViewController: UIViewController, UITextFieldDelegate {
     }()
     
     private lazy var contentStackView: UIStackView = {
-        let stack = UIStackView()
-        stack.axis = .vertical
-        stack.alignment = .fill
-        stack.spacing = 15
-        return stack
+        let stackView = UIStackView()
+        stackView.axis = .vertical
+        stackView.alignment = .fill
+        stackView.spacing = 15
+        return stackView
     }()
     
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
-        label.text = "Şifremi Unuttum"
+        label.text = "Forgot Password"
         label.textColor = UIColor.Primary950
         label.font = UIFont.dmSansSemiBold(22)
         return label
@@ -60,7 +60,7 @@ class ForgotPasswordViewController: UIViewController, UITextFieldDelegate {
     
     private lazy var descriptionLabel: UILabel = {
         let label = UILabel()
-        label.text = "Şifrenizi yenileme linkini gönderebileceğimiz kayıtlı mail adresinizi yazınız."
+        label.text = "Enter your registered email address to receive a password reset link."
         label.font = UIFont.dmSansRegular(16)
         label.textColor = UIColor.textColor400
         label.numberOfLines = 0
@@ -69,7 +69,7 @@ class ForgotPasswordViewController: UIViewController, UITextFieldDelegate {
     
     private lazy var emailLabel: UILabel = {
         let label = UILabel()
-        label.text = "E-posta"
+        label.text = "Email"
         label.textColor = UIColor.textColor800
         label.font = UIFont.dmSansRegular(16)
         return label
@@ -78,13 +78,13 @@ class ForgotPasswordViewController: UIViewController, UITextFieldDelegate {
     private lazy var emailTextField: UITextField = {
         let textField = UITextField()
         textField.keyboardType = .emailAddress
-        textField.applyDefaultStyle(placeholder: "ornek@hotmail.com")
+        textField.applyDefaultStyle(placeholder: "example@hotmail.com")
         return textField
     }()
     
     private lazy var sendButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("Gönder",
+        button.setTitle("Send",
                         for: .normal)
         button.setTitleColor(.white,
                              for: .normal)
@@ -109,6 +109,7 @@ class ForgotPasswordViewController: UIViewController, UITextFieldDelegate {
     //MARK: - Setup Methods
     func setupViews(){
         view.backgroundColor = .white
+        
         view.addSubview(scrollView)
         scrollView.addSubview(mainStackView)
         
@@ -173,9 +174,11 @@ class ForgotPasswordViewController: UIViewController, UITextFieldDelegate {
         forgotPasswordViewModel.resetPassword(email: emailTextField.text) { [weak self] error in
             DispatchQueue.main.async {
                 if let error = error {
-                    self?.showAlert(title: "Hata", message: error)
+                    self?.showAlert(title: "Error",
+                                    message: error)
                 } else {
-                    self?.showAlert(title: "Başarılı", message: "Şifre sıfırlama bağlantısı e-posta adresinize gönderildi."){ 
+                    self?.showAlert(title: "Success",
+                                    message: "A password reset link has been sent to your email address."){
                         self?.navigationController?.popViewController(animated: true)
                     }
                 }

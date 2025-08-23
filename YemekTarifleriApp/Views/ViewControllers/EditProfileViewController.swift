@@ -23,11 +23,21 @@ class EditProfileViewController: UIViewController{
     }()
     
     private lazy var stackView: UIStackView = {
-        let stack = UIStackView()
-        stack.axis = .vertical
-        stack.alignment = .center
-        stack.spacing = 20
-        return stack
+        let stackView = UIStackView()
+        stackView.axis = .vertical
+        stackView.alignment = .center
+        stackView.spacing = 20
+        return stackView
+    }()
+    
+    private lazy var editProfileLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Edit Profile"
+        label.font = .dmSansSemiBold(18)
+        label.textColor = UIColor.Color10
+        label.textAlignment = .center
+        label.isUserInteractionEnabled = true
+        return label
     }()
     
     private lazy var backButton: UIButton = {
@@ -35,17 +45,10 @@ class EditProfileViewController: UIViewController{
         button.setImage(UIImage(systemName: "arrow.backward"),
                         for: .normal)
         button.tintColor = UIColor.Color10
-        button.addTarget(self, action: #selector(backButtonAction), for: .touchUpInside)
+        button.addTarget(self,
+                         action: #selector(backButtonAction),
+                         for: .touchUpInside)
         return button
-    }()
-    
-    private lazy var editProfileLabel: UILabel = {
-        let label = UILabel()
-        label.text = "Profili Düzenle"
-        label.font = .dmSansSemiBold(18)
-        label.textColor = UIColor.Color10
-        label.textAlignment = .center
-        return label
     }()
     
     private lazy var profileImageView: UIImageView = {
@@ -65,22 +68,24 @@ class EditProfileViewController: UIViewController{
         button.setImage(UIImage(systemName: "camera.fill"),
                         for: .normal)
         button.clipsToBounds = true
-        button.addTarget(self, action: #selector(cameraButtonTapped), for: .touchUpInside)
+        button.addTarget(self,
+                         action: #selector(cameraButtonTapped),
+                         for: .touchUpInside)
         return button
     }()
     
     private lazy var editFormStackView: UIStackView = {
-        let stack = UIStackView()
-        stack.axis = .vertical
-        stack.spacing = 12
-        stack.alignment = .fill
-        return stack
+        let stackView = UIStackView()
+        stackView.axis = .vertical
+        stackView.spacing = 12
+        stackView.alignment = .fill
+        return stackView
     }()
     
     private lazy var nameLabel: UILabel = {
         let label = UILabel()
         label.textAlignment = .left
-        label.text = "Ad"
+        label.text = "First Name"
         label.font = UIFont.dmSansRegular(16)
         label.textColor = UIColor.textColor800
         return label
@@ -88,14 +93,14 @@ class EditProfileViewController: UIViewController{
 
     private lazy var nameTextField: UITextField = {
         let textField = UITextField()
-        textField.applyDefaultStyle(placeholder: "Ad")
+        textField.applyDefaultStyle(placeholder: "First Name")
         return textField
     }()
 
     private lazy var surnameLabel: UILabel = {
         let label = UILabel()
         label.textAlignment = .left
-        label.text = "Soyad"
+        label.text = "Last Name"
         label.font = UIFont.dmSansRegular(16)
         label.textColor = UIColor.textColor800
         return label
@@ -103,13 +108,13 @@ class EditProfileViewController: UIViewController{
 
     private lazy var surnameTextField: UITextField = {
         let textField = UITextField()
-        textField.applyDefaultStyle(placeholder: "Soyad")
+        textField.applyDefaultStyle(placeholder: "Last Name")
         return textField
     }()
     
     private lazy var phoneLabel: UILabel = {
         let label = UILabel()
-        label.text = "Cep Telefonu"
+        label.text = "Phone Number"
         label.font = UIFont.dmSansRegular(16)
         label.textColor = UIColor.textColor800
         label.textAlignment = .left
@@ -119,13 +124,13 @@ class EditProfileViewController: UIViewController{
     private lazy var phoneTextField: UITextField = {
         let textField = UITextField()
         textField.textContentType = .telephoneNumber
-        textField.applyDefaultStyle(placeholder: "Cep Telefonu")
+        textField.applyDefaultStyle(placeholder: "Phone Number")
         return textField
     }()
     
     private lazy var saveButton: UIButton = {
         let button = UIButton()
-        button.setTitle("Kaydet", for: .normal)
+        button.setTitle("Save", for: .normal)
         button.backgroundColor = UIColor.primaryColor
         button.setTitleColor(.white, for: .normal)
         button.titleLabel?.font = .dmSansBold(16)
@@ -136,10 +141,12 @@ class EditProfileViewController: UIViewController{
         return button
     }()
     
+    //MARK: - Init
     init(viewModel: EditProfileViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
+    
     required init?(coder: NSCoder) { fatalError("init(coder:) not implemented") }
     
     //MARK: - Lifecycle
@@ -170,17 +177,12 @@ class EditProfileViewController: UIViewController{
         editFormStackView.addArrangedSubview(phoneLabel)
         editFormStackView.addArrangedSubview(phoneTextField)
         stackView.addArrangedSubview(saveButton)
-        view.addSubview(backButton)
+        editProfileLabel.addSubview(backButton)
         view.addSubview(cameraButton)
         self.hideKeyboardOnTap()
     }
     
     func setupConstraints(){
-        backButton.snp.makeConstraints { make in
-            make.height.width.equalTo(44)
-            make.leading.equalToSuperview().inset(15)
-            make.top.equalTo(view.safeAreaLayoutGuide)
-        }
         scrollView.snp.makeConstraints { make in
             make.top.bottom.equalTo(view.safeAreaLayoutGuide)
             make.leading.trailing.equalToSuperview().inset(15)
@@ -191,6 +193,11 @@ class EditProfileViewController: UIViewController{
         }
         editProfileLabel.snp.makeConstraints { make in
             make.height.equalTo(44)
+        }
+        backButton.snp.makeConstraints { make in
+            make.height.width.equalTo(44)
+            make.leading.equalToSuperview()
+            make.top.equalTo(view.safeAreaLayoutGuide)
         }
         profileImageView.snp.makeConstraints { make in
             make.height.width.equalTo(120)
@@ -245,11 +252,12 @@ class EditProfileViewController: UIViewController{
                                                object: nil)
     }
     
+    // MARK: - Bind ViewModel
     private func bindViewModel() {
         viewModel.onLoaded = { [weak self] user in
             DispatchQueue.main.async {
-                self?.nameTextField.text = user.displayName ?? ""
-                self?.surnameTextField.text = user.displayName ?? ""
+                self?.nameTextField.text = user.name ?? ""
+                self?.surnameTextField.text = user.surname ?? ""
                 self?.phoneTextField.text = user.phone ?? ""
                 if let url = user.photoURL,
                    let Url = URL(string: url) {
@@ -257,16 +265,27 @@ class EditProfileViewController: UIViewController{
                 }
             }
         }
-        viewModel.onSaved = { [weak self] updated in
+        viewModel.onSaved = { updated in
             DispatchQueue.main.async {
-                self?.onDidSave?(updated)
-                self?.showAlert(title: "Başarılı",
-                                message: "Profil güncellendi")
-                self?.navigationController?.popViewController(animated: true)
+                self.onDidSave?(updated)
+                
+                let alert = CustomAlertView(
+                    titleText: "Success",
+                    confirmText: "",
+                    cancelText: "OK",
+                    isConfirmHidden: true
+                )
+                
+                alert.onCancel = { [weak alert] in
+                    alert?.dismiss()
+                    self.navigationController?.popViewController(animated: true)
+                }
+                
+                alert.present(on: self)
             }
         }
         viewModel.onError = { [weak self] message in
-            DispatchQueue.main.async { self?.showAlert(title: "Hata",
+            DispatchQueue.main.async { self?.showAlert(title: "Error",
                                                        message: message) }
         }
     }
@@ -280,9 +299,14 @@ class EditProfileViewController: UIViewController{
                               y: 0,
                               width: 24,
                               height: 24)
-        button.addTarget(self, action: #selector(togglePasswordVisibility(_:)), for: .touchDown)
+        button.addTarget(self,
+                         action: #selector(togglePasswordVisibility(_:)),
+                         for: .touchDown)
 
-        let containerView = UIView(frame: CGRect(x: 0, y: 0, width: 34, height: 24))
+        let containerView = UIView(frame: CGRect(x: 0,
+                                                 y: 0,
+                                                 width: 34,
+                                                 height: 24))
         containerView.addSubview(button)
 
         textField.rightView = containerView
@@ -298,8 +322,10 @@ class EditProfileViewController: UIViewController{
             scrollView.verticalScrollIndicatorInsets.bottom = keyboardHeight + 20
             
             if let activeTextField = activeTextField {
-                let textFieldFrame = activeTextField.convert(activeTextField.bounds, to: scrollView)
-                scrollView.scrollRectToVisible(textFieldFrame, animated: true)
+                let textFieldFrame = activeTextField.convert(activeTextField.bounds,
+                                                             to: scrollView)
+                scrollView.scrollRectToVisible(textFieldFrame,
+                                               animated: true)
             }
         }
     }
@@ -324,30 +350,40 @@ class EditProfileViewController: UIViewController{
                           duration: 0.2,
                           options: .transitionCrossDissolve,
                           animations: {
-            sender.setImage(UIImage(systemName: imageName), for: .normal)
+            sender.setImage(UIImage(systemName: imageName),
+                            for: .normal)
         })
     }
     
     @objc private func saveTapped() {
         viewModel.save(
             name: nameTextField.text,
+            surname: surnameTextField.text,
             phone: phoneTextField.text,
             image: profileImageView.image
         )
     }
     
     @objc private func cameraButtonTapped() {
-        let alert = UIAlertController(title: "Fotoğraf Ekle", message: nil, preferredStyle: .actionSheet)
+        let alert = UIAlertController(title: "Add Photo",
+                                      message: nil,
+                                      preferredStyle: .actionSheet)
 
-        alert.addAction(UIAlertAction(title: "Kamera", style: .default, handler: { _ in
+        alert.addAction(UIAlertAction(title: "Camera",
+                                      style: .default,
+                                      handler: { _ in
             self.requestCameraAccess()
         }))
 
-        alert.addAction(UIAlertAction(title: "Fotoğraf Galerisi", style: .default, handler: { _ in
+        alert.addAction(UIAlertAction(title: "Photo Library",
+                                      style: .default,
+                                      handler: { _ in
             self.requestPhotoLibraryAccess()
         }))
 
-        alert.addAction(UIAlertAction(title: "İptal", style: .cancel, handler: nil))
+        alert.addAction(UIAlertAction(title: "Cancel",
+                                      style: .cancel,
+                                      handler: nil))
 
         present(alert, animated: true)
     }
@@ -358,7 +394,7 @@ class EditProfileViewController: UIViewController{
                 if granted {
                     self.openImagePicker(sourceType: .camera)
                 } else {
-                    self.showPermissionAlert(type: "kamera")
+                    self.showPermissionAlert(type: "Camera")
                 }
             }
         }
@@ -370,22 +406,23 @@ class EditProfileViewController: UIViewController{
                 if status == .authorized || status == .limited {
                     self.openImagePicker(sourceType: .photoLibrary)
                 } else {
-                    self.showPermissionAlert(type: "fotoğraf galerisi")
+                    self.showPermissionAlert(type: "Photo Library")
                 }
             }
         }
     }
     
     private func showPermissionAlert(type: String) {
-        let alert = UIAlertController(title: "\(type.capitalized) izni gerekli",
-                                      message: "Lütfen Ayarlar’dan \(type) iznini aktif edin.",
+        let alert = UIAlertController(title: "\(type.capitalized) access required",
+                                      message: "Please enable \(type) access in Settings.",
                                       preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Ayarlar’a Git", style: .default, handler: { _ in
+        alert.addAction(UIAlertAction(title: "Go to Settings", style: .default, handler: { _ in
             if let settingsURL = URL(string: UIApplication.openSettingsURLString) {
                 UIApplication.shared.open(settingsURL)
             }
         }))
-        alert.addAction(UIAlertAction(title: "İptal", style: .cancel))
+        alert.addAction(UIAlertAction(title: "Cancel",
+                                      style: .cancel))
         present(alert, animated: true)
     }
 
@@ -399,6 +436,8 @@ class EditProfileViewController: UIViewController{
     }
 }
 
+
+// MARK: - Delegates
 extension EditProfileViewController: UITextFieldDelegate  {
     func textFieldDidBeginEditing(_ textField: UITextField) {
         activeTextField = textField

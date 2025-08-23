@@ -25,29 +25,29 @@ enum FirebaseAuthError: Int, Error {
     var localizedMessage: String {
         switch self {
         case .networkError:
-            return "İnternet bağlantısı kurulamadı. Lütfen bağlantınızı kontrol edin."
+            return "Unable to connect to the internet. Please check your connection."
         case .userNotFound, .wrongPassword:
-            return "E-posta veya şifre hatalı."
+            return "Incorrect email or password."
         case .invalidEmail:
-            return "Geçersiz e-posta adresi. Lütfen doğru bir format kullanın."
+            return "Invalid email address. Please use a correct format."
         case .emailAlreadyInUse:
-            return "Bu e-posta adresi zaten kullanılıyor."
+            return "This email address is already in use."
         case .weakPassword:
-            return "Şifreniz çok zayıf. Lütfen daha güçlü bir şifre belirleyin."
+            return "Your password is too weak. Please choose a stronger password."
         case .userDisabled:
-            return "Bu kullanıcı hesabı devre dışı bırakılmış."
+            return "This user account has been disabled."
         case .tooManyRequests:
-            return "Çok fazla giriş denemesi yapıldı. Lütfen daha sonra tekrar deneyin."
+            return "Too many login attempts. Please try again later."
         case .operationNotAllowed:
-            return "Bu işlem şu anda devre dışı. Lütfen destekle iletişime geçin."
+            return "This operation is currently not allowed. Please contact support."
         case .invalidGoogleAuth:
-            return "Google kimlik doğrulama bilgileri alınamadı."
+            return "Google authentication credentials could not be retrieved."
         case .missingClientID:
-            return "Google Client ID bulunamadı. Firebase yapılandırmasını kontrol edin."
+            return "Google Client ID not found. Please check your Firebase configuration."
         case .missingFacebookToken:
-            return "Facebook girişinde bir sorun oluştu. Lütfen tekrar deneyin."
+            return "There was an issue with Facebook login. Please try again."
         case .unknown:
-            return "Bir hata oluştu. Lütfen tekrar deneyin."
+            return "An error occurred. Please try again."
         }
     }
     

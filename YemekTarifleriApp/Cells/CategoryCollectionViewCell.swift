@@ -8,25 +8,23 @@
 import UIKit
 
 class CategoryCollectionViewCell: UICollectionViewCell {
-    static let reuseID = "CategoryCell"
+    //MARK: Properties
+    static let reuseID = "CategoryCollectionViewCell"
     
+    override var isSelected: Bool {
+        didSet { titleLabel.backgroundColor = isSelected ? UIColor.secondaryColor : UIColor.white; titleLabel.textColor = isSelected ? .white : .systemGray }
+    }
+    
+    //MARK: UI Elements
     private let titleLabel: UILabel = {
         let label = UILabel()
-        label.font = .dmSansSemiBold(11)
+        label.font = .dmSansSemiBold(12)
         label.textColor = UIColor.textColor400
         label.textAlignment = .center
         return label
     }()
-    
-    var selectedBackground: UIColor = UIColor.secondaryColor
-    var deselectedBackground: UIColor = .white
-    var selectedTextColor: UIColor = .white
-    var deselectedTextColor: UIColor = UIColor.textColor400
-    
-    override var isSelected: Bool {
-        didSet { updateAppearance() }
-    }
-    
+
+    //MARK: Init
     override init(frame: CGRect) {
         super.init(frame: frame)
         contentView.layer.cornerRadius = 10
@@ -36,27 +34,15 @@ class CategoryCollectionViewCell: UICollectionViewCell {
         
         contentView.addSubview(titleLabel)
         titleLabel.snp.makeConstraints { make in
-            make.edges.equalToSuperview().inset(UIEdgeInsets(top: 8, left: 4, bottom: 8, right: 4))
+            make.edges.equalToSuperview()
         }
         
-        updateAppearance()
     }
     
     required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
     
+    //MARK: Configure
     func configure(title: String) {
         titleLabel.text = title
-    }
-    
-    private func updateAppearance() {
-        if isSelected {
-            contentView.backgroundColor = selectedBackground
-            titleLabel.textColor = selectedTextColor
-            contentView.layer.borderColor = selectedBackground.cgColor
-        } else {
-            contentView.backgroundColor = deselectedBackground
-            titleLabel.textColor = deselectedTextColor
-            contentView.layer.borderColor = UIColor.Text50.cgColor
-        }
     }
 }

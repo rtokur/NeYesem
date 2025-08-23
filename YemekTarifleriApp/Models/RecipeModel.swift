@@ -6,6 +6,8 @@
 //
 
 import Foundation
+import UIKit
+import FirebaseFirestore
 
 struct RecipeSearchResponse: Codable {
     let results: [Recipe]
@@ -18,6 +20,7 @@ struct Recipe: Codable {
     let image: String?
     let readyInMinutes: Int?
     let dishTypes: [String]?
+    let missedIngredientCount: Int?
 }
 
 struct RecipeDetail: Codable {
@@ -64,4 +67,37 @@ struct RecipeUIModel {
     let recipe: Recipe
     var isFavorite: Bool
     var likeCount: Int
+    var color: UIColor
+}
+
+struct AutocompleteRecipe: Codable {
+    let id: Int
+    let title: String
+}
+
+struct IngredientResult: Decodable {
+    let id: Int?
+    let name: String
+    let image: String?
+    let aisle: String?
+    let possibleUnits: [String]?
+}
+
+struct CategoryModel: Codable {
+    let title: String
+    let type: String
+    let colorHex: String?
+}
+
+struct IngredientUIModel: Codable {
+    @DocumentID var id: String?
+    let name: String
+    var amount: Double?
+    let unit: String?
+    let aisle: String?
+}
+
+struct AisleProduct: Codable {
+    let name: String
+    let units: [String]?
 }

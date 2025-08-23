@@ -9,19 +9,21 @@ import FirebaseFirestore
 import FirebaseAuth
 import FirebaseStorage
 
+// MARK: - Protocol
 protocol UserServiceProtocol {
     func fetchCurrentUser(completion: @escaping (Result<UserModel, Error>) -> Void)
-    func updateUserProfile(name: String?, phone: String?, image: UIImage?, completion: @escaping (Result<Void, Error>) -> Void)
+    func updateUserProfile(name: String?, surname: String?, phone: String?, image: UIImage?, completion: @escaping (Result<Void, Error>) -> Void)
     func signOut(completion: @escaping (Result<Void, Error>) -> Void)
     func saveUserPreferences(diet: String?, allergies: [String], dislikes: [String], completion: @escaping (Result<Void, Error>) -> Void)
 }
 
 final class UserService: UserServiceProtocol {
-    
+    // MARK: - Properties
     private let db = Firestore.firestore()
     private let auth = Auth.auth()
     private let storage = Storage.storage()
     
+    // MARK: - Fetch Current User
     func fetchCurrentUser(completion: @escaping (Result<UserModel, Error>) -> Void) {
         guard let uid = auth.currentUser?.uid else {
             completion(.failure(NSError(domain: "User not logged in", code: 401)))
@@ -44,59 +46,79 @@ final class UserService: UserServiceProtocol {
         }
     }
     
-    func updateUserProfile(name: String?, phone: String?, image: UIImage?, completion: @escaping (Result<Void, Error>) -> Void) {
+    // MARK: - Update User Profile
+    func updateUserProfile(
+        name: String?,
+        surname: String?,
+        phone: String?,
+        image: UIImage?,
+        completion: @escaping (Result<Void, Error>) -> Void
+    ) {
         guard let uid = auth.currentUser?.uid else {
-            completion(.failure(NSError(domain: "User not logged in", code: 401))); return
+            completion(.failure(NSError(domain: "User not logged in", code: 401)))
+            return
         }
         
         var updates: [String: Any] = [:]
-        if let name = name { updates["username"] = name }
+        if let name = name { updates["name"] = name }
+        if let surname = surname { updates["surname"] = surname }
         if let phone = phone { updates["phone"] = phone }
+        
+        let commitChanges = {
+            self.commitProfileChanges(uid: uid, updates: updates, completion: completion)
+        }
         
         if let image = image, let data = image.jpegData(compressionQuality: 0.85) {
             let ref = storage.reference().child("users/\(uid)/profile.jpg")
-            let meta = StorageMetadata(); meta.contentType = "image/jpeg"
-            ref.putData(data, metadata: meta) { [weak self] _, error in
+            let meta = StorageMetadata()
+            meta.contentType = "image/jpeg"
+            ref.putData(data, metadata: meta) { _, error in
                 if let error = error { completion(.failure(error)); return }
                 ref.downloadURL { url, urlErr in
                     if let urlErr = urlErr { completion(.failure(urlErr)); return }
                     if let url = url { updates["photoURL"] = url.absoluteString }
-                    self?.commitProfileChanges(uid: uid, updates: updates, photoURL: updates["photoURL"] as? String, name: name, completion: completion)
+                    commitChanges()
                 }
             }
         } else {
-            commitProfileChanges(uid: uid, updates: updates, photoURL: nil, name: name, completion: completion)
+            commitChanges()
+        }
+    }
+
+    // MARK: - Commit Profile Changes
+    private func commitProfileChanges(
+        uid: String,
+        updates: [String: Any],
+        completion: @escaping (Result<Void, Error>) -> Void
+    ) {
+        db.collection("users").document(uid).updateData(updates) { error in
+            if let error = error { completion(.failure(error)) }
+            else { completion(.success(())) }
         }
     }
     
-    private func commitProfileChanges(uid: String,
-                                      updates: [String: Any],
-                                      photoURL: String?,
-                                      name: String?,
-                                      completion: @escaping (Result<Void, Error>) -> Void) {
-        db.collection("users").document(uid).setData(updates, merge: true) { [weak self] err in
-            if let err = err { completion(.failure(err)); return }
-            
-            if let current = self?.auth.currentUser {
-                let change = current.createProfileChangeRequest()
-                if let name = name { change.displayName = name }
-                if let photoURL = photoURL, let url = URL(string: photoURL) { change.photoURL = url }
-                change.commitChanges { _ in completion(.success(())) }
-            } else {
-                completion(.success(()))
-            }
-        }
-    }
-    
-    func saveUserPreferences(diet: String?, allergies: [String], dislikes: [String], completion: @escaping (Result<Void, Error>) -> Void) {
+    // MARK: - Save User Preferences
+    func saveUserPreferences(
+        diet: String?,
+        allergies: [String],
+        dislikes: [String],
+        completion: @escaping (Result<Void, Error>) -> Void
+    ) {
         guard let uid = Auth.auth().currentUser?.uid else {
-            completion(.failure(NSError(domain: "Auth", code: 401, userInfo: [NSLocalizedDescriptionKey: "User not logged in"])))
+            completion(.failure(NSError(
+                domain: "Auth",
+                code: 401,
+                userInfo: [NSLocalizedDescriptionKey: "User not logged in"]
+            )))
             return
         }
+        
         let data: [String: Any] = [
-            "diet": diet ?? "",
-            "allergies": allergies,
-            "dislikes": dislikes
+            "preferences": [
+                "diet": diet ?? "",
+                "allergies": allergies,
+                "dislikes": dislikes
+            ]
         ]
         
         Firestore.firestore()
@@ -111,7 +133,7 @@ final class UserService: UserServiceProtocol {
             }
     }
 
-    
+    // MARK: - Sign Out
     func signOut(completion: @escaping (Result<Void, Error>) -> Void) {
         do {
             try Auth.auth().signOut()

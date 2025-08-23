@@ -10,37 +10,51 @@ import CoreData
 
 struct UserModel {
     let uid: String
-    let displayName: String?
-    let email: String?
-    let phone: String?
-    let photoURL: String?
+    var name: String?
+    var surname: String?
+    var email: String?
+    var phone: String?
+    var photoURL: String?
     
-    let diet: String?
-    let allergies: [String]
-    let dislikes: [String]
+    // ✅ preferences nested
+    var diet: String?
+    var allergies: [String]
+    var dislikes: [String]
 
     init?(dictionary: [String: Any], uid: String) {
         self.uid = uid
-        self.displayName = dictionary["username"] as? String
+        self.name = dictionary["name"] as? String
+        self.surname = dictionary["surname"] as? String
         self.email = dictionary["email"] as? String
         self.phone = dictionary["phone"] as? String
         self.photoURL = dictionary["photoURL"] as? String
-        
-        self.diet = dictionary["diet"] as? String
-        self.allergies = dictionary["allergies"] as? [String] ?? []
-        self.dislikes = dictionary["dislikes"] as? [String] ?? []
+
+        if let preferences = dictionary["preferences"] as? [String: Any] {
+            self.diet = preferences["diet"] as? String
+            self.allergies = preferences["allergies"] as? [String] ?? []
+            self.dislikes = preferences["dislikes"] as? [String] ?? []
+        } else {
+            self.diet = nil
+            self.allergies = []
+            self.dislikes = []
+        }
     }
 
     var asFirestore: [String: Any] {
         [
-            "username": displayName ?? "",
+            "uid": uid,
+            "name": name ?? "",
+            "surname": surname ?? "",
             "email": email ?? "",
             "phone": phone ?? "",
             "photoURL": photoURL ?? "",
-            "diet": diet ?? "",
-            "allergies": allergies,
-            "dislikes": dislikes
+            "preferences": [
+                "diet": diet ?? "",
+                "allergies": allergies,
+                "dislikes": dislikes
+            ]
         ]
     }
 }
+
 

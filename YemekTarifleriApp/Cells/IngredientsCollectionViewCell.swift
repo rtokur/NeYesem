@@ -8,8 +8,10 @@
 import UIKit
 
 class IngredientsCollectionViewCell: UICollectionViewCell {
-    static let reuseID = "IngredientCell"
+    //MARK: - Properties
+    static let reuseID = "IngredientsCell"
     
+    //MARK: - UI Elements
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.textColor = UIColor.Text950
@@ -19,6 +21,7 @@ class IngredientsCollectionViewCell: UICollectionViewCell {
         return label
     }()
     
+    //MARK: - Init
     override init(frame: CGRect) {
         super.init(frame: frame)
         
@@ -30,6 +33,7 @@ class IngredientsCollectionViewCell: UICollectionViewCell {
     
     required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
     
+    //MARK: - Configure
     func configure(text: String) {
         titleLabel.text = " •  \(text)"
     }

@@ -21,11 +21,21 @@ class ChangePasswordViewController: UIViewController {
     }()
     
     private lazy var stackView: UIStackView = {
-        let stack = UIStackView()
-        stack.axis = .vertical
-        stack.alignment = .center
-        stack.spacing = 20
-        return stack
+        let stackView = UIStackView()
+        stackView.axis = .vertical
+        stackView.alignment = .center
+        stackView.spacing = 20
+        return stackView
+    }()
+    
+    private lazy var editProfileLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Change Password"
+        label.font = .dmSansSemiBold(18)
+        label.textColor = UIColor.Color10
+        label.textAlignment = .center
+        label.isUserInteractionEnabled = true
+        return label
     }()
     
     private lazy var backButton: UIButton = {
@@ -33,17 +43,10 @@ class ChangePasswordViewController: UIViewController {
         button.setImage(UIImage(systemName: "arrow.backward"),
                         for: .normal)
         button.tintColor = UIColor.Color10
-        button.addTarget(self, action: #selector(backButtonAction), for: .touchUpInside)
+        button.addTarget(self,
+                         action: #selector(backButtonAction),
+                         for: .touchUpInside)
         return button
-    }()
-    
-    private lazy var editProfileLabel: UILabel = {
-        let label = UILabel()
-        label.text = "Şifre Değiştirme"
-        label.font = .dmSansSemiBold(18)
-        label.textColor = UIColor.Color10
-        label.textAlignment = .center
-        return label
     }()
     
     private lazy var editFormStackView: UIStackView = {
@@ -56,7 +59,7 @@ class ChangePasswordViewController: UIViewController {
 
     private lazy var currentPasswordLabel: UILabel = {
         let label = UILabel()
-        label.text = "Mevcut şifre"
+        label.text = "Current Password"
         label.font = UIFont.dmSansRegular(16)
         label.textColor = UIColor.textColor800
         label.textAlignment = .left
@@ -72,7 +75,7 @@ class ChangePasswordViewController: UIViewController {
     
     private lazy var newPasswordLabel: UILabel = {
         let label = UILabel()
-        label.text = "Yeni şifre"
+        label.text = "New Password"
         label.font = UIFont.dmSansRegular(16)
         label.textColor = UIColor.textColor800
         label.textAlignment = .left
@@ -88,7 +91,7 @@ class ChangePasswordViewController: UIViewController {
     
     private lazy var confirmPasswordLabel: UILabel = {
         let label = UILabel()
-        label.text = "Şifreyi doğrula"
+        label.text = "Confirm Password"
         label.font = UIFont.dmSansRegular(16)
         label.textColor = UIColor.textColor800
         label.textAlignment = .left
@@ -104,7 +107,7 @@ class ChangePasswordViewController: UIViewController {
     
     private lazy var saveButton: UIButton = {
         let button = UIButton()
-        button.setTitle("Kaydet", for: .normal)
+        button.setTitle("Save", for: .normal)
         button.backgroundColor = UIColor.primaryColor
         button.setTitleColor(.white, for: .normal)
         button.titleLabel?.font = .dmSansBold(16)
@@ -130,6 +133,7 @@ class ChangePasswordViewController: UIViewController {
     //MARK: - Setup Methods
     func setupViews(){
         view.backgroundColor = .white
+        
         view.addSubview(scrollView)
         scrollView.addSubview(stackView)
         stackView.addArrangedSubview(editProfileLabel)
@@ -144,16 +148,11 @@ class ChangePasswordViewController: UIViewController {
         addPasswordToggleButton(to: newPasswordTextField)
         addPasswordToggleButton(to: confirmPasswordTextField)
         stackView.addArrangedSubview(saveButton)
-        view.addSubview(backButton)
+        editProfileLabel.addSubview(backButton)
         self.hideKeyboardOnTap()
     }
     
     func setupConstraints(){
-        backButton.snp.makeConstraints { make in
-            make.height.width.equalTo(44)
-            make.leading.equalToSuperview().inset(15)
-            make.top.equalTo(view.safeAreaLayoutGuide)
-        }
         scrollView.snp.makeConstraints { make in
             make.top.bottom.equalTo(view.safeAreaLayoutGuide)
             make.leading.trailing.equalToSuperview().inset(15)
@@ -164,6 +163,12 @@ class ChangePasswordViewController: UIViewController {
         }
         editProfileLabel.snp.makeConstraints { make in
             make.height.equalTo(44)
+            make.leading.trailing.equalToSuperview().inset(15)
+        }
+        backButton.snp.makeConstraints { make in
+            make.height.width.equalTo(44)
+            make.leading.equalToSuperview().inset(15)
+            make.top.equalTo(view.safeAreaLayoutGuide)
         }
         editFormStackView.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview()
@@ -210,15 +215,18 @@ class ChangePasswordViewController: UIViewController {
                                                object: nil)
     }
     
+    // MARK: - Bind ViewModel
     private func bindViewModel() {
         viewModel.onSuccess = { [weak self] in
             let successChangingViewController = SuccessChangingViewController()
-            self?.navigationController?.pushViewController(successChangingViewController, animated: true)
+            self?.navigationController?.pushViewController(successChangingViewController,
+                                                           animated: true)
         }
         
         viewModel.onError = { [weak self] message in
             DispatchQueue.main.async {
-                self?.showAlert(title: "Hata", message: message)
+                self?.showAlert(title: "Hata",
+                                message: message)
             }
         }
     }
@@ -247,8 +255,10 @@ class ChangePasswordViewController: UIViewController {
             scrollView.verticalScrollIndicatorInsets.bottom = keyboardHeight + 20
             
             if let activeTextField = activeTextField {
-                let textFieldFrame = activeTextField.convert(activeTextField.bounds, to: scrollView)
-                scrollView.scrollRectToVisible(textFieldFrame, animated: true)
+                let textFieldFrame = activeTextField.convert(activeTextField.bounds,
+                                                             to: scrollView)
+                scrollView.scrollRectToVisible(textFieldFrame,
+                                               animated: true)
             }
         }
     }
@@ -272,7 +282,8 @@ class ChangePasswordViewController: UIViewController {
                           duration: 0.2,
                           options: .transitionCrossDissolve,
                           animations: {
-            sender.setImage(UIImage(systemName: imageName), for: .normal)
+            sender.setImage(UIImage(systemName: imageName),
+                            for: .normal)
         })
     }
     
@@ -285,6 +296,7 @@ class ChangePasswordViewController: UIViewController {
     }
 }
 
+// MARK: - Delegates
 extension ChangePasswordViewController: UITextFieldDelegate  {
     func textFieldDidBeginEditing(_ textField: UITextField) {
         activeTextField = textField

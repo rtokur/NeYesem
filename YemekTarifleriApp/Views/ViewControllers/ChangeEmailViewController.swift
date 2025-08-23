@@ -8,6 +8,7 @@
 import UIKit
 
 class ChangeEmailViewController: UIViewController {
+    //MARK: Properties
     private var activeTextField: UITextField?
     private let viewModel = ChangeEmailViewModel()
     private var passwordToggleButtons: [UITextField: UIButton] = [:]
@@ -20,11 +21,21 @@ class ChangeEmailViewController: UIViewController {
     }()
     
     private lazy var stackView: UIStackView = {
-        let stack = UIStackView()
-        stack.axis = .vertical
-        stack.alignment = .center
-        stack.spacing = 20
-        return stack
+        let stackView = UIStackView()
+        stackView.axis = .vertical
+        stackView.alignment = .center
+        stackView.spacing = 20
+        return stackView
+    }()
+    
+    private lazy var editProfileLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Change Email"
+        label.font = .dmSansSemiBold(18)
+        label.textColor = UIColor.Color10
+        label.textAlignment = .center
+        label.isUserInteractionEnabled = true
+        return label
     }()
     
     private lazy var backButton: UIButton = {
@@ -34,15 +45,6 @@ class ChangeEmailViewController: UIViewController {
         button.tintColor = UIColor.Color10
         button.addTarget(self, action: #selector(backButtonAction), for: .touchUpInside)
         return button
-    }()
-    
-    private lazy var editProfileLabel: UILabel = {
-        let label = UILabel()
-        label.text = "E posta Değiştirme"
-        label.font = .dmSansSemiBold(18)
-        label.textColor = UIColor.Color10
-        label.textAlignment = .center
-        return label
     }()
     
     private lazy var editFormStackView: UIStackView = {
@@ -55,7 +57,7 @@ class ChangeEmailViewController: UIViewController {
 
     private lazy var currentEmailLabel: UILabel = {
         let label = UILabel()
-        label.text = "Mevcut E posta"
+        label.text = "Current Email"
         label.font = UIFont.dmSansRegular(16)
         label.textColor = UIColor.textColor800
         label.textAlignment = .left
@@ -65,13 +67,13 @@ class ChangeEmailViewController: UIViewController {
     private lazy var currentEmailTextField: UITextField = {
         let textField = UITextField()
         textField.textContentType = .emailAddress
-        textField.applyDefaultStyle(placeholder: "ornek@hotmail.com")
+        textField.applyDefaultStyle(placeholder: "example@hotmail.com")
         return textField
     }()
     
     private lazy var currentPasswordLabel: UILabel = {
         let label = UILabel()
-        label.text = "Mevcut şifre"
+        label.text = "Current Password"
         label.font = UIFont.dmSansRegular(16)
         label.textColor = UIColor.textColor800
         label.textAlignment = .left
@@ -87,7 +89,7 @@ class ChangeEmailViewController: UIViewController {
     
     private lazy var newEmailLabel: UILabel = {
         let label = UILabel()
-        label.text = "Yeni E posta"
+        label.text = "New Email"
         label.font = UIFont.dmSansRegular(16)
         label.textColor = UIColor.textColor800
         label.textAlignment = .left
@@ -97,13 +99,13 @@ class ChangeEmailViewController: UIViewController {
     private lazy var newEmailTextField: UITextField = {
         let textField = UITextField()
         textField.textContentType = .emailAddress
-        textField.applyDefaultStyle(placeholder: "Yeni E posta")
+        textField.applyDefaultStyle(placeholder: "New Email")
         return textField
     }()
     
     private lazy var confirmEmailLabel: UILabel = {
         let label = UILabel()
-        label.text = "E postayı doğrula"
+        label.text = "Confirm Email"
         label.font = UIFont.dmSansRegular(16)
         label.textColor = UIColor.textColor800
         label.textAlignment = .left
@@ -113,13 +115,13 @@ class ChangeEmailViewController: UIViewController {
     private lazy var confirmEmailTextField: UITextField = {
         let textField = UITextField()
         textField.textContentType = .emailAddress
-        textField.applyDefaultStyle(placeholder: "Yeni E postayı doğrulama")
+        textField.applyDefaultStyle(placeholder: "Confirm New Email")
         return textField
     }()
     
     private lazy var saveButton: UIButton = {
         let button = UIButton()
-        button.setTitle("Kaydet", for: .normal)
+        button.setTitle("Save", for: .normal)
         button.backgroundColor = UIColor.primaryColor
         button.setTitleColor(.white, for: .normal)
         button.titleLabel?.font = .dmSansBold(16)
@@ -145,6 +147,7 @@ class ChangeEmailViewController: UIViewController {
     //MARK: - Setup Methods
     func setupViews(){
         view.backgroundColor = .white
+        
         view.addSubview(scrollView)
         scrollView.addSubview(stackView)
         stackView.addArrangedSubview(editProfileLabel)
@@ -159,16 +162,11 @@ class ChangeEmailViewController: UIViewController {
         editFormStackView.addArrangedSubview(confirmEmailLabel)
         editFormStackView.addArrangedSubview(confirmEmailTextField)
         stackView.addArrangedSubview(saveButton)
-        view.addSubview(backButton)
+        editProfileLabel.addSubview(backButton)
         self.hideKeyboardOnTap()
     }
     
     func setupConstraints(){
-        backButton.snp.makeConstraints { make in
-            make.height.width.equalTo(44)
-            make.leading.equalToSuperview().inset(15)
-            make.top.equalTo(view.safeAreaLayoutGuide)
-        }
         scrollView.snp.makeConstraints { make in
             make.top.bottom.equalTo(view.safeAreaLayoutGuide)
             make.leading.trailing.equalToSuperview().inset(15)
@@ -179,6 +177,12 @@ class ChangeEmailViewController: UIViewController {
         }
         editProfileLabel.snp.makeConstraints { make in
             make.height.equalTo(44)
+            make.leading.trailing.equalToSuperview().inset(15)
+        }
+        backButton.snp.makeConstraints { make in
+            make.height.width.equalTo(44)
+            make.leading.equalToSuperview()
+            make.top.equalTo(view.safeAreaLayoutGuide)
         }
         editFormStackView.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview()
@@ -231,34 +235,47 @@ class ChangeEmailViewController: UIViewController {
                                                object: nil)
     }
     
+    // MARK: - Bind ViewModel
     private func bindViewModel() {
         currentEmailTextField.text = viewModel.currentEmail
+        
         viewModel.onSuccess = { [weak self] result in
             guard let result = result else {
                 let successChangingViewController = SuccessChangingViewController()
-                self?.navigationController?.pushViewController(successChangingViewController, animated: true)
+                self?.navigationController?.pushViewController(successChangingViewController,
+                                                               animated: true)
                 return
             }
             let successChangingViewController = SuccessChangingViewController()
             successChangingViewController.successMessage = result
-            self?.navigationController?.pushViewController(successChangingViewController, animated: true)
+            self?.navigationController?.pushViewController(successChangingViewController,
+                                                           animated: true)
         }
         
         viewModel.onError = { [weak self] message in
             DispatchQueue.main.async {
-                self?.showAlert(title: "Hata", message: message)
+                self?.showAlert(title: "Error", message: message)
             }
         }
     }
 
     private func addPasswordToggleButton(to textField: UITextField) {
         let button = UIButton(type: .custom)
-        button.setImage(UIImage(systemName: "eye"), for: .normal)
+        button.setImage(UIImage(systemName: "eye"),
+                        for: .normal)
         button.tintColor = UIColor.textColor300
-        button.frame = CGRect(x: -10, y: 0, width: 24, height: 24)
-        button.addTarget(self, action: #selector(togglePasswordVisibility(_:)), for: .touchDown)
+        button.frame = CGRect(x: -10,
+                              y: 0,
+                              width: 24,
+                              height: 24)
+        button.addTarget(self,
+                         action: #selector(togglePasswordVisibility(_:)),
+                         for: .touchDown)
         
-        let containerView = UIView(frame: CGRect(x: 0, y: 0, width: 34, height: 24))
+        let containerView = UIView(frame: CGRect(x: 0,
+                                                 y: 0,
+                                                 width: 34,
+                                                 height: 24))
         containerView.addSubview(button)
         
         textField.rightView = containerView
@@ -300,7 +317,8 @@ class ChangeEmailViewController: UIViewController {
                           duration: 0.2,
                           options: .transitionCrossDissolve,
                           animations: {
-            sender.setImage(UIImage(systemName: imageName), for: .normal)
+            sender.setImage(UIImage(systemName: imageName),
+                            for: .normal)
         })
     }
     
@@ -314,6 +332,7 @@ class ChangeEmailViewController: UIViewController {
     }
 }
 
+// MARK: - Delegates
 extension ChangeEmailViewController: UITextFieldDelegate  {
     func textFieldDidBeginEditing(_ textField: UITextField) {
         activeTextField = textField
