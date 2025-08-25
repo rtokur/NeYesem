@@ -10,6 +10,8 @@ import UIKit
 class RecipeCollectionViewCell: UICollectionViewCell {
     //MARK: - Properties
     static let reuseID = "RecipeCell"
+    var likeButtonAction: (() -> Void)?
+    var goButtonAction: (() -> Void)?
     
     //MARK: - UI Elements
     private let stackView: UIStackView = {
@@ -56,10 +58,10 @@ class RecipeCollectionViewCell: UICollectionViewCell {
     
     private let likeButton: UIButton = {
         let button = UIButton()
-        let configuration = UIImage.SymbolConfiguration(pointSize: 11,
-                                                        weight: .bold)
-        button.setImage(UIImage(systemName: "heart.fill", withConfiguration: configuration), for: .normal)
         button.tintColor = UIColor.secondaryColor
+        button.addTarget(self,
+                             action: #selector(likeButtonTapped),
+                             for: .touchUpInside)
         return button
     }()
     
@@ -153,6 +155,9 @@ class RecipeCollectionViewCell: UICollectionViewCell {
         button.setImage(UIImage(systemName: "chevron.right"),
                         for: .normal)
         button.tintColor = UIColor.textColor400
+        button.addTarget(self,
+                         action: #selector(goButtonTapped),
+                         for: .touchUpInside)
         return button
     }()
     
@@ -268,5 +273,19 @@ class RecipeCollectionViewCell: UICollectionViewCell {
            let url = URL(string: image) {
             imageView.kf.setImage(with: url)
         }
+        
+        let configuration = UIImage.SymbolConfiguration(pointSize: 11,
+                                                        weight: .bold)
+        let heartImageName = recipe.isFavorite ? "heart.fill" : "heart"
+        likeButton.setImage(UIImage(systemName: heartImageName, withConfiguration: configuration), for: .normal)
+    }
+    
+    //MARK: - Actions
+    @objc private func likeButtonTapped() {
+        likeButtonAction?()
+    }
+    
+    @objc private func goButtonTapped() {
+        goButtonAction?()
     }
 }

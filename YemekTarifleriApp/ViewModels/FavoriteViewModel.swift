@@ -13,36 +13,18 @@ final class FavoriteViewModel {
     private(set) var favorites: [RecipeUIModel] = [] {
         didSet { self.onFavoritesUpdated?() }
     }
-    
+
     var onFavoritesUpdated: (() -> Void)?
     var onError: ((String) -> Void)?
     
     // MARK: - Fetch Favorites
     func fetchFavorites() {
-        FavoriteService.shared.fetchUserFavorites { [weak self] recipes in
-            DispatchQueue.main.async {
+            FavoriteService.shared.fetchUserFavorites { [weak self] favorites in
                 guard let self = self else { return }
                 
-                let uniqueRecipes = Dictionary(grouping: recipes, by: { $0.id })
-                    .compactMap { $0.value.first }
-                
-                self.favorites = uniqueRecipes.map { recipe in
-                    RecipeUIModel(recipe: recipe, isFavorite: true, likeCount: 0, color: .gray)
-                }
-                
-                for (index, item) in self.favorites.enumerated() {
-                    FavoriteService.shared.getLikeCount(recipeId: item.recipe.id) { count in
-                        DispatchQueue.main.async {
-                            if index < self.favorites.count {
-                                self.favorites[index].likeCount = count
-                                self.onFavoritesUpdated?()
-                            }
-                        }
-                    }
-                }
+                self.favorites = favorites
             }
         }
-    }
     
     // MARK: - Toggle Favorite
     func toggleFavorite(recipe: Recipe) {
@@ -57,15 +39,6 @@ final class FavoriteViewModel {
         }
     }
     
-    func favorites(for mealType: String?) -> [RecipeUIModel] {
-        guard let mealType = mealType, !mealType.isEmpty, mealType != "All recipes" else {
-            return favorites
-        }
-        return favorites.filter { model in
-            model.recipe.dishTypes?.contains(where: { $0.lowercased() == mealType.lowercased() }) ?? false
-        }
-    }
-    
     // MARK: - Helper Methods
     func numberOfItems() -> Int {
         return favorites.count
@@ -76,13 +49,49 @@ final class FavoriteViewModel {
         return favorites[index]
     }
     
-    // MARK: - Filter Favorites by Meal Type
-    func filterFavorites(by mealType: String?) -> [RecipeUIModel] {
-        guard let mealType = mealType, !mealType.isEmpty, mealType != "All recipes" else {
+    // MARK: - Filter Favorites by Multiple Meal Types
+    func filterFavorites(by mealTypes: [String]) -> [RecipeUIModel] {
+        guard !mealTypes.isEmpty else {
             return favorites
         }
-        return favorites.filter { model in
-            model.recipe.dishTypes?.contains(where: { $0.lowercased() == mealType.lowercased() }) ?? false
+        return favorites.filter { recipeUI in
+            guard let dishTypes = recipeUI.recipe.dishTypes?.map({ $0.lowercased() }) else { return false }
+            return mealTypes.contains { dishTypes.contains($0.lowercased()) }
         }
+    }
+    
+    // MARK: - Sort Favorites by Option
+    func sortFavorites(by option: String) {
+        switch option {
+        case "Newest First":
+            favorites.sort { ($0.createdAt ?? Date.distantPast) > ($1.createdAt ?? Date.distantPast) }
+        case "Oldest First":
+            favorites.sort { ($0.createdAt ?? Date.distantPast) < ($1.createdAt ?? Date.distantPast) }
+        case "Alphabetical (A→Z)":
+            favorites.sort { $0.recipe.title.lowercased() < $1.recipe.title.lowercased() }
+        case "Alphabetical (Z→A)":
+            favorites.sort { $0.recipe.title.lowercased() > $1.recipe.title.lowercased() }
+        case "Preparation Time (Short → Long)":
+            favorites.sort { ($0.recipe.readyInMinutes ?? 0) < ($1.recipe.readyInMinutes ?? 0) }
+        case "Preparation Time (Long → Short)":
+            favorites.sort { ($0.recipe.readyInMinutes ?? 0) > ($1.recipe.readyInMinutes ?? 0) }
+        case "Calories (Low → High)":
+            favorites.sort {
+                let cal0 = $0.recipe.nutrition?.nutrients.first(where: { $0.name.lowercased() == "calories" })?.amount ?? 0
+                let cal1 = $1.recipe.nutrition?.nutrients.first(where: { $0.name.lowercased() == "calories" })?.amount ?? 0
+                return cal0 < cal1
+            }
+
+        case "Calories (High → Low)":
+            favorites.sort {
+                let cal0 = $0.recipe.nutrition?.nutrients.first(where: { $0.name.lowercased() == "calories" })?.amount ?? 0
+                let cal1 = $1.recipe.nutrition?.nutrients.first(where: { $0.name.lowercased() == "calories" })?.amount ?? 0
+                return cal0 > cal1
+            }
+        default:
+            break
+        }
+
+        onFavoritesUpdated?()
     }
 }

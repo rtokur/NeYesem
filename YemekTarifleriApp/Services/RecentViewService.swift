@@ -65,7 +65,8 @@ final class RecentViewService: RecentViewServiceProtocol {
                         image: data["image"] as? String,
                         readyInMinutes: data["readyInMinutes"] as? Int,
                         dishTypes: data["dishTypes"] as? [String],
-                        missedIngredientCount: 0
+                        missedIngredientCount: 0,
+                        nutrition: nil
                     )
                 } ?? []
                 completion(.success(items))

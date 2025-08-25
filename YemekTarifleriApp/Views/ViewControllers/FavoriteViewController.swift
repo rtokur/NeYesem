@@ -102,6 +102,9 @@ class FavoriteViewController: UIViewController, UITextFieldDelegate {
         configuration.preferredSymbolConfigurationForImage = UIImage.SymbolConfiguration(pointSize: 16)
         button.configuration = configuration
         button.tintColor = UIColor.textColor500
+        button.addTarget(self,
+                         action: #selector(sortButtonTapped),
+                         for: .touchUpInside)
         return button
     }()
     
@@ -112,6 +115,9 @@ class FavoriteViewController: UIViewController, UITextFieldDelegate {
         configuration.preferredSymbolConfigurationForImage = UIImage.SymbolConfiguration(pointSize: 16)
         button.configuration = configuration
         button.tintColor = UIColor.textColor500
+        button.addTarget(self,
+                         action: #selector(filterButtonTapped),
+                         for: .touchUpInside)
         return button
     }()
     
@@ -288,7 +294,7 @@ class FavoriteViewController: UIViewController, UITextFieldDelegate {
             DispatchQueue.main.async {
                 guard let self = self else { return }
                 let selectedCategory = self.categories[self.selectedIndexPath.item]
-                self.filteredFavorites = self.viewModel.filterFavorites(by: selectedCategory)
+                self.filteredFavorites = self.viewModel.favorites
                 self.mealCollectionView.reloadData()
                 self.updateEmptyState()
             }
@@ -352,6 +358,37 @@ class FavoriteViewController: UIViewController, UITextFieldDelegate {
         
         filteredFavorites = viewModel.favorites.filter { $0.recipe.title.lowercased().contains(text.lowercased()) }
         updateSearchSuggestions()
+    }
+    
+    @objc private func sortButtonTapped() {
+        let sortViewController = SortViewController()
+        sortViewController.sheetPresentationController?.detents = [.custom(resolver: { context in
+            return context.maximumDetentValue * 0.45
+        })]
+        sortViewController.sheetPresentationController?.preferredCornerRadius = 20
+        sortViewController.sheetPresentationController?.prefersGrabberVisible = true
+        sortViewController.onSelection = { [weak self] selectedOption in
+            guard let self = self else { return }
+            print("Seçilen sıralama: \(selectedOption)")
+            
+            self.viewModel.sortFavorites(by: selectedOption)
+        }
+        present(sortViewController, animated: true)
+    }
+    
+    @objc private func filterButtonTapped() {
+        let filterViewController = FilterViewController()
+        filterViewController.sheetPresentationController?.detents = [.custom(resolver: { context in
+            return context.maximumDetentValue * 0.5
+        })]
+        filterViewController.sheetPresentationController?.preferredCornerRadius = 20
+        filterViewController.sheetPresentationController?.prefersGrabberVisible = true
+        filterViewController.onApply = { [weak self] selectedCategories in
+            guard let self = self else { return }
+            self.filteredFavorites = self.viewModel.filterFavorites(by: Array(selectedCategories))
+            self.mealCollectionView.reloadData()
+        }
+        present(filterViewController, animated: true)
     }
 }
 

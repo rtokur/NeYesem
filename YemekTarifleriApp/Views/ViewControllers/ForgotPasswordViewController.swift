@@ -174,13 +174,30 @@ class ForgotPasswordViewController: UIViewController, UITextFieldDelegate {
         forgotPasswordViewModel.resetPassword(email: emailTextField.text) { [weak self] error in
             DispatchQueue.main.async {
                 if let error = error {
-                    self?.showAlert(title: "Error",
-                                    message: error)
+                    guard let self = self else { return }
+                    let alert = CustomAlertView(
+                        titleText: error,
+                        confirmText: "",
+                        cancelText: "OK",
+                        isConfirmHidden: true
+                    )
+                    
+                    alert.present(on: self)
                 } else {
-                    self?.showAlert(title: "Success",
-                                    message: "A password reset link has been sent to your email address."){
-                        self?.navigationController?.popViewController(animated: true)
+                    guard let self = self else { return }
+                    let alert = CustomAlertView(
+                        titleText: "A password reset link has been sent to your email address.",
+                        confirmText: "",
+                        cancelText: "OK",
+                        isConfirmHidden: true
+                    )
+                    
+                    alert.onCancel = { [weak alert] in
+                        alert?.dismiss()
+                        self.navigationController?.popViewController(animated: true)
                     }
+                    
+                    alert.present(on: self)
                 }
             }
         }

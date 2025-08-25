@@ -17,11 +17,7 @@ class IngredientCollectionViewCell: UICollectionViewCell {
     
     override var isSelected: Bool {
         didSet {
-            contentView.backgroundColor = isSelected ? UIColor.secondaryColor : UIColor.white
-            titleLabel.textColor = isSelected ? .white : .secondaryColor
-            imageView.isHidden = isSelected ? false : true
-            unitButton.isHidden = isSelected ? false : true
-            quantityTextField.isHidden = isSelected ? false : true
+            updateLayout()
         }
     }
     
@@ -38,9 +34,8 @@ class IngredientCollectionViewCell: UICollectionViewCell {
         let label = UILabel()
         label.textColor = UIColor.secondaryColor
         label.font = .dmSansRegular(12)
-        label.numberOfLines = 0
+        label.numberOfLines = 1
         label.textAlignment = .center
-        label.lineBreakMode = .byWordWrapping
         return label
     }()
     
@@ -50,12 +45,13 @@ class IngredientCollectionViewCell: UICollectionViewCell {
                                                    withConfiguration: configuration))
         imageView.tintColor = .white
         imageView.isHidden = true
+        imageView.contentMode = .scaleAspectFit
         return imageView
     }()
     
     let quantityTextField: UITextField = {
         let textField = UITextField()
-        textField.keyboardType = .decimalPad
+        textField.keyboardType = .numberPad
         textField.textAlignment = .center
         textField.font = .dmSansRegular(12)
         textField.backgroundColor = UIColor.Text50
@@ -103,21 +99,23 @@ class IngredientCollectionViewCell: UICollectionViewCell {
     
     func setupConstraints(){
         stackView.snp.makeConstraints { make in
-            make.leading.trailing.equalToSuperview().inset(10)
-            make.height.equalToSuperview()
+            make.edges.equalToSuperview().inset(10)
         }
         titleLabel.snp.makeConstraints { make in
-            make.top.bottom.equalToSuperview()
+            make.leading.equalToSuperview()
+            make.height.equalToSuperview()
         }
         imageView.snp.makeConstraints { make in
-            make.width.equalTo(self.imageView.snp.height)
+            make.height.equalToSuperview()
+            make.width.equalTo(20)
         }
         quantityTextField.snp.makeConstraints { make in
-            make.width.equalTo(30)
-            make.top.bottom.equalToSuperview().inset(5)
+            make.height.equalToSuperview()
+            make.width.equalTo(50)
         }
         unitButton.snp.makeConstraints { make in
-            make.top.bottom.equalToSuperview().inset(5)
+            make.height.equalToSuperview()
+            make.width.equalTo(50)
         }
     }
     
@@ -137,10 +135,14 @@ class IngredientCollectionViewCell: UICollectionViewCell {
             setupUnitMenu(units: [])
         }
         
-        quantityTextField.isHidden = isSelected ? false : true
-        unitButton.isHidden = isSelected ? false : true
-        contentView.backgroundColor = isSelected ? UIColor.secondaryColor : UIColor.white
-        imageView.isHidden = isSelected ? false : true
+        updateLayout()
+    }
+    
+    func configure(with item: IngredientUIModel) {
+        titleLabel.text = item.name
+        quantityTextField.text = "\(item.amount ?? 0.0)"
+        unitButton.setTitle(item.unit, for: .normal)
+        updateLayout()
     }
     
     private func setupUnitMenu(units: [String]) {
@@ -160,6 +162,14 @@ class IngredientCollectionViewCell: UICollectionViewCell {
         
         unitButton.menu = UIMenu(children: actions)
         unitButton.showsMenuAsPrimaryAction = true
+    }
+    
+    private func updateLayout() {
+        quantityTextField.isHidden = !isSelected
+        unitButton.isHidden = !isSelected
+        titleLabel.textColor = isSelected ? UIColor.white : .secondaryColor
+        contentView.backgroundColor = isSelected ? UIColor.secondaryColor : UIColor.white
+        imageView.isHidden = !isSelected
     }
     
     //MARK: - Actions

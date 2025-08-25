@@ -92,10 +92,34 @@ final class UserService: UserServiceProtocol {
         completion: @escaping (Result<Void, Error>) -> Void
     ) {
         db.collection("users").document(uid).updateData(updates) { error in
-            if let error = error { completion(.failure(error)) }
-            else { completion(.success(())) }
+            if let error = error {
+                completion(.failure(error))
+                return
+            }
+
+            if let currentUser = Auth.auth().currentUser {
+                let changeRequest = currentUser.createProfileChangeRequest()
+                
+                if let name = updates["name"] as? String {
+                    changeRequest.displayName = "\(name)"
+                }
+                
+                if let photoURL = updates["photoURL"] as? String {
+                    changeRequest.photoURL = URL(string: photoURL)
+                }
+                
+                changeRequest.commitChanges { commitError in
+                    if let commitError = commitError {
+                        print("Auth profile update failed: \(commitError.localizedDescription)")
+                    }
+                    completion(.success(()))
+                }
+            } else {
+                completion(.success(()))
+            }
         }
     }
+
     
     // MARK: - Save User Preferences
     func saveUserPreferences(

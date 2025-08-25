@@ -16,7 +16,6 @@ struct UserModel {
     var phone: String?
     var photoURL: String?
     
-    // ✅ preferences nested
     var diet: String?
     var allergies: [String]
     var dislikes: [String]

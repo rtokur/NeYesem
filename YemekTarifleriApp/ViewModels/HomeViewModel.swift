@@ -81,14 +81,14 @@ final class HomeViewModel {
                                     self.categories.contains(where: { $0.title.lowercased() == type.lowercased() })
                                 }
                                 let color = self.categories.first(where: { $0.title.lowercased() == matchedType?.lowercased() })?.colorHex.flatMap { UIColor(hex: $0) } ?? .systemGray
-
                                 FavoriteService.shared.isFavorite(recipeId: recipe.id) { isFav in
                                     FavoriteService.shared.getLikeCount(recipeId: recipe.id) { likeCount in
                                         let model = RecipeUIModel(
                                             recipe: recipe,
                                             isFavorite: isFav,
                                             likeCount: likeCount,
-                                            color: color
+                                            color: color,
+                                            createdAt: Date()
                                         )
                                         uiModels.append(model)
                                         group.leave()
@@ -128,10 +128,12 @@ final class HomeViewModel {
                                                      image: nil,
                                                     readyInMinutes: nil,
                                                      dishTypes: nil,
-                                                     missedIngredientCount: 0),
+                                                     missedIngredientCount: 0,
+                                                     nutrition: nil),
                                       isFavorite: false,
                                       likeCount: 0,
-                                      color: .gray)
+                                      color: .gray,
+                                      createdAt: Date())
                     }
                 case .failure(let error):
                     self?.searchSuggestions = []
@@ -166,7 +168,8 @@ final class HomeViewModel {
                                         recipe: recipe,
                                         isFavorite: isFav,
                                         likeCount: likeCount,
-                                        color: color
+                                        color: color,
+                                        createdAt: Date()
                                     )
                                     uiModels.append(model)
                                     group.leave()

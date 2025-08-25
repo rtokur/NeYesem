@@ -100,29 +100,66 @@ final class FridgeViewModel {
         selectedAisle = aisle
     }
     
+    func toggleFavorite(in index: Int, completion: @escaping (Bool) -> Void) {
+        guard index < recommendedRecipes.count else { completion(false); return }
+        var recipeModel = recommendedRecipes[index]
+        
+        FavoriteService.shared.toggleFavorite(recipe: recipeModel.recipe) { success in
+            if success {
+                recipeModel.isFavorite.toggle()
+                if recipeModel.isFavorite {
+                    recipeModel.likeCount += 1
+                } else {
+                    recipeModel.likeCount -= 1
+                }
+                self.recommendedRecipes[index] = recipeModel
+            }
+            completion(success)
+        }
+    }
+    
     func fetchRecipesFromFridge() {
         let ingredients = filteredItems.map { $0.name }.joined(separator: ",")
         SpoonacularService.shared.searchRecipesByIngredients(ingredients: ingredients) { [weak self] result in
             DispatchQueue.main.async {
+                guard let self = self else { return }
+                
                 switch result {
-                case .success(let recipes): 
-                    self?.recommendedRecipes = recipes.map { summary in
-
+                case .success(let recipes):
+                    let group = DispatchGroup()
+                    var uiModels: [RecipeUIModel] = []
+                    
+                    for summary in recipes {
+                        group.enter()
+                        
                         let recipe = Recipe(
                             id: summary.id,
                             title: summary.title,
                             image: summary.image,
                             readyInMinutes: summary.readyInMinutes,
                             dishTypes: summary.dishTypes,
-                            missedIngredientCount: summary.missedIngredientCount
+                            missedIngredientCount: summary.missedIngredientCount,
+                            nutrition: nil
                         )
                         
-                        return RecipeUIModel(
-                            recipe: recipe,
-                            isFavorite: false,
-                            likeCount: 0,
-                            color: .gray
-                        )
+                        FavoriteService.shared.isFavorite(recipeId: summary.id) { isFav in
+                            FavoriteService.shared.getLikeCount(recipeId: summary.id) { likeCount in
+                                let model = RecipeUIModel(
+                                    recipe: recipe,
+                                    isFavorite: isFav,
+                                    likeCount: likeCount,
+                                    color: .gray,
+                                    createdAt: Date()
+                                )
+                                uiModels.append(model)
+                                group.leave()
+                            }
+                        }
+                    }
+                    
+                    group.notify(queue: .main) {
+                        self.recommendedRecipes = uiModels
+                        self.onRecipesUpdated?()
                     }
                     
                 case .failure(let error):
@@ -131,6 +168,7 @@ final class FridgeViewModel {
             }
         }
     }
+
     // MARK: - Private Methods
     private func groupItemsByAisle() {
         var grouped: [String: [IngredientUIModel]] = [:]

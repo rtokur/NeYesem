@@ -58,7 +58,8 @@ final class RecipeDetailViewModel {
             image: recipeDetail.image,
             readyInMinutes: recipeDetail.readyInMinutes,
             dishTypes: recipeDetail.dishTypes,
-            missedIngredientCount: 0
+            missedIngredientCount: 0,
+            nutrition: nil
         )
     }
     

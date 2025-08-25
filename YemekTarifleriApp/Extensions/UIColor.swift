@@ -120,6 +120,14 @@ extension UIColor {
         return UIColor(named: "D92427")!
     }
     
+    static var ColorEFEFEF: UIColor {
+        return UIColor(named: "EFEFEF")!
+    }
+    
+    static var Color57565B: UIColor {
+        return UIColor(named: "57565B")!
+    }
+    
     convenience init?(hex: String) {
         var hexFormatted = hex.trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
         

@@ -177,7 +177,7 @@ class ChangeEmailViewController: UIViewController {
         }
         editProfileLabel.snp.makeConstraints { make in
             make.height.equalTo(44)
-            make.leading.trailing.equalToSuperview().inset(15)
+            make.leading.trailing.equalToSuperview()
         }
         backButton.snp.makeConstraints { make in
             make.height.width.equalTo(44)

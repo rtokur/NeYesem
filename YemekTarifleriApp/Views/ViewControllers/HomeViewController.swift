@@ -148,7 +148,6 @@ class HomeViewController: UIViewController{
         layout.scrollDirection = .horizontal
         let collectionView = UICollectionView(frame: .zero,
                                               collectionViewLayout: layout)
-        
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.register(HomeMealTypeCollectionViewCell.self,
@@ -174,7 +173,7 @@ class HomeViewController: UIViewController{
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
         layout.itemSize = CGSize(width: 153,
-                                 height: 234)
+                                 height: 212)
         let collectionView = UICollectionView(frame: .zero,
                                               collectionViewLayout: layout)
         collectionView.showsHorizontalScrollIndicator = false
@@ -201,7 +200,7 @@ class HomeViewController: UIViewController{
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
         layout.itemSize = CGSize(width: 153,
-                                 height: 234)
+                                 height: 212)
         let collectionView = UICollectionView(frame: .zero,
                                               collectionViewLayout: layout)
         collectionView.showsHorizontalScrollIndicator = false

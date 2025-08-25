@@ -163,11 +163,11 @@ class ChangePasswordViewController: UIViewController {
         }
         editProfileLabel.snp.makeConstraints { make in
             make.height.equalTo(44)
-            make.leading.trailing.equalToSuperview().inset(15)
+            make.leading.trailing.equalToSuperview()
         }
         backButton.snp.makeConstraints { make in
             make.height.width.equalTo(44)
-            make.leading.equalToSuperview().inset(15)
+            make.leading.equalToSuperview()
             make.top.equalTo(view.safeAreaLayoutGuide)
         }
         editFormStackView.snp.makeConstraints { make in

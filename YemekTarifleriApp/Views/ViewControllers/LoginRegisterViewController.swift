@@ -605,7 +605,15 @@ class LoginRegisterViewController: UIViewController, UITextFieldDelegate {
         loginRegisterViewModel.login(email: emailTextField.text,
                                      password: passwordTextField.text) { [weak self] error in
             if let error = error {
-                self?.showAlert(message: error)
+                guard let self = self else { return }
+                let alert = CustomAlertView(
+                    titleText: error,
+                    confirmText: "",
+                    cancelText: "OK",
+                    isConfirmHidden: true
+                )
+                
+                alert.present(on: self)
             } else {
                 self?.navigateToHome()
             }
@@ -617,7 +625,15 @@ class LoginRegisterViewController: UIViewController, UITextFieldDelegate {
                                         password: newPasswordTextField.text,
                                         confirmPassword: confirmPasswordTextField.text) { [weak self] error in
             if let error = error {
-                self?.showAlert(message: error)
+                guard let self = self else { return }
+                let alert = CustomAlertView(
+                    titleText: error,
+                    confirmText: "",
+                    cancelText: "OK",
+                    isConfirmHidden: true
+                )
+                
+                alert.present(on: self)
             } else {
                 self?.navigateToSelection()
             }
@@ -633,7 +649,15 @@ class LoginRegisterViewController: UIViewController, UITextFieldDelegate {
     @objc private func handleGoogleLogin() {
         loginRegisterViewModel.loginWithGoogle(presentingVC: self) { [weak self] error in
             if let error = error {
-                self?.showAlert(message: error)
+                guard let self = self else { return }
+                let alert = CustomAlertView(
+                    titleText: error,
+                    confirmText: "",
+                    cancelText: "OK",
+                    isConfirmHidden: true
+                )
+                
+                alert.present(on: self)
             } else {
                 self?.navigateToSelection()
             }
@@ -643,7 +667,15 @@ class LoginRegisterViewController: UIViewController, UITextFieldDelegate {
     @objc private func handleFacebookLogin() {
         loginRegisterViewModel.loginWithFacebook(presentingVC: self) { [weak self] error in
             if let error = error {
-                self?.showAlert(message: error)
+                guard let self = self else { return }
+                let alert = CustomAlertView(
+                    titleText: error,
+                    confirmText: "",
+                    cancelText: "OK",
+                    isConfirmHidden: true
+                )
+                
+                alert.present(on: self)
             } else {
                 self?.navigateToSelection()
             }

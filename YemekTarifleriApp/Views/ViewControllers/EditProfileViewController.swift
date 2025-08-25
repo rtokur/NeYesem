@@ -16,6 +16,17 @@ class EditProfileViewController: UIViewController{
     var onDidSave: ((UserModel) -> Void)?
     
     //MARK: UI Elements
+    private lazy var backButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setImage(UIImage(systemName: "arrow.backward"),
+                        for: .normal)
+        button.tintColor = UIColor.Color10
+        button.addTarget(self,
+                         action: #selector(backButtonAction),
+                         for: .touchUpInside)
+        return button
+    }()
+    
     private lazy var scrollView: UIScrollView = {
         let scrollView = UIScrollView()
         scrollView.showsVerticalScrollIndicator = false
@@ -38,17 +49,6 @@ class EditProfileViewController: UIViewController{
         label.textAlignment = .center
         label.isUserInteractionEnabled = true
         return label
-    }()
-    
-    private lazy var backButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.setImage(UIImage(systemName: "arrow.backward"),
-                        for: .normal)
-        button.tintColor = UIColor.Color10
-        button.addTarget(self,
-                         action: #selector(backButtonAction),
-                         for: .touchUpInside)
-        return button
     }()
     
     private lazy var profileImageView: UIImageView = {
@@ -165,9 +165,11 @@ class EditProfileViewController: UIViewController{
     //MARK: - Setup Methods
     func setupViews(){
         view.backgroundColor = .white
+        
         view.addSubview(scrollView)
         scrollView.addSubview(stackView)
         stackView.addArrangedSubview(editProfileLabel)
+        editProfileLabel.addSubview(backButton)
         stackView.addArrangedSubview(profileImageView)
         stackView.addArrangedSubview(editFormStackView)
         editFormStackView.addArrangedSubview(nameLabel)
@@ -177,15 +179,18 @@ class EditProfileViewController: UIViewController{
         editFormStackView.addArrangedSubview(phoneLabel)
         editFormStackView.addArrangedSubview(phoneTextField)
         stackView.addArrangedSubview(saveButton)
-        editProfileLabel.addSubview(backButton)
         view.addSubview(cameraButton)
         self.hideKeyboardOnTap()
     }
     
     func setupConstraints(){
+        backButton.snp.makeConstraints { make in
+            make.height.width.equalTo(44)
+            make.leading.equalToSuperview().inset(15)
+            make.top.equalTo(view.safeAreaLayoutGuide)
+        }
         scrollView.snp.makeConstraints { make in
-            make.top.bottom.equalTo(view.safeAreaLayoutGuide)
-            make.leading.trailing.equalToSuperview().inset(15)
+            make.edges.equalTo(view.safeAreaLayoutGuide)
         }
         stackView.snp.makeConstraints { make in
             make.height.equalTo(scrollView.contentLayoutGuide)
@@ -193,22 +198,18 @@ class EditProfileViewController: UIViewController{
         }
         editProfileLabel.snp.makeConstraints { make in
             make.height.equalTo(44)
-        }
-        backButton.snp.makeConstraints { make in
-            make.height.width.equalTo(44)
-            make.leading.equalToSuperview()
-            make.top.equalTo(view.safeAreaLayoutGuide)
+            make.leading.trailing.equalToSuperview()
         }
         profileImageView.snp.makeConstraints { make in
             make.height.width.equalTo(120)
         }
         cameraButton.snp.makeConstraints { make in
             make.height.width.equalTo(40)
-            make.trailing.equalTo(profileImageView).inset(10)
-            make.bottom.equalTo(profileImageView).offset(10)
+            make.trailing.equalToSuperview().inset(150)
+            make.top.equalTo(view.safeAreaLayoutGuide).inset(140)
         }
         editFormStackView.snp.makeConstraints { make in
-            make.leading.trailing.equalToSuperview()
+            make.leading.trailing.equalToSuperview().inset(15)
         }
         nameTextField.snp.makeConstraints { make in
             make.height.equalTo(50)
@@ -224,7 +225,7 @@ class EditProfileViewController: UIViewController{
         }
         saveButton.snp.makeConstraints { make in
             make.height.equalTo(50)
-            make.width.equalToSuperview()
+            make.leading.trailing.equalToSuperview().inset(15)
         }
     }
     
@@ -270,7 +271,7 @@ class EditProfileViewController: UIViewController{
                 self.onDidSave?(updated)
                 
                 let alert = CustomAlertView(
-                    titleText: "Success",
+                    titleText: "Your profile information has been successfully updated",
                     confirmText: "",
                     cancelText: "OK",
                     isConfirmHidden: true
@@ -314,7 +315,55 @@ class EditProfileViewController: UIViewController{
 
         passwordToggleButton = (textField, button)
     }
-    //MARK: Actions
+    
+    private func requestCameraAccess() {
+        AVCaptureDevice.requestAccess(for: .video) { granted in
+            DispatchQueue.main.async {
+                if granted {
+                    self.openImagePicker(sourceType: .camera)
+                } else {
+                    self.showPermissionAlert(type: "Camera")
+                }
+            }
+        }
+    }
+
+    private func requestPhotoLibraryAccess() {
+        PHPhotoLibrary.requestAuthorization { status in
+            DispatchQueue.main.async {
+                if status == .authorized || status == .limited {
+                    self.openImagePicker(sourceType: .photoLibrary)
+                } else {
+                    self.showPermissionAlert(type: "Photo Library")
+                }
+            }
+        }
+    }
+    
+    private func showPermissionAlert(type: String) {
+        let alert = UIAlertController(title: "\(type.capitalized) access required",
+                                      message: "Please enable \(type) access in Settings.",
+                                      preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Go to Settings", style: .default, handler: { _ in
+            if let settingsURL = URL(string: UIApplication.openSettingsURLString) {
+                UIApplication.shared.open(settingsURL)
+            }
+        }))
+        alert.addAction(UIAlertAction(title: "Cancel",
+                                      style: .cancel))
+        present(alert, animated: true)
+    }
+
+    private func openImagePicker(sourceType: UIImagePickerController.SourceType) {
+        guard UIImagePickerController.isSourceTypeAvailable(sourceType) else { return }
+        let picker = UIImagePickerController()
+        picker.sourceType = sourceType
+        picker.delegate = self
+        picker.allowsEditing = true
+        present(picker, animated: true)
+    }
+    
+    //MARK: - Actions
     @objc private func keyboardWillShow(_ notification: Notification) {
         if let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect {
             let keyboardHeight = keyboardFrame.height
@@ -386,53 +435,6 @@ class EditProfileViewController: UIViewController{
                                       handler: nil))
 
         present(alert, animated: true)
-    }
-    
-    private func requestCameraAccess() {
-        AVCaptureDevice.requestAccess(for: .video) { granted in
-            DispatchQueue.main.async {
-                if granted {
-                    self.openImagePicker(sourceType: .camera)
-                } else {
-                    self.showPermissionAlert(type: "Camera")
-                }
-            }
-        }
-    }
-
-    private func requestPhotoLibraryAccess() {
-        PHPhotoLibrary.requestAuthorization { status in
-            DispatchQueue.main.async {
-                if status == .authorized || status == .limited {
-                    self.openImagePicker(sourceType: .photoLibrary)
-                } else {
-                    self.showPermissionAlert(type: "Photo Library")
-                }
-            }
-        }
-    }
-    
-    private func showPermissionAlert(type: String) {
-        let alert = UIAlertController(title: "\(type.capitalized) access required",
-                                      message: "Please enable \(type) access in Settings.",
-                                      preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Go to Settings", style: .default, handler: { _ in
-            if let settingsURL = URL(string: UIApplication.openSettingsURLString) {
-                UIApplication.shared.open(settingsURL)
-            }
-        }))
-        alert.addAction(UIAlertAction(title: "Cancel",
-                                      style: .cancel))
-        present(alert, animated: true)
-    }
-
-    private func openImagePicker(sourceType: UIImagePickerController.SourceType) {
-        guard UIImagePickerController.isSourceTypeAvailable(sourceType) else { return }
-        let picker = UIImagePickerController()
-        picker.sourceType = sourceType
-        picker.delegate = self
-        picker.allowsEditing = true
-        present(picker, animated: true)
     }
 }
 

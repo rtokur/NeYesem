@@ -42,12 +42,6 @@ class CategoryViewController: UIViewController {
         return label
     }()
     
-    private lazy var searchStackView: UIStackView = {
-        let stackView = UIStackView()
-        stackView.axis = .horizontal
-        return stackView
-    }()
-    
     private let customSearchBarView: UIView = {
         let container = UIView()
         container.backgroundColor = .clear
@@ -86,26 +80,6 @@ class CategoryViewController: UIViewController {
                             action: #selector(searchTextChanged(_:)),
                             for: .editingChanged)
         return textField
-    }()
-    
-    private lazy var sortButton: UIButton = {
-        let button = UIButton()
-        var configuration = UIButton.Configuration.plain()
-        configuration.image = UIImage(named: "sort")
-        configuration.preferredSymbolConfigurationForImage = UIImage.SymbolConfiguration(pointSize: 16)
-        button.configuration = configuration
-        button.tintColor = UIColor.textColor500
-        return button
-    }()
-    
-    private lazy var filterButton: UIButton = {
-        let button = UIButton()
-        var configuration = UIButton.Configuration.plain()
-        configuration.image = UIImage(systemName: "slider.horizontal.3")
-        configuration.preferredSymbolConfigurationForImage = UIImage.SymbolConfiguration(pointSize: 16)
-        button.configuration = configuration
-        button.tintColor = UIColor.textColor500
-        return button
     }()
     
     private lazy var mealCollectionView: UICollectionView = {
@@ -166,13 +140,10 @@ class CategoryViewController: UIViewController {
         view.addSubview(stackView)
         stackView.addArrangedSubview(titleLabel)
         view.addSubview(backButton)
-        stackView.addArrangedSubview(searchStackView)
-        searchStackView.addArrangedSubview(customSearchBarView)
+        stackView.addArrangedSubview(customSearchBarView)
         customSearchBarView.addSubview(searchBarStackView)
         searchBarStackView.addArrangedSubview(iconImageView)
         searchBarStackView.addArrangedSubview(searchTextField)
-        searchStackView.addArrangedSubview(sortButton)
-        searchStackView.addArrangedSubview(filterButton)
         stackView.addArrangedSubview(mealCollectionView)
         view.addSubview(suggestionView)
         suggestionView.addSubview(suggestionStackView)
@@ -190,12 +161,9 @@ class CategoryViewController: UIViewController {
         titleLabel.snp.makeConstraints { make in
             make.height.equalTo(44)
         }
-        searchStackView.snp.makeConstraints { make in
+        customSearchBarView.snp.makeConstraints { make in
             make.height.equalTo(44)
             make.leading.trailing.equalToSuperview().inset(15)
-        }
-        customSearchBarView.snp.makeConstraints { make in
-            make.height.equalToSuperview()
         }
         searchBarStackView.snp.makeConstraints { make in
             make.edges.equalToSuperview().inset(10)
@@ -205,12 +173,6 @@ class CategoryViewController: UIViewController {
         }
         searchTextField.snp.makeConstraints { make in
             make.height.equalToSuperview()
-        }
-        sortButton.snp.makeConstraints { make in
-            make.width.equalTo(44)
-        }
-        filterButton.snp.makeConstraints { make in
-            make.width.equalTo(44)
         }
         mealCollectionView.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview().inset(15)

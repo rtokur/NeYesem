@@ -58,8 +58,7 @@ class HomeMealTypeCollectionViewCell: UICollectionViewCell {
             make.width.equalTo(80)
         }
         mealImageView.snp.makeConstraints { make in
-            make.height.equalTo(80)
-            make.width.equalToSuperview()
+            make.height.width.equalTo(80)
         }
     }
     

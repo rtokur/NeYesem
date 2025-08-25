@@ -41,7 +41,7 @@ class LoadingViewController: UIViewController {
         label.text = "This may take a few seconds..."
         label.font = .dmSansRegular(14, weight: .thin)
         label.textColor = UIColor.Text600
-        label.numberOfLines = 0
+        label.textAlignment = .center
         return label
     }()
     
@@ -50,9 +50,7 @@ class LoadingViewController: UIViewController {
         label.text = "Please wait."
         label.font = .dmSansRegular(14, weight: .thin)
         label.textColor = UIColor.Text600
-        label.numberOfLines = 0
-        label.textAlignment = .left
-        label.lineBreakMode = .byWordWrapping
+        label.textAlignment = .center
         return label
     }()
     
@@ -62,6 +60,7 @@ class LoadingViewController: UIViewController {
         setupViews()
         setupConstraints()
         setupGIF()
+    
     }
 
     //MARK: - Setup Methods
@@ -70,7 +69,9 @@ class LoadingViewController: UIViewController {
         view.addSubview(stackView)
         stackView.addArrangedSubview(imageView)
         stackView.addArrangedSubview(titleLabel)
+        stackView.setCustomSpacing(10, after: titleLabel)
         stackView.addArrangedSubview(loadingLabel)
+        stackView.setCustomSpacing(5, after: loadingLabel)
         stackView.addArrangedSubview(waitLabel)
     }
     
@@ -81,6 +82,15 @@ class LoadingViewController: UIViewController {
         }
         imageView.snp.makeConstraints { make in
             make.height.width.equalTo(274)
+        }
+        titleLabel.snp.makeConstraints { make in
+            make.width.equalToSuperview()
+        }
+        loadingLabel.snp.makeConstraints { make in
+            make.width.equalToSuperview()
+        }
+        waitLabel.snp.makeConstraints { make in
+            make.width.equalToSuperview()
         }
     }
     
@@ -102,6 +112,21 @@ class LoadingViewController: UIViewController {
             imageView.animationDuration = Double(images.count) * 0.1
             imageView.animationRepeatCount = 0
             imageView.startAnimating()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 5) { [weak self] in
+                self?.openRandomRecipeDetail()
+            }
         }
+    }
+    
+    //MARK: - Navigation
+    private func openRandomRecipeDetail() {
+        let sampleRecipeIds = [715538, 716429, 782601, 795751, 716426]
+        
+        let randomId = sampleRecipeIds.randomElement() ?? 715538
+        
+        let viewModel = RecipeDetailViewModel(recipeId: randomId)
+        let detailViewContoller = MealDetailViewController(viewModel: viewModel)
+        navigationController?.pushViewController(detailViewContoller,
+                                                 animated: true)
     }
 }

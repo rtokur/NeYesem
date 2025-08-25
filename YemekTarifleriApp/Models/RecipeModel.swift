@@ -21,6 +21,7 @@ struct Recipe: Codable {
     let readyInMinutes: Int?
     let dishTypes: [String]?
     let missedIngredientCount: Int?
+    let nutrition: NutritionInfo?
 }
 
 struct RecipeDetail: Codable {
@@ -68,6 +69,7 @@ struct RecipeUIModel {
     var isFavorite: Bool
     var likeCount: Int
     var color: UIColor
+    let createdAt: Date?
 }
 
 struct AutocompleteRecipe: Codable {

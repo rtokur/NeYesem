@@ -86,8 +86,11 @@ class AddIngredientsViewController: UIViewController {
     private let categoryBar = CategoryBarView()
     
     private lazy var productsCollectionView: UICollectionView = {
-        let layout = UICollectionViewFlowLayout()
+        let layout = LeftAlignedFlowLayout()
         layout.scrollDirection = .vertical
+        layout.minimumLineSpacing = 8
+        layout.minimumInteritemSpacing = 8
+        layout.estimatedItemSize = .zero
         let collectionView = UICollectionView(frame: .zero,
                                               collectionViewLayout: layout)
         collectionView.register(IngredientCollectionViewCell.self,
@@ -345,29 +348,64 @@ class AddIngredientsViewController: UIViewController {
     }
     
     @objc private func addIngredientAction() {
-        guard let selectedIndexPaths = productsCollectionView.indexPathsForSelectedItems else {
+        guard let selectedIndexPaths = productsCollectionView.indexPathsForSelectedItems,
+              !selectedIndexPaths.isEmpty else {
+            let alert = CustomAlertView(
+                titleText: "Please select at least one product.",
+                confirmText: "",
+                cancelText: "OK",
+                isConfirmHidden: true
+            )
+            alert.onConfirm = { [weak alert] in
+                alert?.dismiss()
+            }
+            alert.present(on: self)
             return
         }
         
-        viewModel.selectedProducts = selectedIndexPaths.compactMap { indexPath in
+        var ingredients: [IngredientUIModel] = []
+        var hasInvalidAmount = false
+        
+        for indexPath in selectedIndexPaths {
             let item = viewModel.selectedAisleProducts[indexPath.item]
             
             guard let cell = productsCollectionView.cellForItem(at: indexPath) as? IngredientCollectionViewCell else {
-                return nil
+                continue
             }
             
             let amount = Double(cell.quantityTextField.text ?? "0") ?? 0
             let unit = cell.unitButton.titleLabel?.text
             
-            return IngredientUIModel(
+            if amount <= 0 {
+                hasInvalidAmount = true
+                break
+            }
+            
+            let ingredient = IngredientUIModel(
                 id: nil,
                 name: item.name,
                 amount: amount,
                 unit: unit,
                 aisle: viewModel.selectedAisle
             )
+            ingredients.append(ingredient)
         }
         
+        if hasInvalidAmount {
+            let alert = CustomAlertView(
+                titleText: "Products with zero amount cannot be added. Please enter a valid quantity.",
+                confirmText: "",
+                cancelText: "OK",
+                isConfirmHidden: true
+            )
+            alert.onConfirm = { [weak alert] in
+                alert?.dismiss()
+            }
+            alert.present(on: self)
+            return
+        }
+        
+        viewModel.selectedProducts = ingredients
         viewModel.saveSelectedProductsToFridge()
     }
     
@@ -440,9 +478,9 @@ extension AddIngredientsViewController: UITextFieldDelegate, UICollectionViewDat
         let textSize = title.size(withAttributes: [.font: font])
         
         let isSelected = collectionView.indexPathsForSelectedItems?.contains(indexPath) ?? false
-        let extraWidth: CGFloat = isSelected ? 115 : 0
+        let extraWidth: CGFloat = isSelected ? 140 : 0
         
-        return CGSize(width: ceil(textSize.width) + 30 + extraWidth,
+        return CGSize(width: ceil(textSize.width) + 20 + extraWidth,
                       height: 40)
     }
     

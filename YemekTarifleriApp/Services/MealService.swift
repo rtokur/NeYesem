@@ -11,7 +11,7 @@ final class SpoonacularService {
     static let shared = SpoonacularService()
     private init() {}
     
-    private let apiKey = "9e8a593aff3a4cacaa86b6bbc0347da9"
+    private let apiKey = "6bceec2bcf254063805945f51e8dedb6"
     
     // MARK: - Generic API Request
     private func performRequest<T: Decodable>(urlString: String,
@@ -59,6 +59,7 @@ final class SpoonacularService {
                        completion: @escaping (Result<[Recipe], Error>) -> Void) {
         var queryItems: [URLQueryItem] = [
             URLQueryItem(name: "addRecipeInformation", value: "true"),
+            URLQueryItem(name: "addRecipeNutrition", value: "true"),
             URLQueryItem(name: "number", value: "8")
         ]
         

@@ -10,6 +10,7 @@ import UIKit
 class FavoriteMealCollectionViewCell: UICollectionViewCell {
     //MARK: Properties
     static let reuseID = "FavoriteCell"
+    
     var onFavoriteButtonTapped: (() -> Void)?
     
     var isFavorited: Bool = false {
@@ -82,14 +83,6 @@ class FavoriteMealCollectionViewCell: UICollectionViewCell {
         let label = UILabel()
         label.textColor = UIColor.textColor300
         label.font = UIFont.dmSansRegular(11)
-        return label
-    }()
-    
-    private lazy var missedLabel: UILabel = {
-        let label = UILabel()
-        label.textColor = UIColor.textColor300
-        label.font = UIFont.dmSansRegular(11)
-        label.text = "2 eksik malzeme var!"
         return label
     }()
     
@@ -179,7 +172,6 @@ class FavoriteMealCollectionViewCell: UICollectionViewCell {
         stackView.addArrangedSubview(favoriteStackView)
         favoriteStackView.addArrangedSubview(favoriteImageView)
         favoriteStackView.addArrangedSubview(favoriteLabel)
-        stackView.addArrangedSubview(missedLabel)
         stackView.addArrangedSubview(mealDetailStackView)
         mealDetailStackView.addArrangedSubview(mealTypeView)
         mealTypeView.addSubview(mealTypeLabel)

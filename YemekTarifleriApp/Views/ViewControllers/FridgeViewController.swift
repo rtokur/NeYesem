@@ -49,8 +49,10 @@ class FridgeViewController: UIViewController {
     private let categoryBar = CategoryBarView()
     
     private lazy var collectionView: UICollectionView = {
-        let layout = UICollectionViewFlowLayout()
+        let layout = LeftAlignedFlowLayout()
         layout.scrollDirection = .vertical
+        layout.minimumLineSpacing = 8
+        layout.minimumInteritemSpacing = 8
         let collectionView = UICollectionView(frame: .zero,
                                               collectionViewLayout: layout)
         collectionView.backgroundColor = .clear
@@ -278,6 +280,24 @@ extension FridgeViewController: UICollectionViewDataSource, UICollectionViewDele
                                                           for: indexPath) as! RecipeCollectionViewCell
             let recipe = viewModel.recommendedRecipes[indexPath.item]
             cell.configure(recipe: recipe)
+            cell.likeButtonAction = { [weak self] in
+                guard let self else { return }
+                self.viewModel.toggleFavorite(in: indexPath.item) { success in
+                    if success {
+                        DispatchQueue.main.async {
+                            collectionView.reloadItems(at: [indexPath])
+                        }
+                    }
+                }
+            }
+            cell.goButtonAction = { [weak self] in
+                guard let self = self else { return }
+                let selectedRecipe = self.viewModel.recommendedRecipes[indexPath.item].recipe
+                let recipeDetailViewModel = RecipeDetailViewModel(recipeId: selectedRecipe.id)
+                let detailViewController = MealDetailViewController(viewModel: recipeDetailViewModel)
+                detailViewController.hidesBottomBarWhenPushed = true
+                self.navigationController?.pushViewController(detailViewController, animated: true)
+            }
             return cell
         }
     }

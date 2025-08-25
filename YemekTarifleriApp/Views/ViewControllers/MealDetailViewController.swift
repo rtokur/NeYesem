@@ -197,6 +197,9 @@ class MealDetailViewController: UIViewController {
         button.backgroundColor = UIColor.primaryColor
         button.layer.cornerRadius = 15
         button.clipsToBounds = true
+        button.addTarget(self,
+                         action: #selector(createRecipeAction),
+                         for: .touchUpInside)
         return button
     }()
     
@@ -349,7 +352,15 @@ class MealDetailViewController: UIViewController {
 
     //MARK: - Actions
     @objc func backButtonAction() {
-        navigationController?.popViewController(animated: true)
+        if let navigationController = navigationController {
+            if let homeViewController = navigationController.viewControllers.first(where: { $0 is HomeViewController }) {
+                navigationController.popToViewController(homeViewController, animated: true)
+            } else if let createRecipeViewController = navigationController.viewControllers.first(where: { $0 is CreateRecipeViewController}){
+                navigationController.popToViewController(createRecipeViewController, animated: true)
+            } else if let fridgeViewController = navigationController.viewControllers.first(where: { $0 is FridgeViewController}) {
+                navigationController.popToViewController(fridgeViewController, animated: true)
+            }
+        }
     }
     
     @objc func segmentedControlClicked(_ sender: UISegmentedControl) {
@@ -359,6 +370,12 @@ class MealDetailViewController: UIViewController {
     
     @objc private func favoriteButtonAction() {
         viewModel.toggleFavorite()
+    }
+    
+    @objc func createRecipeAction() {
+        let createRecipeViewController = CreateRecipeViewController()
+        navigationController?.pushViewController(createRecipeViewController,
+                                                 animated: true)
     }
 }
 

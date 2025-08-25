@@ -373,6 +373,7 @@ class ProfileViewController: UIViewController {
             self?.currentUser = updatedUser
             self?.profileNameLabel.text = "\(updatedUser.name ?? "") \(updatedUser.surname ?? "")"
             self?.emailLabel.text = updatedUser.email
+            self?.profileImageView.kf.setImage(with: URL(string: updatedUser.photoURL ?? ""))
         }
         editProfileViewController.hidesBottomBarWhenPushed = true
         navigationController?.pushViewController(editProfileViewController,

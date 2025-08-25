@@ -98,7 +98,8 @@ final class CategoryViewModel {
                                     recipe: recipe,
                                     isFavorite: isFav,
                                     likeCount: likeCount,
-                                    color: color
+                                    color: color,
+                                    createdAt: Date()
                                 )
                                 uiModels.append(model)
                                 group.leave()
@@ -132,7 +133,12 @@ final class CategoryViewModel {
                 switch result {
                 case .success(let recipes):
                     self?.searchSuggestionsRecipes = recipes.map {
-                        RecipeUIModel(recipe: $0, isFavorite: false, likeCount: 0, color: .gray)
+                        RecipeUIModel(recipe: $0,
+                                      isFavorite: false,
+                                      likeCount: 0,
+                                      color: .gray,
+                                      createdAt: Date())
+
                     }
                 case .failure(let error):
                     self?.searchSuggestionsRecipes = []
