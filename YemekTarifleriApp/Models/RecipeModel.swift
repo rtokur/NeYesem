@@ -103,3 +103,47 @@ struct AisleProduct: Codable {
     let name: String
     let units: [String]?
 }
+
+struct CategoryItem: Codable, Identifiable {
+    var id = UUID()
+    let name: String
+    
+    private enum CodingKeys: CodingKey {
+        case name
+    }
+}
+
+struct ShoppingItem: Identifiable, Codable {
+    let id: UUID
+    var name: String
+    var category: String
+    var isCompleted: Bool = false
+    
+    init(id: UUID = UUID(), name: String, category: String, unit: String? = nil, isCompleted: Bool = false) {
+        self.id = id
+        self.name = name
+        self.category = category
+        self.isCompleted = isCompleted
+    }
+}
+
+struct ShoppingList: Identifiable, Codable {
+    let id: UUID
+    var title: String
+    var createdDate: Date
+    var items: [ShoppingItem]
+    
+    init(id: UUID = UUID(), title: String, createdDate: Date, items: [ShoppingItem]) {
+        self.id = id
+        self.title = title
+        self.createdDate = createdDate
+        self.items = items
+    }
+    
+    var progressString: String {
+        let total = items.count
+        let completed = items.filter { $0.isCompleted }.count
+        return "\(total) items | \(completed) completed"
+    }
+    
+}

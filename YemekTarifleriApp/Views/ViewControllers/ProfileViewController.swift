@@ -7,6 +7,7 @@
 
 import UIKit
 import Kingfisher
+import SwiftUI
 
 class ProfileViewController: UIViewController {
     //MARK: - Properties
@@ -161,6 +162,10 @@ class ProfileViewController: UIViewController {
     private lazy var shoppingListOption: ProfileOptionView = {
         let view = ProfileOptionView(icon: UIImage(systemName: "cart"),
                                      title: "My Shopping Lists")
+        let tap = UITapGestureRecognizer(target: self,
+                                         action: #selector(navigateToShoppingList))
+        view.addGestureRecognizer(tap)
+        view.isUserInteractionEnabled = true
         return view
     }()
 
@@ -405,6 +410,13 @@ class ProfileViewController: UIViewController {
         let changeEmailViewController = ChangeEmailViewController()
         changeEmailViewController.hidesBottomBarWhenPushed = true
         navigationController?.pushViewController(changeEmailViewController,
+                                                 animated: true)
+    }
+    
+    @objc func navigateToShoppingList() {
+        let hostingController = UIHostingController(rootView: ShoppingListView())
+        hostingController.hidesBottomBarWhenPushed = true
+        navigationController?.pushViewController(hostingController,
                                                  animated: true)
     }
 }
