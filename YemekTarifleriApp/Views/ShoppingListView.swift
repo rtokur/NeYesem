@@ -89,7 +89,7 @@ enum ItemCategory: String, CaseIterable, Codable {
         case .meat:
             return "🥩"
         case .dairy:
-            return "🥛"
+            return "🧀"
         }
     }
     
@@ -302,7 +302,17 @@ struct NewListView: View {
                         }
                         
                         TextField("Shopping List", text: $listName)
-                            .textFieldStyle(RoundedBorderTextFieldStyle())
+                            .padding()
+                            .background(
+                                RoundedRectangle(cornerRadius: 10)
+                                    .fill(Color.clear) // arka plan şeffaf
+                            )
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 10)
+                                    .stroke(Color.gray.opacity(0.5), lineWidth: 1) // gri çerçeve
+                            )
+
+
                     }
                     .padding(.horizontal, 20)
                     .padding(.top, 20)
@@ -316,24 +326,35 @@ struct NewListView: View {
                             Spacer()
                         }
                         
-                        LazyVGrid(columns: [
-                            GridItem(.flexible()),
-                            GridItem(.flexible())
-                        ], spacing: 12) {
-                            ForEach(ItemCategory.allCases, id: \.self) { category in
-                                CategoryButton(
-                                    category: category,
-                                    isSelected: selectedCategory == category
-                                ) {
-                                    selectedCategory = category
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack(spacing: 12) {
+                                ForEach(ItemCategory.allCases, id: \.self) { category in
+                                    CategoryButton(
+                                        category: category,
+                                        isSelected: selectedCategory == category
+                                    ) {
+                                        selectedCategory = category
+                                    }
+                                    .fixedSize(horizontal: true, vertical: false) // Yazının taşmamasını sağlar
+                                    .font(.system(size: 12)) // Yazı küçültüldü
                                 }
                             }
+                            .padding(.horizontal)
                         }
+
                         
                         // Custom Item Input
                         HStack {
                             TextField("Enter custom item name", text: $newItemName)
-                                .textFieldStyle(RoundedBorderTextFieldStyle())
+                                .padding()
+                                .background(
+                                    RoundedRectangle(cornerRadius: 10)
+                                        .fill(Color.clear) // arka plan şeffaf
+                                )
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 10)
+                                        .stroke(Color.gray.opacity(0.5), lineWidth: 1) // gri çerçeve
+                                )
                             
                             Button(action: addCustomItem) {
                                 Image(systemName: "plus")
@@ -353,6 +374,7 @@ struct NewListView: View {
                                 .foregroundColor(.secondary)
                             
                             LazyVGrid(columns: [
+                                GridItem(.flexible()),
                                 GridItem(.flexible()),
                                 GridItem(.flexible()),
                                 GridItem(.flexible())
@@ -510,6 +532,10 @@ struct CategoryButton: View {
     }
 }
 
+
+
+
+
 struct EditListView: View {
     @Binding var list: ShoppingList
     @ObservedObject var dataManager: DataManager
@@ -519,15 +545,18 @@ struct EditListView: View {
     var body: some View {
         VStack(spacing: 0) {
             List {
-                ForEach(list.items.indices, id: \.self) { index in
-                    ListItemRow(item: $list.items[index], dataManager: dataManager)
+                ForEach(sortedItems.indices, id: \.self) { index in
+                    ListItemRow(item: bindingForItem(sortedItems[index]), dataManager: dataManager)
                 }
                 .onDelete { indexSet in
-                    list.items.remove(atOffsets: indexSet)
+                    let itemsToDelete = indexSet.map { sortedItems[$0] }
+                    list.items.removeAll { item in
+                        itemsToDelete.contains(where: { $0.id == item.id })
+                    }
                     dataManager.saveLists()
                 }
             }
-            .listStyle(InsetGroupedListStyle())
+            .listStyle(.plain)
             
             Button(action: {
                 showingAddItem = true
@@ -545,16 +574,31 @@ struct EditListView: View {
             .padding(.horizontal, 20)
             .padding(.bottom, 30)
         }
+        .padding(.top)
         .navigationTitle(list.title)
         .navigationBarTitleDisplayMode(.inline)
         .sheet(isPresented: $showingAddItem) {
             AddItemView(existingItems: list.items) { newItem in
-                list.items.insert(newItem, at: 0) // Insert at the beginning
+                list.items.insert(newItem, at: 0)
                 dataManager.saveLists()
             }
         }
     }
+    
+    // ✅ Tamamlanmayanlar üstte, tamamlananlar altta
+    private var sortedItems: [ShoppingItem] {
+        list.items.sorted { !$0.isCompleted && $1.isCompleted }
+    }
+    
+    // ✅ Sıralanmış item için binding bulma
+    private func bindingForItem(_ item: ShoppingItem) -> Binding<ShoppingItem> {
+        guard let index = list.items.firstIndex(where: { $0.id == item.id }) else {
+            fatalError("Item not found")
+        }
+        return $list.items[index]
+    }
 }
+
 
 struct ListItemRow: View {
     @Binding var item: ShoppingItem
@@ -562,25 +606,34 @@ struct ListItemRow: View {
     
     var body: some View {
         HStack(spacing: 12) {
+            // Nokta
+            Circle()
+                .fill(Color(red: 0.4, green: 0.6, blue: 0.7))
+                .frame(width: 8, height: 8)
+            
+            // Yazı
             Text(item.name)
                 .font(.system(size: 16))
-                .foregroundColor(item.isCompleted ? Color(red: 0.4, green: 0.6, blue: 0.7) : .primary)
+                .foregroundColor(Color(red: 0.4, green: 0.6, blue: 0.7))
                 .strikethrough(item.isCompleted)
             
             Spacer()
             
+            // Checkbox
             Button(action: {
                 item.isCompleted.toggle()
                 dataManager.saveLists()
             }) {
                 Image(systemName: item.isCompleted ? "checkmark.square.fill" : "square")
-                    .foregroundColor(item.isCompleted ? Color(red: 0.4, green: 0.6, blue: 0.7) : .gray)
+                    .foregroundColor(Color(red: 0.4, green: 0.6, blue: 0.7))
                     .font(.system(size: 20))
             }
         }
         .contentShape(Rectangle())
     }
 }
+
+
 
 struct AddItemView: View {
     @Environment(\.presentationMode) var presentationMode
