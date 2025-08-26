@@ -366,7 +366,7 @@ class CreateRecipeViewController: UIViewController {
     
     private lazy var messageLabel: UILabel = {
         let label = UILabel()
-        label.text = "Merhaba, ben senin tarif asistanıyım en güzel tarifleri oluşturmada sana yardım etmek için buradayım!"
+        label.text = "Hello, I am your recipe assistant, here to help you create the best recipes!"
         label.font = .dmSansRegular(12)
         label.textColor = UIColor.Color57565B
         label.numberOfLines = 0
@@ -393,7 +393,7 @@ class CreateRecipeViewController: UIViewController {
     
     private lazy var userMessageLabel: UILabel = {
         let label = UILabel()
-        label.text = "Lorem ipsum dolor sit amet consectetur. Quisque diam et cursus amet porttitor et. Quam leo su."
+        label.text = "I want to make creamy mushroom pasta. How long should I cook the pasta?"
         label.font = .dmSansRegular(12)
         label.textColor = .white
         label.numberOfLines = 0
@@ -403,7 +403,7 @@ class CreateRecipeViewController: UIViewController {
     
     private lazy var userTimeLabel: UILabel = {
         let label = UILabel()
-        label.text = "Şimdi"
+        label.text = "Now"
         label.font = .dmSansRegular(14)
         label.textColor = .black.withAlphaComponent(0.4)
         label.textAlignment = .left
@@ -445,7 +445,7 @@ class CreateRecipeViewController: UIViewController {
         let button = UIButton()
         button.setImage(UIImage(systemName: "photo"),
                         for: .normal)
-        button.tintColor = UIColor.ColorEFEFEF
+        button.tintColor = UIColor.textColor500
         return button
     }()
     
@@ -687,14 +687,14 @@ class CreateRecipeViewController: UIViewController {
             },
             UIAction(title: "2 Servings") { _ in
                 let font = UIFont.dmSansRegular(14)
-                self.leftDropdown.configuration?.attributedTitle = AttributedString( "2 Serving", attributes: AttributeContainer([
+                self.leftDropdown.configuration?.attributedTitle = AttributedString( "2 Servings", attributes: AttributeContainer([
                     .font: font,
                     .foregroundColor: UIColor.Text600
                 ]))
             },
             UIAction(title: "3 Servings") { _ in
                 let font = UIFont.dmSansRegular(14)
-                self.leftDropdown.configuration?.attributedTitle = AttributedString( "3 Serving", attributes: AttributeContainer([
+                self.leftDropdown.configuration?.attributedTitle = AttributedString( "3 Servings", attributes: AttributeContainer([
                     .font: font,
                     .foregroundColor: UIColor.Text600
                 ]))

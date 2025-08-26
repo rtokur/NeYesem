@@ -11,7 +11,7 @@ final class SpoonacularService {
     static let shared = SpoonacularService()
     private init() {}
     
-    private let apiKey = "6bceec2bcf254063805945f51e8dedb6"
+    private let apiKey = "05f941061fee4ee6a38aa7a43bd851b6"
     
     // MARK: - Generic API Request
     private func performRequest<T: Decodable>(urlString: String,
@@ -120,4 +120,5 @@ final class SpoonacularService {
                                     URLQueryItem(name: "ignorePantry", value: "false")],
                        completion: completion)
     }
+
 }

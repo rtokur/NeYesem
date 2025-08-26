@@ -156,13 +156,6 @@ final class AuthManager: AuthServiceProtocol {
             if let error = error {
                 completion(.failure(error))
             } else {
-                CoreDataManager.shared.saveUserProfile(
-                    uid: user.uid,
-                    email: user.email ?? "",
-                    name: user.displayName ?? "",
-                    surname: "",
-                    photoURL: ""
-                )
                 completion(.success(()))
             }
         }

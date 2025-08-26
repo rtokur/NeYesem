@@ -23,7 +23,6 @@ final class ProfileViewModel {
         userService.fetchCurrentUser { [weak self] result in
             switch result {
             case .success(let user):
-                CoreDataManager.shared.saveUserProfile(uid: user.uid, email: user.email ?? "Bilinmiyor", name: user.name ?? "Bilinmiyor", surname: user.surname ?? "Bilinmiyor", photoURL: user.photoURL ?? "")
                 self?.onUserDataFetched?(user)
             case .failure(let error):
                 self?.onError?(error.localizedDescription)
@@ -36,7 +35,6 @@ final class ProfileViewModel {
         userService.signOut { [weak self] result in
             switch result {
             case .success:
-                CoreDataManager.shared.deleteUserProfile()
                 self?.onSignOut?()
             case .failure(let error):
                 self?.onError?(error.localizedDescription)

@@ -379,7 +379,7 @@ class FavoriteViewController: UIViewController, UITextFieldDelegate {
     @objc private func filterButtonTapped() {
         let filterViewController = FilterViewController()
         filterViewController.sheetPresentationController?.detents = [.custom(resolver: { context in
-            return context.maximumDetentValue * 0.5
+            return context.maximumDetentValue * 0.55
         })]
         filterViewController.sheetPresentationController?.preferredCornerRadius = 20
         filterViewController.sheetPresentationController?.prefersGrabberVisible = true
@@ -419,6 +419,7 @@ extension FavoriteViewController: UICollectionViewDelegate, UICollectionViewData
         let recipeDetailViewModel = RecipeDetailViewModel(recipeId: selectedRecipe.recipe.id)
         let detailViewController = MealDetailViewController(viewModel: recipeDetailViewModel)
         detailViewController.hidesBottomBarWhenPushed = true
+        detailViewController.source = .favorite
         navigationController?.pushViewController(detailViewController,
                                                  animated: true)
         

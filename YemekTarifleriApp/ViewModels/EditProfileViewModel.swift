@@ -50,13 +50,6 @@ final class EditProfileViewModel {
                     switch fetch {
                     case .success(let fresh):
                         self?.user = fresh
-                        CoreDataManager.shared.saveUserProfile(
-                            uid: fresh.uid,
-                            email: fresh.email ?? "",
-                            name: fresh.name ?? "",
-                            surname: fresh.surname ?? "",
-                            photoURL: fresh.photoURL ?? ""
-                        )
                         self?.onSaved?(fresh)
                     case .failure(let e):
                         self?.onError?(e.localizedDescription)
@@ -65,4 +58,5 @@ final class EditProfileViewModel {
             }
         }
     }
+    
 }

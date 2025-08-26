@@ -7,12 +7,20 @@
 
 import UIKit
 
+enum MealDetailSource {
+    case home
+    case fridge
+    case favorite
+    case loading
+    case category
+}
 
 class MealDetailViewController: UIViewController {
     //MARK: - Properties
     private let viewModel: RecipeDetailViewModel
     private var items: [(UIImage?, String)] = []
     private var didTrackRecentOnce = false
+    var source: MealDetailSource?
 
     //MARK: UI Elements
     private lazy var scrollView: UIScrollView = {
@@ -352,13 +360,20 @@ class MealDetailViewController: UIViewController {
 
     //MARK: - Actions
     @objc func backButtonAction() {
-        if let navigationController = navigationController {
-            if let homeViewController = navigationController.viewControllers.first(where: { $0 is HomeViewController }) {
-                navigationController.popToViewController(homeViewController, animated: true)
-            } else if let createRecipeViewController = navigationController.viewControllers.first(where: { $0 is CreateRecipeViewController}){
-                navigationController.popToViewController(createRecipeViewController, animated: true)
-            } else if let fridgeViewController = navigationController.viewControllers.first(where: { $0 is FridgeViewController}) {
-                navigationController.popToViewController(fridgeViewController, animated: true)
+        guard let source = source else {
+            navigationController?.popViewController(animated: true)
+            return
+        }
+        
+        switch source {
+        case .home, .fridge, .favorite, .category:
+            navigationController?.popViewController(animated: true)
+            
+        case .loading:
+            if let createVC = navigationController?.viewControllers.first(where: { $0 is CreateRecipeViewController }) {
+                navigationController?.popToViewController(createVC, animated: true)
+            } else {
+                navigationController?.popViewController(animated: true)
             }
         }
     }

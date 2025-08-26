@@ -125,8 +125,9 @@ class LoadingViewController: UIViewController {
         let randomId = sampleRecipeIds.randomElement() ?? 715538
         
         let viewModel = RecipeDetailViewModel(recipeId: randomId)
-        let detailViewContoller = MealDetailViewController(viewModel: viewModel)
-        navigationController?.pushViewController(detailViewContoller,
+        let detailViewController = MealDetailViewController(viewModel: viewModel)
+        detailViewController.source = .loading
+        navigationController?.pushViewController(detailViewController,
                                                  animated: true)
     }
 }

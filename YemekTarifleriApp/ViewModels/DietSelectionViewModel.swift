@@ -31,11 +31,13 @@ class DietSelectionViewModel: ObservableObject {
     }
     
     func savePreferences(diet: String?, allergies: [String], dislikes: [String], completion: @escaping (Result<Void, Error>) -> Void) {
-        userService.saveUserPreferences(
-            diet: diet,
-            allergies: allergies,
-            dislikes: dislikes,
-            completion: completion
-        )
+        userService.saveUserPreferences(diet: diet, allergies: allergies, dislikes: dislikes) { result in
+                switch result {
+                case .success:
+                    completion(.success(()))
+                case .failure(let error):
+                    completion(.failure(error))
+                }
+            }
     }
 }

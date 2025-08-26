@@ -437,7 +437,6 @@ class HomeViewController: UIViewController{
         perform(#selector(performSearch(_:)), with: query, afterDelay: 0.5)
     }
     
-    
     @objc private func performSearch(_ query: String) {
         viewModel.fetchAutocompleteSuggestions(query: query)
     }
@@ -460,6 +459,7 @@ class HomeViewController: UIViewController{
         let recipeDetailViewModel = RecipeDetailViewModel(recipeId: recipe.id)
         let mealDetailViewController = MealDetailViewController(viewModel: recipeDetailViewModel)
         mealDetailViewController.hidesBottomBarWhenPushed = true
+        mealDetailViewController.source = .home
         navigationController?.pushViewController(mealDetailViewController,
                                                  animated: true)
     }
@@ -543,6 +543,7 @@ extension HomeViewController: UITextFieldDelegate,
             let recipeDetailViewModel = RecipeDetailViewModel(recipeId: selectedRecipe.id)
             let detailViewController = MealDetailViewController(viewModel: recipeDetailViewModel)
             detailViewController.hidesBottomBarWhenPushed = true
+            detailViewController.source = .home
             navigationController?.pushViewController(detailViewController,
                                                      animated: true)
         } else if collectionView == lastViewedCollectionView {
@@ -550,6 +551,7 @@ extension HomeViewController: UITextFieldDelegate,
             let recipeDetailViewModel = RecipeDetailViewModel(recipeId: selectedRecipe.id)
             let detailViewController = MealDetailViewController(viewModel: recipeDetailViewModel)
             detailViewController.hidesBottomBarWhenPushed = true
+            detailViewController.source = .home
             navigationController?.pushViewController(detailViewController,
                                                      animated: true)
         } else {

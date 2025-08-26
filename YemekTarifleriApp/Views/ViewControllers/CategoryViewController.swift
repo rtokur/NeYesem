@@ -295,6 +295,7 @@ class CategoryViewController: UIViewController {
         let recipeDetailViewModel = RecipeDetailViewModel(recipeId: recipe.id)
         let mealDetailViewController = MealDetailViewController(viewModel: recipeDetailViewModel)
         mealDetailViewController.hidesBottomBarWhenPushed = true
+        mealDetailViewController.source = .category
         navigationController?.pushViewController(mealDetailViewController,
                                                  animated: true)
     }
@@ -334,6 +335,7 @@ extension CategoryViewController: UICollectionViewDelegate, UICollectionViewData
         let recipeDetailViewModel = RecipeDetailViewModel(recipeId: selectedRecipe.recipe.id)
         let detailViewController = MealDetailViewController(viewModel: recipeDetailViewModel)
         detailViewController.hidesBottomBarWhenPushed = true
+        detailViewController.source = .category
         navigationController?.pushViewController(detailViewController,
                                                  animated: true)
     }

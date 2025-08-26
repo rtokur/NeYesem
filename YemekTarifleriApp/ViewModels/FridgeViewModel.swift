@@ -28,11 +28,13 @@ final class FridgeViewModel {
         didSet { onFridgeUpdated?() }
     }
     
-    private(set) var aisles: [String: [AisleProduct]] = [:]
-    
     var recommendedRecipes: [RecipeUIModel] = [] {
         didSet { onRecipesUpdated?() }
     }
+    
+    private(set) var categories: [CategoryModel] = []
+
+    private(set) var aisles: [String: [AisleProduct]] = [:]
     
     var allAisles: [String] {
         return Array(aisles.keys)
@@ -46,6 +48,7 @@ final class FridgeViewModel {
     init(service: FridgeServiceProtocol = FridgeService()) {
         self.service = service
         loadAislesFromJSON()
+        loadCategoriesFromJSON()
     }
     
     // MARK: - Public Methods
@@ -132,12 +135,15 @@ final class FridgeViewModel {
                     for summary in recipes {
                         group.enter()
                         
+                        let randomCategory = self.categories.randomElement()
+                        let color = randomCategory?.colorHex.flatMap { UIColor(hex: $0) } ?? .systemGray
+                        
                         let recipe = Recipe(
                             id: summary.id,
                             title: summary.title,
                             image: summary.image,
                             readyInMinutes: summary.readyInMinutes,
-                            dishTypes: summary.dishTypes,
+                            dishTypes: [randomCategory?.title ?? ""],
                             missedIngredientCount: summary.missedIngredientCount,
                             nutrition: nil
                         )
@@ -148,7 +154,7 @@ final class FridgeViewModel {
                                     recipe: recipe,
                                     isFavorite: isFav,
                                     likeCount: likeCount,
-                                    color: .gray,
+                                    color: color,
                                     createdAt: Date()
                                 )
                                 uiModels.append(model)
@@ -199,6 +205,21 @@ final class FridgeViewModel {
             self.aisles = decoded
         } catch {
             print("Aisles JSON decode error: \(error)")
+        }
+    }
+    
+    // MARK: - Load Categories
+    private func loadCategoriesFromJSON(limit: Int = 5) {
+        guard let url = Bundle.main.url(forResource: "Categories", withExtension: "json") else {
+            print("Categories.json not found")
+            return
+        }
+        do {
+            let data = try Data(contentsOf: url)
+            let decoded = try JSONDecoder().decode([CategoryModel].self, from: data)
+            self.categories = Array(decoded.prefix(limit))
+        } catch {
+            print("Failed to decode Categories.json:", error)
         }
     }
 }

@@ -222,7 +222,6 @@ class FridgeViewController: UIViewController {
         categoryBar.onSelectionChanged = { [weak self] aisle, index in
             self?.viewModel.selectAisle(aisle)
         }
-
     }
     
     // MARK: - Actions
@@ -296,6 +295,7 @@ extension FridgeViewController: UICollectionViewDataSource, UICollectionViewDele
                 let recipeDetailViewModel = RecipeDetailViewModel(recipeId: selectedRecipe.id)
                 let detailViewController = MealDetailViewController(viewModel: recipeDetailViewModel)
                 detailViewController.hidesBottomBarWhenPushed = true
+                detailViewController.source = .fridge
                 self.navigationController?.pushViewController(detailViewController, animated: true)
             }
             return cell
