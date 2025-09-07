@@ -26,7 +26,7 @@ final class LoginRegisterViewModel {
               email != "",
               let password = password,
               password != "" else {
-            completion("E-posta ve şifre boş olamaz.")
+            completion("Email and password cannot be empty.")
             return
         }
         
@@ -53,12 +53,12 @@ final class LoginRegisterViewModel {
               password != "",
               let confirmPassword = confirmPassword,
               confirmPassword != "" else {
-            completion("Tüm alanlar doldurulmalıdır.")
+            completion("All fields must be filled.")
             return
         }
         
         guard password == confirmPassword else {
-            completion("Şifreler uyuşmuyor.")
+            completion("Passwords do not match.")
             return
         }
         
@@ -100,4 +100,5 @@ final class LoginRegisterViewModel {
             }
         }
     }
+    
 }

@@ -11,17 +11,18 @@ import GoogleSignIn
 import FirebaseCore
 import FBSDKLoginKit
 
+//MARK: - Protocol
 protocol AuthServiceProtocol {
     func signUp(email: String, password: String, username: String, completion: @escaping (Result<Void, Error>) -> Void)
     func signIn(email: String, password: String, completion: @escaping (Result<Void, Error>) -> Void)
     func signInWithGoogle(presentingVC: UIViewController, completion: @escaping (Result<Void, Error>) -> Void)
     func signInWithFacebook(presentingVC: UIViewController, completion: @escaping (Result<Void, Error>) -> Void)
     func sendPasswordReset(email: String, completion: @escaping (Result<Void, Error>) -> Void)
-    func signOut() throws
     var currentUser: User? { get }
 }
 
 final class AuthManager: AuthServiceProtocol {
+    //MARK: - Properties
     static let shared = AuthManager()
     private let auth = Auth.auth()
     private let db = Firestore.firestore()
@@ -43,7 +44,9 @@ final class AuthManager: AuthServiceProtocol {
                 return
             }
             
-            self?.saveUserToFirestore(user: user, username: username, completion: completion)
+            self?.saveUserToFirestore(user: user,
+                                      username: username,
+                                      completion: completion)
         }
     }
     
@@ -60,7 +63,8 @@ final class AuthManager: AuthServiceProtocol {
                 return
             }
             
-            self?.saveUserToFirestore(user: user, completion: completion)
+            self?.saveUserToFirestore(user: user,
+                                      completion: completion)
         }
     }
     
@@ -88,18 +92,8 @@ final class AuthManager: AuthServiceProtocol {
             
             let credential = GoogleAuthProvider.credential(withIDToken: idToken,
                                                            accessToken: accessToken)
-            
-            self.auth.signIn(with: credential) { authResult, error in
-                if let error = error {
-                    return completion(.failure(error))
-                }
-                
-                guard let firebaseUser = authResult?.user else {
-                    return completion(.failure(FirebaseAuthError.unknown))
-                }
-                
-                self.saveUserToFirestore(user: firebaseUser, completion: completion)
-            }
+            self.firebaseSignIn(with: credential,
+                                completion: completion)
         }
     }
     
@@ -123,23 +117,10 @@ final class AuthManager: AuthServiceProtocol {
             }
             
             let credential = FacebookAuthProvider.credential(withAccessToken: tokenString)
-            
-            self?.auth.signIn(with: credential) { authResult, error in
-                if let error = error {
-                    completion(.failure(error))
-                    return
-                }
-                
-                guard let firebaseUser = authResult?.user else {
-                    completion(.failure(FirebaseAuthError.unknown))
-                    return
-                }
-                
-                self?.saveUserToFirestore(user: firebaseUser, completion: completion)
-            }
+            self?.firebaseSignIn(with: credential,
+                                 completion: completion)
         }
     }
-    
     
     // MARK: - Reset Password
     func sendPasswordReset(email: String, completion: @escaping (Result<Void, Error>) -> Void) {
@@ -157,31 +138,34 @@ final class AuthManager: AuthServiceProtocol {
         }
     }
     
-    // MARK: - Sign Out
-    func signOut() throws {
-        try auth.signOut()
-    }
-    
     // MARK: - Save User to Firestore
     private func saveUserToFirestore(user: User, username: String? = nil, completion: @escaping (Result<Void, Error>) -> Void) {
         let userRef = db.collection("users").document(user.uid)
         
         var userData: [String: Any] = [
             "email": user.email ?? "",
-            "displayName": username ?? user.displayName ?? "Kullanıcı",
+            "name": username ?? user.displayName ?? "Kullanıcı",
             "lastLogin": FieldValue.serverTimestamp()
         ]
         
         if username != nil {
             userData["createdAt"] = FieldValue.serverTimestamp()
         }
-        
+
         userRef.setData(userData, merge: true) { error in
             if let error = error {
                 completion(.failure(error))
             } else {
                 completion(.success(()))
             }
+        }
+    }
+    
+    private func firebaseSignIn(with credential: AuthCredential, completion: @escaping (Result<Void, Error>) -> Void) {
+        auth.signIn(with: credential) { [weak self] authResult, error in
+            if let error = error { return completion(.failure(error)) }
+            guard let user = authResult?.user else { return completion(.failure(FirebaseAuthError.unknown)) }
+            self?.saveUserToFirestore(user: user, completion: completion)
         }
     }
 }

@@ -1,0 +1,73 @@
+[
+  {
+    "title": "Main course",
+    "type": "maincourse",
+    "colorHex": "#4B24CB"
+  },
+  {
+    "title": "Side dish",
+    "type": "sidedish",
+    "colorHex": "#226A0D"
+  },
+  {
+    "title": "Dessert",
+    "type": "dessert",
+    "colorHex": "#A81FE3"
+  },
+  {
+    "title": "Appetizer",
+    "type": "appetizer",
+    "colorHex": "#53D5D7"
+  },
+  {
+    "title": "Salad",
+    "type": "salad",
+    "colorHex": "#97CE4E"
+  },
+  {
+    "title": "Bread",
+    "type": "bread",
+    "colorHex": "#FFC107"
+  },
+  {
+    "title": "Breakfast",
+    "type": "breakfast",
+    "colorHex": "#FF9800"
+  },
+  {
+    "title": "Soup",
+    "type": "soup",
+    "colorHex": "#009688"
+  },
+  {
+    "title": "Beverage",
+    "type": "beverage",
+    "colorHex": "#D92427"
+  },
+  {
+    "title": "Sauce",
+    "type": "sauce",
+    "colorHex": "#CB2488"
+  },
+  {
+    "title": "Marinade",
+    "type": "marinade",
+    "colorHex": "#3F51B5"
+  },
+  {
+    "title": "Fingerfood",
+    "type": "fingerfood",
+    "colorHex": "#9E9E9E"
+  },
+  {
+    "title": "Snack",
+    "type": "snack",
+    "colorHex": "#00BCD4"
+  },
+  {
+    "title": "Drink",
+    "type": "drink",
+    "colorHex": "#795548"
+  }
+]
+

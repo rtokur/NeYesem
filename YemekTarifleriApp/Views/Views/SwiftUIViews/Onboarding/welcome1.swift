@@ -1,0 +1,95 @@
+//
+//  welcome1.swift
+//  YemekTarifleriApp
+//
+//  Created by neodiyadin on 11.08.2025.
+//
+
+import SwiftUI
+import UIKit
+
+
+struct LoginRegisterWrapper: UIViewControllerRepresentable {
+    func makeUIViewController(context: Context) -> UINavigationController {
+        let loginVC = LoginRegisterViewController()
+        let navController = UINavigationController(rootViewController: loginVC)
+        navController.setNavigationBarHidden(true, animated: true)
+        return navController
+    }
+    
+    func updateUIViewController(_ uiViewController: UINavigationController, context: Context) {
+
+    }
+}
+
+struct welcome1: View {
+    
+    @State private var showLogin = false
+    
+    var body: some View {
+        NavigationStack {
+            VStack {
+                Spacer()
+                
+                Image("dream")
+                
+                HStack(spacing: 8) {
+                    Circle()
+                        .fill(Color.blue)
+                        .frame(width: 16, height: 16)
+                    Circle()
+                        .fill(Color.gray.opacity(0.4))
+                        .frame(width: 16, height: 16)
+                    Circle()
+                        .fill(Color.gray.opacity(0.4))
+                        .frame(width: 16, height: 16)
+                }
+                .padding(.bottom, 20)
+                
+                Text("What Can I Cook with What I Have at Home?")
+                    .font(.title2)
+                    .fontWeight(.bold)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal)
+                    .padding(.top, 20)
+                
+                Text("Enter the ingredients in your fridge and get personalized recipe suggestions")
+                    .font(.body)
+                    .foregroundColor(.gray)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal)
+                    .padding(.top, 10)
+                
+                Spacer()
+                
+                HStack {
+                    Button("Skip") {
+                        showLogin = true
+                    }
+                    .foregroundColor(.gray)
+                    .fullScreenCover(isPresented: $showLogin) {
+                        LoginRegisterWrapper()
+                    }
+                    
+                    Spacer()
+                    
+                    NavigationLink(destination: welcome2()) {
+                        Image(systemName: "arrow.right")
+                            .foregroundColor(.white)
+                            .frame(width: 80, height: 50)
+                            .background(Color(red: 41/255, green: 128/255, blue: 158/255))
+                            .cornerRadius(25)
+                    }
+                }
+                .padding(.horizontal, 40)
+                .padding(.bottom, 40)
+            }
+        }
+        .navigationBarBackButtonHidden(true)
+        .navigationBarTitleDisplayMode(.inline)
+    }
+}
+
+#Preview {
+    welcome1()
+}

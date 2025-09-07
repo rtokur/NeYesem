@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SwiftUI
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
@@ -14,10 +15,18 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         let window = UIWindow(windowScene: windowScene)
-        let loginRegisterViewController = LoginRegisterViewController()
-        let navigationController = UINavigationController(rootViewController: loginRegisterViewController)
-        navigationController.setNavigationBarHidden(true, animated: false)
-        window.rootViewController = navigationController
+
+        if AuthManager.shared.currentUser != nil {
+            let navigationController = UINavigationController(rootViewController: MainTabBarController())
+            navigationController.setNavigationBarHidden(true, animated: true)
+            window.rootViewController = navigationController
+        } else {
+            let welcomeView = welcome1()
+            let hostingController = UIHostingController(rootView: welcomeView)
+            let navigationController = UINavigationController(rootViewController: hostingController)
+            navigationController.setNavigationBarHidden(true, animated: true)
+            window.rootViewController = navigationController
+        }
         self.window = window
         window.makeKeyAndVisible()
     }

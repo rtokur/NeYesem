@@ -1,0 +1,44 @@
+{
+  "Pasta & Grains": [
+    { "name": "Spaghetti", "units": ["g", "kg"] },
+    { "name": "Penne", "units": ["g", "kg"] },
+    { "name": "Fusilli", "units": ["g", "kg"] },
+    { "name": "Rice", "units": ["g", "kg", "cup"] },
+    { "name": "Flour", "units": ["g", "kg", "cup"] }
+  ],
+  "Vegetables": [
+    { "name": "Carrot", "units": ["pcs", "kg", "g"] },
+    { "name": "Broccoli", "units": ["g", "kg"] },
+    { "name": "Spinach", "units": ["g", "kg", "bunch"] },
+    { "name": "Tomato", "units": ["pcs", "kg", "g"] },
+    { "name": "Bell pepper", "units": ["pcs", "kg"] }
+  ],
+  "Dairy": [
+    { "name": "Milk", "units": ["ml", "l", "cup"] },
+    { "name": "Cheese", "units": ["g", "kg", "slice"] },
+    { "name": "Yogurt", "units": ["g", "kg", "cup"] },
+    { "name": "Butter", "units": ["g", "kg", "tbsp"] },
+    { "name": "Cream", "units": ["ml", "l"] }
+  ],
+  "Bakery": [
+    { "name": "Bread", "units": ["pcs", "slice", "loaf"] },
+    { "name": "Croissant", "units": ["pcs"] },
+    { "name": "Bagel", "units": ["pcs"] },
+    { "name": "Muffin", "units": ["pcs"] },
+    { "name": "Baguette", "units": ["pcs"] }
+  ],
+  "Meat & Seafood": [
+    { "name": "Chicken breast", "units": ["g", "kg", "pcs"] },
+    { "name": "Salmon fillet", "units": ["g", "kg", "slice"] },
+    { "name": "Beef steak", "units": ["g", "kg", "pcs"] },
+    { "name": "Shrimp", "units": ["g", "kg"] },
+    { "name": "Bacon", "units": ["g", "kg", "slice"] }
+  ],
+  "Spices & Herbs": [
+    { "name": "Salt", "units": ["g", "kg", "tsp"] },
+    { "name": "Pepper", "units": ["g", "kg", "tsp"] },
+    { "name": "Basil", "units": ["g", "kg", "bunch"] },
+    { "name": "Oregano", "units": ["g", "kg", "tsp"] },
+    { "name": "Paprika", "units": ["g", "kg", "tsp"] }
+  ]
+}
