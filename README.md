@@ -50,64 +50,64 @@
 
 <pre>
 firestore-root
- ┣ favorites (collection)
- ┃  ┗ [recipeId] (document)
- ┃     ┣ dishTypes [array<string>]
- ┃     ┣ likeCount (number)
- ┃     ┣ readyInMinutes (number)
- ┃     ┣ recipeId (number)
- ┃     ┣ title (string)
- ┃     ┗ updatedAt (timestamp)
+ ┣ favorites
+ ┃  ┗ [recipeId]
+ ┃     ┣ dishTypes
+ ┃     ┣ likeCount
+ ┃     ┣ readyInMinutes
+ ┃     ┣ recipeId
+ ┃     ┣ title
+ ┃     ┗ updatedAt
  ┃
- ┗ users (collection)
-    ┗ [userId] (document)
-       ┣ createdAt (timestamp)
-       ┣ email (string)
-       ┣ lastLogin (timestamp)
-       ┣ name (string)
-       ┣ surname (string)
-       ┣ phone (string)
-       ┣ photoURL (string)
-       ┣ preferences (map)
-       ┃  ┣ allergies [array<string>]
-       ┃  ┣ diet (string)
-       ┃  ┗ dislikes [array<string>]
+ ┗ users
+    ┗ [userId]
+       ┣ createdAt 
+       ┣ email 
+       ┣ lastLogin
+       ┣ name 
+       ┣ surname
+       ┣ phone 
+       ┣ photoURL 
+       ┣ preferences
+       ┃  ┣ allergies
+       ┃  ┣ diet 
+       ┃  ┗ dislikes 
        ┃
-       ┣ favorites (subcollection)
-       ┃  ┗ [recipeId] (document)
-       ┃     ┣ calories (number)
-       ┃     ┣ colorHex (string)
-       ┃     ┣ createdAt (timestamp)
-       ┃     ┣ dishTypes [array<string>]
-       ┃     ┣ readyInMinutes (number)
-       ┃     ┣ recipeId (number)
-       ┃     ┗ title (string)
+       ┣ favorites 
+       ┃  ┗ [recipeId] 
+       ┃     ┣ calories
+       ┃     ┣ colorHex
+       ┃     ┣ createdAt 
+       ┃     ┣ dishTypes 
+       ┃     ┣ readyInMinutes 
+       ┃     ┣ recipeId 
+       ┃     ┗ title 
        ┃
-       ┣ fridges (subcollection)
-       ┃  ┗ [fridgeItemId] (document)
-       ┃     ┣ aisle (string)
-       ┃     ┣ amount (number)
-       ┃     ┣ name (string)
-       ┃     ┗ unit (string)
+       ┣ fridges 
+       ┃  ┗ [fridgeItemId] 
+       ┃     ┣ aisle
+       ┃     ┣ amount
+       ┃     ┣ name 
+       ┃     ┗ unit
        ┃
-       ┣ recentViews (subcollection)
-       ┃  ┗ [recipeId] (document)
-       ┃     ┣ dishTypes [array<string>]
-       ┃     ┣ readyInMinutes (number)
-       ┃     ┣ recipeId (number)
-       ┃     ┣ title (string)
-       ┃     ┗ viewedAt (timestamp)
+       ┣ recentViews 
+       ┃  ┗ [recipeId] 
+       ┃     ┣ dishTypes
+       ┃     ┣ readyInMinutes 
+       ┃     ┣ recipeId 
+       ┃     ┣ title 
+       ┃     ┗ viewedAt 
        ┃
-       ┗ shoppingLists (subcollection)
-          ┗ [listId] (document)
-             ┣ id (string/uuid)
-             ┣ title (string)
-             ┣ createdDate (timestamp)
-             ┗ items [array<map>]
-                ┣ id (string/uuid)
-                ┣ name (string)
-                ┣ category (string)
-                ┗ isCompleted (bool)
+       ┗ shoppingLists 
+          ┗ [listId]
+             ┣ id 
+             ┣ title 
+             ┣ createdDate 
+             ┗ items 
+                ┣ id 
+                ┣ name
+                ┣ category
+                ┗ isCompleted 
 </pre>
 
 ## 📸 Screenshots
